@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wewo Build"
+  short_description: "Plan, implement, and verify software changes"
+  default_prompt: "Use $wewo-build to plan and implement this change through verifiable vertical slices and TDD where appropriate."

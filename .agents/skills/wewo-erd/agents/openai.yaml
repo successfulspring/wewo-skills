@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wewo ERD"
+  short_description: "Design a confirmed engineering solution"
+  default_prompt: "Use $wewo-erd to analyze this project and produce a confirmed technical design."

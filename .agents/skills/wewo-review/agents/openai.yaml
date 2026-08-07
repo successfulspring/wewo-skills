@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wewo Review"
+  short_description: "Independently review code and security"
+  default_prompt: "Use $wewo-review to independently review this Diff for code quality, security, reliability, and merge readiness."

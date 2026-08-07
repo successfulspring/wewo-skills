@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wewo Test"
+  short_description: "Execute tests and produce an evidence gate"
+  default_prompt: "Use $wewo-test to route and execute verification, triage results, manage manual tests, and produce an evidence-based test gate."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wewo PRD"
+  short_description: "Clarify and confirm product requirements"
+  default_prompt: "Use $wewo-prd to clarify this requirement progressively and create a confirmed PRD."
