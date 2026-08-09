@@ -9,7 +9,7 @@ Claude-specific subagents, tools, hooks, and other capabilities are optional
 enhancements. Preserve the portable Codex/Claude core and provide a functional
 fallback whenever an enhancement is unavailable.
 
-When work matches one of the six workflow stages, use the corresponding
+When work matches one of the six capabilities, use the corresponding
 `wewo-prd`, `wewo-erd`, `wewo-testplan`, `wewo-build`, `wewo-review`, or
 `wewo-test` skill. Do not reproduce their complete workflows in this file.
 

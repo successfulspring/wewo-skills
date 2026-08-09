@@ -2,7 +2,7 @@
 
 Use this internal template throughout implementation. Replace every
 brace-delimited instruction with actual evidence in the selected output
-language. Localize headings while keeping `06-implementation-record.md` in
+language. Localize headings while keeping `implementation-record.md` in
 English. Do not copy this instruction block into the generated document.
 
 ```markdown
@@ -27,9 +27,8 @@ English. Do not copy this instruction block into the generated document.
 
 ## 5. {Unit and Integration Test Results}
 ## 6. {Quality Check Results}
-## 7. {Test Case Adjustments}
-## 8. {Deviations from the Implementation Plan}
-## 9. {Unfinished Work and Known Limitations}
-## 10. {Final Verification Evidence}
-## 11. {Final Conclusion}
+## 7. {Deviations from the Implementation Plan}
+## 8. {Unfinished Work and Known Limitations}
+## 9. {Final Verification Evidence}
+## 10. {Final Conclusion}
 ```

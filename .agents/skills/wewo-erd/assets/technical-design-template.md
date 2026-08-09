@@ -2,7 +2,7 @@
 
 Use this as an internal rendering template. Replace every brace-delimited
 instruction with confirmed content in the selected output language. Localize
-all headings while keeping the filename `02-technical-design.md` in English.
+all headings while keeping the filename `technical-design.md` in English.
 Do not copy this instruction block into the generated document.
 
 ```markdown

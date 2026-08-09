@@ -21,7 +21,7 @@ Select only topics relevant to the requirement:
 12. compatibility and migration;
 13. code structure and implementation constraints.
 
-Resolve upstream choices before dependent detail. After each answer, update
+Resolve higher-level choices before dependent detail. After each answer, update
 which decisions are settled, which new questions emerged, what matters next,
 and whether the design generation gate is satisfied.
 

@@ -19,7 +19,7 @@ Use every core section in this order:
    - In Scope
    - Out of Scope
 5. Global Implementation Constraints
-6. TDD Candidate Evaluation
+6. TDD and Implementation Verification Strategy
 7. Test Seams
 8. Vertical Implementation Slices
 9. Interface, Database, and Dependency Changes
@@ -27,17 +27,17 @@ Use every core section in this order:
 11. Git and Worktree Strategy
 12. Risks and Unresolved Questions
 
-Localize headings and prose. Keep the filename `05-implementation-plan.md` in
+Localize headings and prose. Keep the filename `implementation-plan.md` in
 English.
 
 Record only actual sources and verified project facts. Identify the final
 capability and completion result, affected and unaffected scope, global
 constraints, test framework and seams, quality commands, and Git state.
 
-Use a TDD evaluation table:
+Use a verification-strategy table:
 
 ```markdown
-| Case or behavior | Evaluation | Final test level | Test seam | Notes |
+| Implementation behavior | Evaluation | Final test level | Test seam | Notes |
 |---|---|---|---|---|
 ```
 
@@ -47,7 +47,7 @@ Define every slice:
 ### Slice-001 {Name}
 
 - **Business goal:**
-- **Requirement or case:**
+- **Requirement or behavior:**
 - **Observable result:**
 - **Test seam:**
 - **Test level:**
@@ -71,13 +71,12 @@ Use every core section in this order:
 4. TDD Execution Record
 5. Unit and Integration Test Results
 6. Quality Check Results
-7. Test Case Adjustments
-8. Deviations from the Implementation Plan
-9. Unfinished Work and Known Limitations
-10. Final Verification Evidence
-11. Final Conclusion
+7. Deviations from the Implementation Plan
+8. Unfinished Work and Known Limitations
+9. Final Verification Evidence
+10. Final Conclusion
 
-Localize headings and prose. Keep the filename `06-implementation-record.md`
+Localize headings and prose. Keep the filename `implementation-record.md`
 in English.
 Update the record continuously rather than reconstructing evidence from memory.
 
@@ -131,9 +130,7 @@ Verify that:
 - every command and outcome is actual;
 - Red and Green claims have evidence;
 - changed-file and slice tables match the repository;
-- test-case adjustments are recorded in the implementation record, not
-  applied to upstream documents;
 - deviations and confirmations are explicit;
 - unavailable checks and remaining risks are transparent;
 - no independent-review or final-test-gate claim appears;
-- no empty earlier or later workflow document was created.
+- no document owned by another capability was created.

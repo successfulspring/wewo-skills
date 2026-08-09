@@ -17,8 +17,8 @@ or specified files or directories.
 Create only:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/07-code-review.md
-docs/wewo/<requirement-category>/<requirement-slug>/08-security-review.md
+docs/wewo/<requirement-category>/<requirement-slug>/code-review.md
+docs/wewo/<requirement-category>/<requirement-slug>/security-review.md
 ```
 
 Resolve exactly one requirement workspace before writing either report. Keep
@@ -29,9 +29,10 @@ dominant interaction language, and otherwise Chinese.
 Operate read-only by default. Read code and documents, inspect Git, search
 context, run safe checks, use approved temporary tools, and write the two
 reports. Do not modify production or test code, apply fixes, revert changes,
-commit, merge, deploy, alter requirements or expected behavior, or modify any
-workflow document. If the user requests fixes, stop after review and obtain
-explicit authorization for a separate implementation task.
+commit, merge, deploy, alter requirements or expected behavior, or modify a
+workflow document owned by another capability. If the user requests fixes, stop
+after review and obtain explicit authorization for a separate implementation
+task.
 
 ## Non-negotiable conclusion vocabulary
 
@@ -58,25 +59,30 @@ actual authorized owner, recorded conditions, and follow-up.
 
 ### 1. Resolve the workspace and review target
 
-Run independently. Use upstream documents only when the user explicitly
-provides them, references them, provides the requirement workspace, or asks to
-review an existing requirement. Never require or create empty earlier-stage
-documents, and never scan `docs/wewo/` or the repository for historical
-requirement documents.
+Run independently. Use `prd.md` and `technical-design.md` only when the user
+explicitly supplies or references them, or the current conversation already
+establishes them. Never require or create empty earlier-stage documents, and
+never scan `docs/wewo/` or the repository for historical requirement documents.
+Normal review input does not include `test-plan.md`, `test-cases.md`,
+`implementation-plan.md`, `implementation-record.md`, or `test-execution.md`.
+A user may explicitly request additional review context through ordinary user
+instructions, but that does not make an artifact part of the standard input
+contract.
 
 Resolve the requirement workspace in this order:
 
 1. Use an explicit workspace supplied by the user.
 2. Otherwise reuse the workspace established for this requirement.
 3. Otherwise infer one candidate from the requirement, issue, branch, or
-   available upstream documents.
+   explicitly supplied or referenced material.
 4. Ask before writing if multiple candidates are plausible.
 
-Never select a workspace by modification time. Support `features`, `bugs`,
-`refactors`, and `maintenance`; default to `features` only when no evidence
-favors another category. Use a concise lowercase English kebab-case slug.
-Create missing parents only after resolution is unambiguous. Never mix
-different requirements without confirmation.
+Never infer a workspace from the existence of workflow artifacts. Never select
+a workspace by modification time. Support `features`, `bugs`, `refactors`,
+and `maintenance`; default to `features` only when no evidence favors another
+category. Use a concise lowercase English kebab-case slug. Create missing
+parents only after resolution is unambiguous. Never mix different requirements
+without confirmation.
 
 Apply the scope precedence in
 [diff-scope-and-context.md](references/diff-scope-and-context.md). Prefer an
@@ -99,20 +105,17 @@ scope and state that current-change attribution may be limited.
 ### 2. Collect evidence and pre-analyze the Diff
 
 Use direct code evidence first: the actual Diff, affected context, production
-and test code, repository rules, and actual command output. Treat
-`06-implementation-record.md` as an implementation claim, not proof.
+and test code, repository rules, and actual command output. An implementer's
+process narrative is not proof that the implementation is correct. Actual test
+code may be reviewed because it is part of the repository or Diff. Actual
+directly available execution evidence may be considered when relevant, but the
+review does not depend on another capability's workflow report.
 
-When the user explicitly provides or confirms them, use current requirements,
-`01-prd.md`, `02-technical-design.md`, `05-implementation-plan.md`,
-`06-implementation-record.md`, and an identified issue or MR description. Use
-`04-test-cases.md` only as optional high-risk and test-gap context. Do not
-read `03-test-plan.md` unless the user explicitly requests review of testing
-strategy execution. Never scan `docs/wewo/` or the repository to discover
-these documents.
-
-If requirements are absent, continue engineering, security, reliability, test,
-compatibility, and scope review, but state that business completeness cannot
-be confirmed. Never infer missing requirements from the implementation.
+When the user explicitly supplies or references them, or the current
+conversation already establishes them, use requirement context (`prd.md`) and
+design context (`technical-design.md`), plus an identified issue or MR
+description. Never scan `docs/wewo/` or the repository to discover these
+documents.
 
 Read and apply
 [diff-scope-and-context.md](references/diff-scope-and-context.md). Inspect
@@ -161,6 +164,19 @@ independent review prevents a trustworthy merge conclusion.
 
 Apply [review-dimensions.md](references/review-dimensions.md) to requirement,
 standards, correctness, test, and compatibility analysis.
+
+**Requirement Compliance** — when requirement context exists, evaluate missing
+requirements, partial implementation, wrong observable behavior, acceptance
+mismatch, and scope creep. When requirement context is absent, mark
+`Requirement Compliance: Not Evaluated` and explain why. Do not invent missing
+requirements.
+
+**Design Compliance** — when technical-design context exists, evaluate
+architecture deviation, module/interface/API deviation, data-model deviation,
+transaction/concurrency deviation, permission/security deviation, reliability
+constraint deviation, and other material design deviations. When design context
+is absent, mark `Design Compliance: Not Evaluated` and explain why. Do not
+invent missing design expectations.
 
 Apply
 [security-and-reliability.md](references/security-and-reliability.md).
@@ -262,16 +278,17 @@ identify the actual authorized owner.
 ### 8. Write and verify both reports
 
 Read [document-contract.md](references/document-contract.md). Generate
-`07-code-review.md` from
+`code-review.md` from
 [code-review-template.md](assets/code-review-template.md) and
-`08-security-review.md` from
+`security-review.md` from
 [security-review-template.md](assets/security-review-template.md).
 
 Include the real scope, baseline, evidence sources, independent-review status,
 commands and outcomes, tool installations, all candidate classifications,
 deduplicated findings, supported metrics, limitations, blockers, and separate
-gate conclusions. Never present implementation self-check as independent
-review.
+gate conclusions. Include the Requirement Compliance and Design Compliance
+disposition, including `Not Evaluated` with the reason when context is absent.
+Never present implementation self-check as independent review.
 
 Before finishing, verify that both reports agree on scope, evidence, shared
 findings, severity, blockers, and whether merge is allowed. Base conclusions

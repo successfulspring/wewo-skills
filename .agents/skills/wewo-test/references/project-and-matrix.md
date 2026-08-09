@@ -20,21 +20,18 @@ excluded scope, and limitations.
 ## Input priority
 
 Use current user requirements and actual project behavior first. Reuse
-upstream documents only when the user explicitly provides or confirms them:
+`test-plan.md` and `test-cases.md` only when the user explicitly supplies or
+references them, or the current conversation already establishes them:
 
-- an explicitly selected `04-test-cases.md` as the primary scenario inventory;
-- an explicitly selected `03-test-plan.md` as optional scope and strategy
-  context;
-- requirements, PRD, design, implementation plan, and implementation record as
-  supporting context.
+- an explicitly established `test-cases.md` as the primary scenario inventory;
+- an explicitly established `test-plan.md` as optional scope and strategy
+  context.
 
-Never scan `docs/wewo/` or the repository to discover these documents.
+Never scan `docs/wewo/` or the repository to discover these documents. Never
+treat a prior report or label as current execution evidence. Keep execution
+status, logs, screenshots, and actual responses out of test-planning documents.
 
-Never use implementation records or prior Passed labels as current execution
-evidence. Keep execution status, logs, screenshots, and actual responses out
-of test-planning documents.
-
-Without upstream testing documents, derive the minimum matrix from the user
+Without usable testing artifacts, derive the minimum matrix from the user
 goal, actual Diff, public interfaces, pages, existing tests, repository
 behavior, and risk. Ask when an unresolved expectation affects pass/fail.
 

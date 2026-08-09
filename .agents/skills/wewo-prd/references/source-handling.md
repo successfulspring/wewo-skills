@@ -16,21 +16,17 @@ condition holds:
 4. The user uploads or pastes it in the current interaction.
 5. The user explicitly identifies an issue, task, merge request, or document
    as a source for this requirement.
-6. The agent discovers a potentially relevant document and the user
-   explicitly confirms it before reading or incorporating it.
 
 Never scan `docs/wewo/` or the repository for historical requirement
 documents. A document's presence in a workspace does not by itself authorize
 it as input. For a new PRD request, do not automatically read an existing
-`01-prd.md`.
+`prd.md`.
 
 Treat an external source outside `docs/wewo/...` as read-only. Never overwrite,
 edit, annotate, or relocate it.
 
 Do not recursively read Markdown files, select documents because their content
-seems similar, or combine historical material without authorization. A strong
-filename or path match permits only presenting the path as a candidate and
-asking the user for confirmation before reading or incorporating it.
+seems similar, or combine historical material without authorization.
 
 ## Separate repository instructions from requirements
 
@@ -39,8 +35,15 @@ files when needed to understand repository conventions. Do not treat their
 content as a business requirement unless the user explicitly authorizes that
 use.
 
-Repository facts may inform the clarification process. Product decisions still
-require user confirmation.
+## Gather repository facts selectively
+
+Repository reconnaissance is allowed only to understand current-state facts
+such as what behavior exists today, which states exist, which product concepts
+or terms exist, and which related capability already exists.
+
+Repository facts must not decide desired behavior, business rules, desired
+scope, acceptance policy, or any product decision. The user decides
+requirements. Do not infer requirement intent from implementation convenience.
 
 ## Analyze authorized material
 

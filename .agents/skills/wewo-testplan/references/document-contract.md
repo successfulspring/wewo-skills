@@ -21,17 +21,16 @@ Use every core section in this order:
 5. Quality Risk Analysis
 6. Test Strategy
 7. Test Design Methods
-8. TDD Collaboration Strategy
-9. Automation Strategy
-10. Test Environment
-11. Test Data Strategy
-12. Test Priority
-13. Test Entry Conditions
-14. Test Exit Conditions
-15. Test Deliverables
-16. Blockers and Unresolved Questions
+8. Verification Method and Evidence Levels
+9. Coverage Conditions and Test-Data Assumptions
+10. Test-Data Strategy
+11. Test Priority
+12. Test Entry Conditions
+13. Test Exit Conditions
+14. Test Deliverables
+15. Blockers and Unresolved Questions
 
-Localize headings and content. Keep `03-test-plan.md` in English.
+Localize headings and content. Keep `test-plan.md` in English.
 
 ## Test plan section contract
 
@@ -43,10 +42,12 @@ Localize headings and content. Keep `03-test-plan.md` in English.
 - Use a risk table with ID, description, impact, level, and test response.
 - Assign each applicable test level a clear responsibility.
 - Identify selected design methods and the rules they cover.
-- Separate unit TDD inputs, integration-oriented inputs, and scenarios outside
-  the primary TDD loop.
-- Summarize automation by type, recommendation, execution stage, and method.
-- Describe only verified environment and data capabilities; mark unknowns.
+- Describe the Verification Method and Evidence Levels: the Recommended Test
+  Level per scenario and the Required Evidence Level where business risk or
+  observable behavior requires it.
+- Describe coverage conditions (product scope) and test-data assumptions as
+  design inputs, without inspecting execution infrastructure.
+- Describe only verified project capabilities and data; mark unknowns.
 - Derive entry and exit conditions from the project without inventing fixed
   coverage or pass-rate targets.
 
@@ -62,13 +63,11 @@ Use every core section in this order:
 2. Test Case Overview
 3. Requirement Coverage
 4. Detailed Test Cases
-5. TDD Case List
-6. E2E Automation Candidate List
-7. Manual Test List
-8. Case Review Result
-9. Unresolved Questions and Blockers
+5. Manual Evidence Index
+6. Case Review Result
+7. Unresolved Questions and Blockers
 
-Localize headings and content. Keep `04-test-cases.md` in English.
+Localize headings and content. Keep `test-cases.md` in English.
 
 ## Test case document contract
 
@@ -81,8 +80,8 @@ business risk or observable behavior requires it, the Required Evidence Level
 for each case. Build the overview counts from the actual documented cases:
 
 ```markdown
-| Test level | Total | P0 | P1 | P2 | TDD inputs | Automation candidates |
-|---|---:|---:|---:|---:|---:|---:|
+| Test level | Total | P0 | P1 | P2 | Required evidence |
+|---|---:|---:|---:|---:|---:|
 ```
 
 Map requirement IDs when they exist, otherwise concise business rules:
@@ -92,39 +91,31 @@ Map requirement IDs when they exist, otherwise concise business rules:
 |---|---|---|
 ```
 
-Summarize TDD cases:
+Keep a Manual Evidence Index listing cases whose Required Evidence Level is
+Manual. It is an index only; it is not an execution workflow.
 
-```markdown
-| Case ID | Case title | Test level | Business capability driven |
-|---|---|---|---|
-```
-
-Summarize E2E candidates:
-
-```markdown
-| Case ID | User flow | Automation judgment | Blocker |
-|---|---|---|---|
-```
-
-Summarize cases better suited to manual work or currently unstable for
-automation. Include the internal review result and remaining gaps.
+Include the internal review result and remaining gaps.
 
 ## Final quality gate
 
 Before writing both documents, verify:
 
 - the user confirmed the test design;
-- content matches actual requirements, design, code, and test foundation;
+- content matches actual requirements, design, code, and product context;
 - no page, interface, role, state, environment, account, or data is invented;
 - unknown rules are not presented as expected behavior;
 - steps are specific and expectations judgeable;
 - priority follows risk;
 - selected levels are economical and trustworthy;
 - E2E is limited to useful end-to-end evidence;
-- TDD and automation classifications are explicit and realistic;
+- the Required Evidence Level is set only where business risk or observable
+  behavior requires it;
+- Recommended Test Level and Required Evidence Level classifications are
+  explicit and realistic;
 - normal, negative, boundary, high-risk, security, consistency, and regression
   coverage is appropriate;
 - actual counts match the documented cases;
 - the internal review is complete;
 - neither document contains execution results or claims;
+- no concrete tool, runner, or execution-environment decision appears;
 - no executable test or production implementation is produced.

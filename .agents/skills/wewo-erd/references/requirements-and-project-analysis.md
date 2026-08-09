@@ -18,22 +18,25 @@ data compatibility, interface or database change permission, rollback versus
 partial success, audit needs, or new-dependency permission.
 
 If the goal is too vague to select a basic implementation direction, clarify
-it progressively. Suggest product-requirement work only when the user wants a
-complete product rediscovery; never make another skill a prerequisite.
+it progressively. Request additional requirement clarification or requirement
+context only when the user wants a complete product rediscovery; never make
+another capability a prerequisite.
 
 ## Combine input material
 
-Use only sources the user explicitly provides, references, or confirms in this
-interaction. Do not scan `docs/wewo/` or the repository for historical
-requirement documents; a discovered candidate requires explicit user
-confirmation before use.
+Use only sources the user explicitly provides or references in this
+interaction, or that the current conversation already establishes. Do not scan
+`docs/wewo/` or the repository for historical requirement documents.
+
+A `prd.md` is simply a requirement artifact; this skill does not care which
+capability produced it.
 
 Accept and synthesize:
 
 - current conversation and requirement descriptions;
 - Markdown, TXT, office documents, and PDFs;
 - screenshots, prototypes, and other images;
-- existing PRDs, including `01-prd.md`;
+- existing PRDs, including `prd.md`;
 - issues, tasks, change notes, and bug reports;
 - relevant project requirement documents;
 - current project code;

@@ -40,7 +40,7 @@ Use these sections in order:
 23. Test Gate
 24. Environment Limitations and Residual Risks
 
-Use the filename `09-test-execution.md`. Mark inapplicable test-type sections
+Use the filename `test-execution.md`. Mark inapplicable test-type sections
 `Not Applicable` without fabricated detail.
 
 ## Manual checklist
@@ -58,7 +58,7 @@ Use these sections in order:
 9. Missing Evidence
 10. Manual Test Conclusion
 
-Use the filename `10-manual-test-checklist.md`.
+Use the filename `manual-test-checklist.md`.
 
 ## Evidence tables
 
@@ -100,7 +100,7 @@ Testability request:
 - **Production impact:**
 - **Alternative:**
 - **Risk:**
-- **Recommended wewo-build handoff:**
+- **Recommended production-code change:**
 ```
 
 ## Final consistency checks
@@ -118,4 +118,4 @@ Verify:
 - secrets and production data are absent from reports and artifacts;
 - executable tests remain in project test paths;
 - no production file or planning document was silently modified;
-- no empty earlier or later workflow document was created.
+- no document owned by another capability was created.

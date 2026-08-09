@@ -3,15 +3,15 @@
 1. The complete collection is named `wewo-skills`.
 
 2. The individual skills are independently runnable. No skill may require that
-   an earlier skill has already run.
+   another `wewo-*` skill has already run.
 
-3. When useful upstream documents exist and the user has authorized their use
-   (explicit reference, explicit workspace, a user-requested continuation of
-   an existing requirement, or explicit confirmation of a discovered
-   candidate), a skill should reuse them. A document's existence in a
-   requirement workspace does not by itself authorize it as input. When no
-   authorized upstream material exists, the skill must establish the minimum
-   context needed for its own work.
+3. Skills are artifact-composable, not workflow-state-coupled. A skill may
+   consume an artifact established in the current conversation context or
+   explicitly supplied or referenced by the user. A skill must never select an
+   artifact because the agent discovered its existence in the repository or a
+   requirement workspace; artifact existence is not an input-selection signal.
+   When no usable artifact exists, the skill must establish the minimum context
+   needed for its own work.
 
 4. Every generated workflow document, review report, execution report, and
    related evidence must be stored under an isolated requirement workspace:
@@ -44,7 +44,7 @@
    - Otherwise reuse the workspace established in the current requirement
      context.
    - Otherwise infer a candidate from the requirement, issue, branch, or
-     available upstream documents.
+     explicitly supplied or referenced material.
    - If multiple workspaces are plausible, ask the user before writing files.
    - Never silently select the most recently modified workspace.
 
@@ -57,16 +57,16 @@
 9. Stable workflow filenames remain in English regardless of document
    language:
 
-   - `01-prd.md`
-   - `02-technical-design.md`
-   - `03-test-plan.md`
-   - `04-test-cases.md`
-   - `05-implementation-plan.md`
-   - `06-implementation-record.md`
-   - `07-code-review.md`
-   - `08-security-review.md`
-   - `09-test-execution.md`
-   - `10-manual-test-checklist.md`
+   - `prd.md`
+   - `technical-design.md`
+   - `test-plan.md`
+   - `test-cases.md`
+   - `implementation-plan.md`
+   - `implementation-record.md`
+   - `test-execution.md`
+   - `manual-test-checklist.md`
+   - `code-review.md`
+   - `security-review.md`
 
 10. Skill implementation files must be written in English, including:
 
@@ -99,8 +99,7 @@
 16. Skills may create missing parent directories only after the requirement
     workspace has been resolved unambiguously.
 
-17. Skills must not create empty documents for earlier or later stages merely
-    to complete the numeric sequence.
+17. Skills must not create empty documents owned by other capabilities.
 
 18. Documents from different requirements must never be written into the same
     workspace unless the user explicitly confirms they belong to the same
@@ -121,19 +120,17 @@
     designs, plans, reports, or test documents). A workflow document may be
     used as input only when the user explicitly references it, explicitly
     provides its requirement workspace, explicitly asks to continue, revise,
-    review, implement, or test an existing requirement, provides or uploads
-    the document in the current interaction, or explicitly confirms a
-    candidate the agent discovered. Never silently select a workspace because
-    a document appears similar or recently modified.
+    review, implement, or test an existing requirement, or provides or uploads
+    the document in the current interaction. Never silently select a workspace
+    because a document appears similar or recently modified.
 
-22. Each workflow document is owned by the skill that produces it:
-    `01-prd.md` by wewo-prd, `02-technical-design.md` by wewo-erd,
-    `03-test-plan.md` and `04-test-cases.md` by wewo-testplan,
-    `05-implementation-plan.md` and `06-implementation-record.md` by
-    wewo-build, `07-code-review.md` and `08-security-review.md` by
-    wewo-review, and `09-test-execution.md`,
-    `10-manual-test-checklist.md`, and `test-artifacts/` by wewo-test.
-    A downstream skill must not normally modify an upstream skill's workflow
-    document. Deviations, adjustments, and execution states belong in the
-    owning stage's own documents, or are handled through explicit user
+22. Each workflow document is owned by the capability that produces it:
+    `prd.md` by wewo-prd, `technical-design.md` by wewo-erd,
+    `test-plan.md` and `test-cases.md` by wewo-testplan,
+    `implementation-plan.md` and `implementation-record.md` by wewo-build,
+    `test-execution.md`, `manual-test-checklist.md`, and `test-artifacts/` by
+    wewo-test, and `code-review.md` and `security-review.md` by wewo-review.
+    A skill must not normally modify a workflow document owned by another
+    capability. Deviations, adjustments, and execution states belong in the
+    owning capability's own documents, or are handled through explicit user
     confirmation and deliberate revision of the owning document.

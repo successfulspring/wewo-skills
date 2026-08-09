@@ -2,7 +2,7 @@
 
 Use this as an internal rendering template. Replace every brace-delimited
 instruction with confirmed content in the selected output language. Localize
-headings while keeping the filename `03-test-plan.md` in English. Do not copy
+headings while keeping the filename `test-plan.md` in English. Do not copy
 this instruction block into the generated document.
 
 ```markdown
@@ -25,18 +25,19 @@ this instruction block into the generated document.
 
 ## 6. {Test Strategy}
 ## 7. {Test Design Methods}
-## 8. {TDD Collaboration Strategy}
-## 9. {Automation Strategy}
+## 8. {Verification Method and Evidence Levels}
 
-| {Test Type} | {Recommendation} | {Execution Stage} | {Method} |
-|---|---|---|---|
-| ... | ... | ... | ... |
+{Recommended Test Level per scenario; Required Evidence Level where business
+risk or observable behavior requires it}
 
-## 10. {Test Environment}
-## 11. {Test Data Strategy}
-## 12. {Test Priority}
-## 13. {Test Entry Conditions}
-## 14. {Test Exit Conditions}
-## 15. {Test Deliverables}
-## 16. {Blockers and Unresolved Questions}
+## 9. {Coverage Conditions and Test-Data Assumptions}
+
+{Product-scope coverage conditions and test-data assumptions as design inputs}
+
+## 10. {Test-Data Strategy}
+## 11. {Test Priority}
+## 12. {Test Entry Conditions}
+## 13. {Test Exit Conditions}
+## 14. {Test Deliverables}
+## 15. {Blockers and Unresolved Questions}
 ```

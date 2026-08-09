@@ -34,12 +34,29 @@ Only confirmed Product Defect items enter the formal product defect list.
 Do not weaken assertions, skip a required scenario, modify business
 expectations, or change production logic to obtain Green.
 
-## Flaky protocol
+## Mandatory stability-evidence protocol
 
-After preserving the first failure, use a small bounded number of reruns under
-unchanged code, environment, data policy, and test configuration. Record every
-outcome. Mixed pass/fail results are Flaky.
+When an affected test has shown mixed Pass/Fail behavior, unexplained
+intermittent failure, or a failure that required changing synchronization,
+waiting, timing, or harness behavior:
 
-Do not use unlimited retries or report a final passing retry as reliable
-success. Framework retry output is diagnostic evidence, not a way to erase the
-initial failure.
+1. one successful rerun is not sufficient evidence of stability;
+2. before making a stability or no-flaky conclusion, execute the final
+   unchanged affected test scope under unchanged code and materially unchanged
+   environment;
+3. the default minimum repeated evidence is 3 consecutive executions of the
+   affected scope (this does not require running the entire suite three times);
+4. mixed Pass/Fail among those executions marks the affected test Flaky;
+5. without sufficient repeated evidence, do not claim stability or "no flaky";
+6. report the repeat count and observed outcomes.
+
+Prefer evidence-scoped wording such as "No flaky behavior was observed in 3
+consecutive executions of the affected scope under the recorded environment"
+over unsupported categorical wording such as "There are no flaky tests."
+
+After preserving the first failure, collect logs, screenshots, Trace, and
+environment evidence. Fix test-code defects and rerun. Use a small bounded
+number of reruns under unchanged code, environment, data policy, and test
+configuration, and record every outcome. Do not use unlimited retries or
+report a final passing retry as reliable success. Framework retry output is
+diagnostic evidence, not a way to erase the initial failure.

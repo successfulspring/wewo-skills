@@ -19,6 +19,26 @@ Do not default to production writes. Stop before destructive, financial,
 external, shared-data, or production behavior without explicit safe
 authorization.
 
+## Production-like evidence
+
+Do not invent a production-like environment. Production-like evidence becomes
+relevant only when established by project deployment or start conventions, an
+acceptance environment, project requirements, or the user's explicit test goal.
+
+When production-like evidence is relevant:
+
+- record the environment or mode actually tested;
+- development-mode evidence proves only development-mode behavior;
+- development success does not prove production-like coverage, production
+  readiness, or deployment-mode correctness.
+
+If production-like execution is attempted but blocked, record the
+production-like environment evidence as Blocked with the concrete blocker. If
+production-like verification is relevant but intentionally not attempted,
+record it as Not Run with the reason. A development-mode fallback may provide
+supplementary evidence but does not replace the missing production-like
+evidence. Keep scenario execution status and environment coverage distinct.
+
 ## Data lifecycle
 
 Prefer:

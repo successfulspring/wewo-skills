@@ -65,12 +65,13 @@ assert calls.
 
 ## E2E boundary
 
-Browser E2E is outside Build's execution responsibility. Do not make browser
-E2E part of the implementation loop, do not inspect whether E2E tooling or
-browsers are installed, and do not install or run browser E2E. When a planned
-or documented scenario is classified as E2E, preserve its expected business
-behavior, keep it outside Build execution, never mark it Passed, and record
-the handoff for independent test execution in the implementation record.
-Leave browser scripts, compatibility, visual checks, exploration, full
-acceptance, large performance tests, and uncontrolled third-party pages to
-the test-execution stage.
+Browser-level acceptance testing is outside this capability's implementation
+verification scope. Do not make it part of the implementation loop, do not
+inspect whether browser-test tooling or browsers are installed, and do not
+install or run browser acceptance tests. Do not reason about concrete
+browser-test tools. When a planned behavior is classified as browser
+acceptance, preserve its expected business behavior, keep it outside this
+capability's execution, never mark it Passed, and record the scope boundary in
+the implementation record. Browser scripts, compatibility, visual checks,
+exploration, full acceptance, and large performance tests are outside this
+capability's implementation verification scope.

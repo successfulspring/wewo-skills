@@ -14,7 +14,7 @@
 - 多份相互关联的需求材料；
 - 当前对话中描述的一个初步想法。
 
-Skill 不应直接根据这些原始材料生成 PRD，而应先理解已有信息，再通过多轮追问帮助用户逐步明确需求，最终生成可作为后续设计和开发依据的 `01-prd.md`。
+Skill 不应直接根据这些原始材料生成 PRD，而应先理解已有信息，再通过多轮追问帮助用户逐步明确需求，最终生成可作为设计、开发和验证依据的 `prd.md`。
 
 ------
 
@@ -28,7 +28,7 @@ Skill 不应直接根据这些原始材料生成 PRD，而应先理解已有信�
 
 ### 第二阶段：PRD 生成
 
-当需求中的主要问题已经澄清，并且用户确认双方理解一致后，将原始材料和多轮对话中确认的内容整理成 `01-prd.md`。
+当需求中的主要问题已经澄清，并且用户确认双方理解一致后，将原始材料和多轮对话中确认的内容整理成 `prd.md`。
 
 完整流程为：
 
@@ -45,7 +45,30 @@ Skill 不应直接根据这些原始材料生成 PRD，而应先理解已有信�
     ↓
 用户确认或修改
     ↓
-生成 01-prd.md
+生成 prd.md
+```
+
+------
+
+## 2.1 输入契约
+
+`/wewo-prd` 的合法输入包括：
+
+- 用户意图：一句话、一段文字、一个初步想法；
+- 当前对话中已经确认的上下文；
+- 用户显式提供或引用的需求材料，包括文档、粘贴的文本、图片、Issue、任务单，以及其他用户明确选择的需求来源；
+- 用于理解当前状态的选择性仓库事实，仅用于获取当前状态，不决定产品决策。
+
+禁止的是隐式发现历史工作流工件（不得扫描 `docs/wewo/` 或仓库寻找历史需求文档），而不是禁止消费用户提供的需求材料。
+
+`/wewo-prd` 的输入输出契约：
+
+```text
+用户意图
++ 对话上下文
++ 显式提供的需求材料
++ 选择性仓库事实
+→ prd.md
 ```
 
 ------
@@ -209,7 +232,7 @@ AI 的建议只是帮助用户思考，不能默认用户已经接受。
 
 ### 3.7 避免过度追问
 
-Skill 的目标是形成足够支持后续设计和开发的 PRD，而不是无限追问所有可能情况。
+Skill 的目标是形成足以支持设计、开发和验证的 PRD，而不是无限追问所有可能情况。
 
 以下内容通常不应在 `/wewo-prd` 阶段深入展开：
 
@@ -362,12 +385,10 @@ is met:
 4. The user uploads or pastes the document in the current interaction.
 5. The user explicitly identifies an Issue, task, MR, or document as a source
    for the current requirement.
-6. The agent discovers a potentially relevant document and the user
-   explicitly confirms it before reading or incorporating it.
 
 A document's existence in a requirement workspace does not by itself
 authorize it as input. For a new PRD request, do not automatically read an
-existing `01-prd.md` or any other historical requirement document. Do not
+existing `prd.md` or any other historical requirement document. Do not
 scan `docs/wewo/` or the repository looking for previous PRDs or related
 requirement documents merely because they appear related.
 
@@ -376,15 +397,11 @@ Repository instruction files such as `AGENTS.md`, `CLAUDE.md`,
 when needed to understand repository conventions, but they MUST NOT be treated
 as business requirements unless the user explicitly says so.
 
-If the agent discovers a likely related external requirement document based on
-a strong name or path match, it may present that file as a candidate source and
-ask the user for confirmation before reading or incorporating it.
-
 The skill MUST NOT:
 
 - recursively read all Markdown files;
 - scan `docs/wewo/` or the repository for historical requirement documents;
-- read an existing `01-prd.md` for a new PRD request without explicit user
+- read an existing `prd.md` for a new PRD request without explicit user
   selection or confirmation;
 - select requirement documents only because their content appears similar;
 - combine historical or unrelated requirement documents into the current PRD;
@@ -392,7 +409,7 @@ The skill MUST NOT:
 - overwrite or modify external source documents.
 
 External requirement files outside `docs/wewo/...` are read-only input sources.
-The generated `01-prd.md` must still be written to the resolved
+The generated `prd.md` must still be written to the resolved
 `docs/wewo/<category>/<slug>/` workspace.
 
 ------
@@ -423,7 +440,7 @@ The generated `01-prd.md` must still be written to the resolved
 ```text
 以上是否已经准确表达你的需求？
 如果有不准确或遗漏的地方，请直接修改。
-确认后我将生成 01-prd.md。
+确认后我将生成 prd.md。
 ```
 
 只有用户确认后，才生成最终文件。
@@ -440,7 +457,7 @@ PRD 采用“固定核心结构 + 动态扩展章节”的方式。
 
 ### 7.1 固定核心结构
 
-`01-prd.md` 至少包含：
+`prd.md` 至少包含：
 
 ```markdown
 # 产品需求文档
@@ -502,7 +519,7 @@ PRD 采用“固定核心结构 + 动态扩展章节”的方式。
 - 不提前完成技术设计；
 - 功能需求应尽可能明确；
 - 业务规则应能够被开发人员理解；
-- 验收标准应能够被后续测试；
+- 验收标准应能够被验证；
 - 未解决的问题必须保留在“未决问题”中；
 - 如果没有未决问题，应明确写“无”。
 
@@ -513,13 +530,13 @@ PRD 采用“固定核心结构 + 动态扩展章节”的方式。
 最终输出文件：
 
 ```text
-01-prd.md
+prd.md
 ```
 
 文件必须创建在已经明确解析或确认的独立需求工作区中：
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/01-prd.md
+docs/wewo/<requirement-category>/<requirement-slug>/prd.md
 ```
 
 即使项目中存在其他需求文档目录，或读取了位于 `docs/wewo/...` 之外的外部需求文档，也不能把最终 PRD 写入那些位置。外部需求文档仅作为只读输入来源。
@@ -547,8 +564,8 @@ docs/wewo/<requirement-category>/<requirement-slug>/01-prd.md
 - 执行测试；
 - 进行代码审查。
 
-这些内容由后续 Skill 处理。
+这些内容由其他能力负责处理。
 
 `/wewo-prd` 的唯一职责是：
 
-> 将用户提供的不完整原始需求，通过递进式多轮澄清，转化为经过用户确认、能够作为后续设计和开发依据的 `01-prd.md`。
+> 将用户提供的不完整原始需求，通过递进式多轮澄清，转化为经过用户确认、能够作为设计、开发和验证依据的 `prd.md`。

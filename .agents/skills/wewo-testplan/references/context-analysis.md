@@ -16,21 +16,24 @@ Establish at least:
 - expected business outcomes.
 
 Proceed directly when the information is sufficient. Ask only for missing
-details that change the plan, such as covered roles, test environment,
-data-creation and cleanup permission, mockability, captcha or external login,
-browser or device support, regression boundaries, test database availability,
-destructive-test permission, and priority risks.
+details that change the plan, such as covered roles, coverage conditions
+(required platforms, browsers, or devices as part of the requirement), whether
+test data may be created or deleted, mockability of external dependencies,
+captcha or external login, regression boundaries, destructive-test permission,
+and priority risks. Do not ask about test-environment readiness or installed
+tooling; those belong to test execution.
 
 If the expected behavior is too vague to judge results, clarify it instead of
-creating speculative cases. Suggest product clarification only when the user
-wants a complete rediscovery; never make another skill a prerequisite.
+creating speculative cases. Request additional requirement clarification or
+requirement context only when the user wants a complete rediscovery; never
+make another capability a prerequisite.
 
 ## Clarify in focused rounds
 
 Discuss one test topic per round and normally ask one to three tightly related
-questions. Select from scope, business risk, roles and permissions,
-environment, data, external services and mocks, browsers or devices,
-regression, automation conditions, and TDD scope according to current need.
+questions. Select from scope, business risk, roles and permissions, coverage
+conditions and test-data assumptions, external services and mocks, regression,
+and verification method and evidence requirements according to current need.
 
 For each material question:
 
@@ -50,40 +53,50 @@ Use relevant:
 
 - user instructions and conversation context;
 - requirement and design documents;
-- `01-prd.md` and `02-technical-design.md` when present;
+- `prd.md` and `technical-design.md` when explicitly supplied or already
+  established in the current conversation;
 - Markdown, TXT, office documents, PDFs, images, prototypes, and diagrams;
 - API documentation, issues, tasks, changes, and defects;
 - current project code;
-- existing plans, cases, historical defects, and automated tests;
+- historical defects;
 - multiple related sources.
 
 Do not assume one file is the only truth. Preserve provenance, distinguish
 confirmed expectations from proposals, and surface conflicts for user
 resolution.
 
-## Inspect the project's test foundation
+## Understand product and design context
 
-Inspect only relevant project areas:
+Inspect only what is needed to understand test behavior:
 
 - affected modules and public interfaces;
-- existing test frameworks and configuration;
-- test directory and naming conventions;
-- existing unit, component, integration, API, contract, and E2E tests;
-- fixtures, factories, mocks, stubs, helpers, and test data;
-- test databases, containers, services, and environment configuration;
-- authentication helpers and reusable user roles;
-- existing CI test stages when they inform feasibility;
-- related historical defects and regression tests.
+- roles, business rules, and state transitions;
+- existing product behavior and its observable outcomes;
+- related historical defects and regression concerns.
 
-Do not invent infrastructure, accounts, data, interfaces, or test seams. Reuse
-verified project capabilities in recommendations.
+Do not inspect concrete test tools, test frameworks, test runners, browser
+installations, test directories, fixtures, test databases, or CI test stages
+to decide how tests will be executed; those belong to test execution. Do not
+invent infrastructure, accounts, data, interfaces, or test seams.
+
+## Coverage conditions and test-data assumptions
+
+Record product-scope coverage conditions and test-data assumptions as design
+inputs:
+
+- required platforms, browsers, or device categories when they are part of the
+  requirement;
+- roles, locales, and configurations that affect expected behavior;
+- whether test data may be created or deleted;
+- destructive-data constraints;
+- required state or setup assumptions.
+
+These are design inputs, not execution-infrastructure discovery.
 
 ## Separate expectations from execution choices
 
-Treat confirmed business behavior as stable. Treat test level, framework,
-automation, fixtures, parameterization, and execution timing as adjustable
-engineering recommendations.
-
-Ask the user when business behavior, permissions, state transitions, failure
-outcomes, or scope is unresolved. Recommend execution methods based on verified
-project facts without turning them into business requirements.
+Treat confirmed business behavior as stable. Treat test level, method, and
+evidence-level recommendations as adjustable engineering guidance. Ask the
+user when business behavior, permissions, state transitions, failure outcomes,
+or scope is unresolved. The skill does not decide which concrete tool executes
+a scenario.

@@ -21,7 +21,7 @@ Goal
 └── Acceptance outcomes
 ```
 
-Ask upstream questions before dependent questions. After every answer, mark
+Ask higher-level questions before dependent questions. After every answer, mark
 resolved decisions, add newly exposed decisions, and choose the highest-impact
 unresolved topic for the next round.
 

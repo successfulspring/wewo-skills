@@ -13,8 +13,8 @@ and combine automated and human evidence into one test gate.
 Create workflow outputs only at:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/09-test-execution.md
-docs/wewo/<requirement-category>/<requirement-slug>/10-manual-test-checklist.md
+docs/wewo/<requirement-category>/<requirement-slug>/test-execution.md
+docs/wewo/<requirement-category>/<requirement-slug>/manual-test-checklist.md
 docs/wewo/<requirement-category>/<requirement-slug>/test-artifacts/
 ```
 
@@ -55,21 +55,23 @@ Use these final gate values only:
 
 ### 1. Resolve the workspace and execution scope
 
-Run independently. Use upstream documents only when the user explicitly
-selects them: an explicitly provided workspace, an explicit reference, or an
-explicit request to continue an existing requirement. Never require them,
-create empty earlier-stage documents, or scan the repository for them.
+Run independently. Use `test-plan.md` and `test-cases.md` only when the user
+explicitly supplies or references them, or the current conversation already
+establishes them. Never require them, create empty earlier documents, or scan
+the repository for them. The skill does not depend on any other capability's
+completion, deferred state, or workflow report.
 
 Resolve exactly one requirement workspace before writing reports or artifacts:
 
 1. Use an explicit workspace supplied by the user.
 2. Otherwise reuse the workspace established for the current requirement.
 3. Otherwise infer one candidate from the requirement, issue, branch, or
-   available upstream documents.
+   explicitly supplied or referenced material.
 4. Ask before writing when multiple candidates are plausible.
 
-Never choose by modification time. Support `features`, `bugs`, `refactors`,
-and `maintenance`; default to `features` only when no evidence favors another
+Never infer a workspace from the existence of workflow artifacts. Never choose
+by modification time. Support `features`, `bugs`, `refactors`, and
+`maintenance`; default to `features` only when no evidence favors another
 category. Use a concise lowercase English kebab-case slug. Create parents only
 after resolution is unambiguous. Never combine different requirements without
 confirmation.
@@ -87,16 +89,15 @@ Use current user goals, requirements, code, Diff, public interfaces, pages,
 existing tests, repository instructions, environment and account information,
 and known risks.
 
-When the user explicitly provides or confirms them, reuse `01-prd.md`,
-`02-technical-design.md`, `03-test-plan.md`, `04-test-cases.md`,
-`05-implementation-plan.md`, and `06-implementation-record.md`. Treat an
-explicitly selected `04-test-cases.md` as the primary scenario inventory and
-an explicitly selected `03-test-plan.md` as optional scope and strategy
-context. Treat implementation records as claims, not current execution
-evidence. Never scan `docs/wewo/` or the repository to discover these
-documents.
+When the user explicitly provides or references them, or the current
+conversation already establishes them, reuse `test-plan.md` and `test-cases.md`.
+Treat an explicitly established `test-cases.md` as the primary scenario
+inventory and an explicitly established `test-plan.md` as optional scope and
+strategy context. Never scan `docs/wewo/` or the repository to discover these
+documents. Existing executable test code in the repository may be used because
+it is a repository fact.
 
-When upstream testing documents are absent, derive the minimum matrix from the
+When usable testing artifacts are absent, derive the minimum matrix from the
 user goal, actual Diff, interfaces, pages, existing tests, repository behavior,
 and risk. Do not fabricate expected behavior. Ask when an unresolved
 expectation changes the test result.
@@ -126,9 +127,9 @@ trustworthy evidence. Use unit, component, integration, API, contract, Web
 E2E, security-behavior, database/migration, performance/reliability, and manual
 testing only where applicable. Do not convert every scenario to E2E.
 
-Determine the obligations from the user's current test request, explicitly
-selected requirements and cases, actual code, and the selected scope; do not
-depend on a build-stage statement that E2E was deferred.
+Determine the obligations from the user's current test request and any
+explicitly established test cases; do not depend on any other capability's
+deferred or completion state.
 
 For every P0/P1 scenario with a documented Required Evidence Level of E2E,
 execute E2E and classify it `Passed` or `Failed`, or mark it `Blocked` with a
@@ -144,8 +145,8 @@ Classify automation feasibility as `Direct Automation`,
 
 The actual method may differ from the test plan. Record the reason, but never
 silently change business behavior, acceptance criteria, permissions, security,
-or consistency requirements. Keep execution results out of
-`03-test-plan.md` and `04-test-cases.md`.
+or consistency requirements. Keep execution results out of `test-plan.md` and
+`test-cases.md`.
 
 ### 4. Confirm the test implementation approach
 
@@ -160,12 +161,13 @@ dependencies, lockfiles, runner configuration, directories, CI, Docker,
 Obtain confirmation once for that agreed scope rather than per file.
 
 When production-code testability changes are needed, do not make them. Record a
-Testability Change Request with:
+capability-neutral Testability Change Request with:
 
 - the obstacle and proposed change;
 - production-behavior impact;
 - alternatives and risk;
-- recommended handoff to `wewo-build`.
+- the statement that a production-code change is required before this
+  verification can proceed.
 
 Examples include `data-testid`, injected time or randomness, test-only setup,
 test-environment captcha controls, and replaceable external adapters.
@@ -222,6 +224,11 @@ Chromium, semantic locators, web-first assertions, auto-waiting, isolated
 tests, and cleanup. Do not require all browsers, all devices, full
 parallelism, Page Object, or one directory layout.
 
+Synchronize browser tests on observable state with framework-supported
+automatic waiting. Do not use arbitrary fixed-time waits or sleep-based
+stabilization as the normal mechanism to make a browser test pass, and do not
+hide a synchronization problem with a hardcoded delay.
+
 A scenario whose Required Evidence Level is E2E must enter the Web E2E branch
 and finish as `Passed`, `Failed`, `Blocked` with a concrete blocker, or
 `Not Run` with an explicit justified reason. Missing framework or browser
@@ -246,7 +253,7 @@ preconditions, data, steps, expected result, evidence requirement, status,
 actual result, executor, execution time, and defect ID.
 
 Generate and maintain
-`docs/wewo/<requirement-category>/<requirement-slug>/10-manual-test-checklist.md`.
+`docs/wewo/<requirement-category>/<requirement-slug>/manual-test-checklist.md`.
 Combine actual human results with automation evidence in the matrix. Leave
 unexecuted tasks `Manual Pending`; never impersonate a human executor.
 
@@ -258,12 +265,19 @@ Read and apply
 Classify each failure as `Product Defect`, `Test Defect`, `Test Data Issue`,
 `Environment Blocker`, `Existing Failure`, `Flaky`, `Requirement Conflict`, or
 `Unverified`. Only confirmed product behavior failures enter the formal product
-defect list.
+defect list. Keep scenario execution status distinct from
+environment/tool/infrastructure blockers; do not report contradictory headline
+metrics.
 
 Fix in-scope test-code defects and rerun. Do not silently fix production
-defects; record them and recommend `wewo-build`. For a suspected Flaky result,
-preserve first-failure evidence and use limited reruns under unchanged code and
-environment. Mixed outcomes are `Flaky`, never reliably Passed.
+defects; record them and note that a production-code change is required before
+this verification can proceed. For a suspected Flaky result, apply the
+mandatory stability-evidence protocol in
+[failure-triage.md](references/failure-triage.md): one successful rerun is not
+sufficient; repeat the final unchanged affected scope under unchanged code and
+materially unchanged environment; the default minimum is 3 consecutive
+executions; mixed outcomes are `Flaky`; report the repeat count and outcomes,
+and do not claim stability without sufficient repeated evidence.
 
 ### 9. Calculate metrics and the test gate
 
@@ -297,15 +311,23 @@ on the latest code, real environment, and actual execution evidence.
 ### 10. Write and verify outputs
 
 Read [document-contract.md](references/document-contract.md). Generate
-`09-test-execution.md` from
+`test-execution.md` from
 [test-execution-template.md](assets/test-execution-template.md) and
-`10-manual-test-checklist.md` from
+`manual-test-checklist.md` from
 [manual-test-checklist-template.md](assets/manual-test-checklist-template.md).
 
 Store sanitized HTML/JSON/JUnit reports, logs, coverage, screenshots, traces,
 necessary video, performance results, and structured execution output under
 `test-artifacts/`. Never expose credentials, cookies, tokens, secrets, or
 production data.
+
+Apply the environment-evidence distinction: record which environment or mode
+was actually tested; development-mode evidence proves only development-mode
+behavior and does not prove production-like coverage, production readiness, or
+deployment-mode correctness. When production-like evidence is relevant but
+blocked, record it as Blocked with the concrete blocker; when relevant but not
+attempted, record it as Not Run with the reason. Keep scenario status and
+environment coverage distinct.
 
 Verify that the report, manual checklist, artifacts, matrix, status counts,
 failure attribution, metrics, and gate agree. Mark non-applicable test types
@@ -318,6 +340,7 @@ Report to the user:
 - tools, browsers, and dynamic installations;
 - Passed, Failed, Blocked, Not Run, Flaky, and manual counts;
 - product defects, test defects, and blockers;
+- environment coverage and any stability evidence used;
 - artifact locations;
 - test gate and remaining risks.
 

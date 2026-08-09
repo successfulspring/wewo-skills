@@ -30,7 +30,7 @@ Under section 7, always include:
 - Reliability and Business Correctness
 - Code Structure and Maintainability
 
-Localize headings and content. Keep `02-technical-design.md` in English.
+Localize headings and content. Keep `technical-design.md` in English.
 
 ## Section content
 
@@ -89,8 +89,12 @@ formats as relevant.
 
 List directions later verification must emphasize, such as normal flow,
 illegal state, unauthorized access, duplicates, concurrency, rollback,
-external failure, regression, sensitive data, and logs. Do not generate a full
-test plan or test cases.
+external failure, regression, sensitive data, and logs. Where useful, record
+focused Testability / Verification Seams as engineering boundaries suitable
+for implementation verification, such as an application-service boundary, a
+domain-operation boundary, an API boundary, or an integration seam. These are
+engineering-design boundaries, not QA test cases. Do not generate a full test
+plan or test cases.
 
 ### Design decision summary
 

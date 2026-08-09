@@ -2,25 +2,36 @@
 
 Create the plan before production-code modification.
 
-## Evaluate TDD candidates
+## Determine the implementation verification strategy
 
-For each documented case or extracted behavior, classify:
+Derive implementation behaviors from the confirmed requirement, technical
+design when available, and actual code and architecture. For each relevant
+behavior, determine where useful:
+
+- the observable behavior;
+- the verification seam;
+- whether TDD is appropriate;
+- the implementation-time verification level;
+- the reason.
+
+Classify each verification approach as:
 
 - adopt directly;
 - change test level;
 - split;
 - merge;
-- defer to later E2E or manual verification;
+- defer to later independent verification;
 - do not adopt;
 - blocked by environment;
 - pending confirmation.
 
 Focus on inputs, caller behavior, and observable result rather than proposed
-classes, methods, mock style, or internal structure.
+classes, methods, mock style, or internal structure. The verification strategy
+is derived from implementation behavior, not from QA test-case documents.
 
-When no case document exists, extract the minimum implementation behaviors
-from confirmed requirements, design, code, and existing tests. Summarize them
-for confirmation without generating a full test plan.
+When no formal design document exists, extract the minimum implementation
+behaviors from confirmed requirements, code, and existing tests. Summarize
+them for confirmation without generating a full test plan.
 
 ## Select test seams
 

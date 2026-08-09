@@ -32,7 +32,7 @@ Use these sections in order:
 17. Recommended Fix Order
 18. Review Limitations
 
-Use the filename `07-code-review.md`.
+Use the filename `code-review.md`.
 
 ## Security review report
 
@@ -58,7 +58,7 @@ Use these sections in order:
 18. Residual Risks and Verification Recommendations
 19. Review Limitations
 
-Use the filename `08-security-review.md`.
+Use the filename `security-review.md`.
 
 ## Shared evidence tables
 
@@ -123,4 +123,4 @@ Verify:
 - missing requirements and non-independent fallback are disclosed;
 - conclusions use the latest Diff and command evidence;
 - no source or test file was modified;
-- no empty upstream or downstream workflow document was created.
+- no document owned by another capability was created.

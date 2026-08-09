@@ -55,8 +55,9 @@ Before claiming completion, verify:
 - every slice has current evidence or a transparent blocker;
 - failures are resolved or reported;
 - latest quality commands support the conclusion;
-- plan deviations and test-case adjustments are documented;
-- browser-E2E handoffs are recorded for independent execution;
+- plan deviations are documented;
+- the actual scope of implementation verification performed is recorded,
+  including the browser-acceptance boundary;
 - known limitations and remaining risks are explicit;
 - implementation record matches actual files and commands.
 

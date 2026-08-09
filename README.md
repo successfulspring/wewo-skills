@@ -1,25 +1,67 @@
 # wewo-skills
 
-`wewo-skills` is a portable collection of six software-engineering skills for
-Codex and Claude Code. The repository currently provides the collection
-structure, shared conventions, skill metadata, requirement placeholders, and
-portable synchronization and validation tooling. `wewo-prd`, `wewo-erd`,
-`wewo-testplan`, `wewo-build`, `wewo-review`, and `wewo-test` are implemented.
+`wewo-skills` is a portable library of six independently executable,
+artifact-composable software-engineering capabilities for Codex and Claude
+Code. The repository provides shared conventions, per-capability requirement
+specifications, canonical runtime implementations, and portable
+synchronization and validation tooling.
 
-## Six-stage workflow
+## Capabilities
 
-The collection is organized around six independently runnable stages:
+Each capability is independently runnable. No capability requires another
+`wewo-*` capability to have run.
 
-1. `wewo-prd` — establish product requirements.
-2. `wewo-erd` — establish the technical design.
-3. `wewo-testplan` — plan coverage and test cases.
-4. `wewo-build` — implement the requirement.
-5. `wewo-review` — review code quality and security.
-6. `wewo-test` — execute verification and record evidence.
+- `wewo-prd` — requirement clarification and PRD synthesis.
+- `wewo-erd` — engineering design grounded in the actual project.
+- `wewo-testplan` — QA / acceptance test design.
+- `wewo-build` — implementation with implementation-time TDD and verification.
+- `wewo-test` — independent real test execution and evidence collection.
+- `wewo-review` — independent Diff-centered code, security, and reliability
+  review.
 
-The stages form a useful end-to-end sequence, but they are not prerequisites for
-one another. Each skill must be able to establish the minimum context it needs
-when useful upstream documents are unavailable.
+Artifacts are composable. A capability may use an artifact when it is
+explicitly supplied by the user or already established in the current
+conversation. Artifact existence alone does not authorize it as input.
+Recommended composition below is documentation for humans, not a runtime
+dependency.
+
+### Recommended composition
+
+Product / engineering:
+
+```text
+Requirement clarification
+→ engineering design
+→ implementation
+```
+
+QA design:
+
+```text
+Requirement / design
+→ test design
+```
+
+Verification:
+
+```text
+Implemented code
+→ test execution
+```
+
+Quality:
+
+```text
+Final Diff
+→ review
+```
+
+Repository-level recommendation: when test execution creates or modifies
+repository files such as executable tests, test assets, or test configuration,
+the final quality review should evaluate the final resulting Diff. This is a
+human workflow recommendation only. It does not mean that test execution
+automatically invokes review, that review requires test execution, or that test
+execution tracks review state.
 
 ## Requirement workspaces
 
@@ -62,8 +104,8 @@ Claude Code mirrors with:
 python scripts/sync_skills.py
 ```
 
-Validate the canonical skills, local references, portability rules, and both
-mirrors with:
+Validate the canonical skills, local references, portability rules, V2
+architecture contracts, and both mirrors with:
 
 ```text
 python scripts/validate_skills.py

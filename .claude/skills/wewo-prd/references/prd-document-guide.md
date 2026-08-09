@@ -8,9 +8,13 @@ Write clear, precise business language in the selected output language.
 Include only facts and product decisions covered by the user's confirmation.
 Do not state an AI inference or unaccepted recommendation as a requirement.
 
-Make functional requirements specific enough for design, business rules
-understandable to developers, and acceptance criteria observable by later
-testing. Do not include code-level implementation or perform technical design.
+Keep the PRD product-semantic. Make functional requirements specific enough
+for design, business rules understandable to developers, and acceptance
+criteria observable by later testing. Do not include code-level implementation,
+perform technical design, or normally include implementation file paths,
+function or class names, test file names, code snippets, internal architecture
+decisions, or database implementation details, unless one of those is itself
+an explicit business or technical constraint provided by the user.
 
 Preserve unresolved issues in the final section. Write the localized equivalent
 of “None” when no unresolved issues remain.
@@ -32,7 +36,7 @@ Use every core section in this order:
 9. Acceptance Criteria
 10. Unresolved Questions
 
-Localize the headings; do not translate the filename `01-prd.md`.
+Localize the headings; do not translate the filename `prd.md`.
 
 ## Optional dynamic sections
 

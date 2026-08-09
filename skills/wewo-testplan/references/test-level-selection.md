@@ -68,7 +68,7 @@ schema, interface, or historical defect.
 
 Use for visual quality, subjective usability, exploratory work, unstable or
 uncontrolled third parties, real-device behavior, hardware, captcha, and
-experiences that automation cannot judge reliably.
+experiences requiring human observation.
 
 ## Complementary evidence
 

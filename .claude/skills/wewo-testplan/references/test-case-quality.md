@@ -16,11 +16,9 @@ Include when applicable:
 - steps or behavior description;
 - expected result;
 - recommended test level;
+- required evidence level (only where business risk or observable behavior
+  requires it);
 - test category or perspective;
-- recommended execution stage;
-- automation candidacy and suggested method;
-- TDD candidacy;
-- manual-test candidacy;
 - dependencies and blockers;
 - cleanup considerations;
 - notes and open questions.
@@ -41,23 +39,23 @@ function.
 
 ## Behavior versus execution
 
-Keep three concepts explicit:
+Keep two concepts explicit:
 
 1. confirmed expected business behavior;
-2. suggested execution method or level;
-3. automation recommendation.
+2. suggested execution method or level.
 
-The first is a requirement expectation. The latter two are adjustable.
-Future stages may split, merge, parameterize, or change level without silently
-changing the expectation.
+The first is a requirement expectation. The second is adjustable. Later
+verification may split, merge, parameterize, or change the level without
+silently changing the expectation.
 
 ## Recommended test level versus required evidence level
 
 Keep two concepts explicit when useful:
 
-1. Recommended Test Level: advisory guidance for later stages.
-2. Required Evidence Level: the weakest evidence later execution may
-   substitute for this scenario (a specific level, or "X or higher").
+1. Recommended Test Level: advisory guidance for later verification.
+2. Required Evidence Level: the minimum evidence level considered sufficient
+   to verify the scenario (a specific level, or "X or higher"). It defines only
+   the evidence requirement.
 
 Examples:
 
@@ -94,8 +92,7 @@ Before user confirmation, review and revise:
 - duplicate or mergeable cases;
 - lowest reasonable test level;
 - excessive E2E allocation;
-- TDD classification;
-- automation and manual classification;
+- Recommended Test Level and Required Evidence Level classifications;
 - satisfiable preconditions and data;
 - specific steps;
 - judgeable expected results;
@@ -107,5 +104,5 @@ Record in the final case document:
 - core and high-risk coverage status;
 - duplicates merged or retained;
 - cases that cannot yet be designed;
-- level, TDD, and automation review conclusions;
+- level and evidence-level review conclusions;
 - remaining gaps and required follow-up.

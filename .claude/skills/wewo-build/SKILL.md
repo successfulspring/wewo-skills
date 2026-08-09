@@ -10,16 +10,18 @@ repository's conventions and actual command evidence.
 
 ## Runtime inputs and outputs
 
-Accept user requirements, conversation context, issues or bugs, source
-documents, project code, existing tests, Git diffs, repository conventions,
-and optional `01-prd.md`, `02-technical-design.md`, `03-test-plan.md`, or
-`04-test-cases.md`.
+Accept a clear implementation intent or requirement, conversation context,
+issues or bugs, source documents, project code, existing tests, Git diffs, and
+repository conventions. High-value context when available: confirmed
+technical-design decisions already established in the conversation, an
+explicitly supplied `prd.md`, and an explicitly supplied `technical-design.md`.
+A formal technical-design artifact is not a prerequisite.
 
 Create workflow documents only at:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/05-implementation-plan.md
-docs/wewo/<requirement-category>/<requirement-slug>/06-implementation-record.md
+docs/wewo/<requirement-category>/<requirement-slug>/implementation-plan.md
+docs/wewo/<requirement-category>/<requirement-slug>/implementation-record.md
 ```
 
 Create or modify production code, executable unit, integration, and focused API
@@ -36,27 +38,27 @@ repository conventions for code names, tests, comments, and formatting.
 
 ### 1. Resolve scope and workspace
 
-Run independently. Use upstream documents only when the user explicitly
-selects them: an explicitly provided workspace, an explicit reference, or an
-explicit request to continue an existing requirement. Never require them,
-create empty predecessors, or scan the repository for them. Establish the
-minimum implementation context from the user, issue or task, current code,
-affected interfaces, existing tests, and repository conventions when no
-authorized documents exist.
+Run independently. Use `prd.md` and `technical-design.md` only when the user
+explicitly supplies or references them, or the current conversation already
+establishes them. Never require them, create empty predecessors, or scan the
+repository for them. Establish the minimum implementation context from the
+user, issue or task, current code, affected interfaces, existing tests, and
+repository conventions when no usable artifact exists.
 
 Resolve exactly one requirement workspace before writing workflow documents:
 
 1. Use an explicit workspace supplied by the user.
 2. Otherwise reuse the workspace established for this requirement.
 3. Otherwise infer a candidate from the requirement, issue, branch, or
-   available upstream documents.
+   explicitly supplied or referenced material.
 4. Ask before writing if multiple candidates are plausible.
 
-Never choose the most recently modified workspace by default. Use
-`features`, `bugs`, `refactors`, or `maintenance`; default to `features` only
-when no evidence favors another category. Use a concise lowercase English
-kebab-case slug. Create parent directories only after resolution is
-unambiguous, and never combine separate requirements without confirmation.
+Never infer a workspace from the existence of workflow artifacts. Never choose
+the most recently modified workspace by default. Use `features`, `bugs`,
+`refactors`, or `maintenance`; default to `features` only when no evidence
+favors another category. Use a concise lowercase English kebab-case slug.
+Create parent directories only after resolution is unambiguous, and never
+combine separate requirements without confirmation.
 
 Clarify any missing business or design decision that materially changes
 observable behavior, authorization, consistency, security, scope, interface,
@@ -92,7 +94,12 @@ Read and apply
 
 Before modifying production code:
 
-- evaluate TDD candidates and choose real test seams;
+- derive implementation behaviors from the requirement, technical design when
+  available, and actual code;
+- determine the implementation verification strategy: for each relevant
+  behavior, identify the observable behavior, the verification seam, whether
+  TDD is appropriate, the implementation-time verification level, and the
+  reason;
 - define global implementation constraints;
 - identify affected and unaffected files or modules;
 - split work into small, independently verifiable vertical slices;
@@ -102,7 +109,7 @@ Before modifying production code:
 - make blockers explicit.
 
 Generate
-`docs/wewo/<requirement-category>/<requirement-slug>/05-implementation-plan.md`
+`docs/wewo/<requirement-category>/<requirement-slug>/implementation-plan.md`
 using [implementation-plan-template.md](assets/implementation-plan-template.md).
 Summarize it and obtain confirmation before code modification. If the user
 explicitly requests direct execution and the goal is already sufficiently
@@ -135,32 +142,14 @@ If no valid testing seam exists or another approach is more appropriate,
 record the reason and use the best available verification. Never fabricate a
 Red or Green result.
 
-Browser E2E is outside Build's execution responsibility. Do not inspect
-whether Playwright, Cypress, or browsers are installed; do not install or run
-browser E2E; do not require it for completion. A test case classified as E2E
-keeps its expected business behavior, stays outside Build execution, is never
-marked Passed here, and is recorded as a handoff for independent test
-execution.
+Browser-level acceptance testing is outside this capability's implementation
+verification scope. Do not inspect, install, configure, generate, or execute
+browser acceptance tests, and do not reason about concrete browser-test tools.
+Do not track browser acceptance as deferred workflow state or create a handoff
+to another capability. Record the actual scope of implementation verification
+performed in the implementation record.
 
-### 5. Handle test-design input without changing expectations
-
-Treat `04-test-cases.md` as design input, not an infallible executable
-specification. Apply
-[test-case-adjustments.md](references/test-case-adjustments.md).
-
-The implementation may change test level, seam, splitting, merging,
-parameterization, or defer broad E2E/manual scenarios. It must not change
-confirmed business behavior, acceptance criteria, permissions, consistency,
-security, or scope. Pause and request clarification when a case conflicts with
-confirmed expectations.
-
-Never modify `03-test-plan.md` or `04-test-cases.md`; do not fabricate them
-when absent. Record test-case adjustments, plan deviations, and strategy
-conflicts in `06-implementation-record.md` and surface them to the user. A
-revision of an upstream document happens only through explicit user
-confirmation and deliberate revision of the owning document.
-
-### 6. Use repository-native tools and controlled dependencies
+### 5. Use repository-native tools and controlled dependencies
 
 Prefer the project's declared tools, package manager, versions, scripts, and
 configuration. Distinguish restoring declared dependencies from introducing
@@ -176,15 +165,14 @@ Default to no commit, merge, push, release, or deployment. Perform those
 external changes only when the user explicitly requests them and the current
 environment permits them.
 
-### 7. Verify each slice and the completed implementation
+### 6. Verify each slice and the completed implementation
 
 Use [evidence-and-completion.md](references/evidence-and-completion.md).
 
 After each slice, verify requirement compliance, the focused test, relevant
 regression, applicable integration behavior, type or compile status, lint, and
-scope/constraint adherence. An implementation-time self-check or optional
-fresh-agent check is not final independent review and must not produce
-`07-code-review.md` or `08-security-review.md`.
+scope/constraint adherence. An implementation-time self-check is not an
+independent code or security review and does not create those reports.
 
 Before completion, freshly rerun the commands that prove the implementation:
 new tests, affected-module tests, necessary integration and regression tests,
@@ -195,27 +183,26 @@ Classify every check as passed, failed, not run, blocked, unavailable, or
 limited to partial scope. Do not rely solely on earlier output, another
 agent's claim, or code inspection.
 
-### 8. Finalize the implementation record
+### 7. Finalize the implementation record
 
 Maintain
-`docs/wewo/<requirement-category>/<requirement-slug>/06-implementation-record.md`
+`docs/wewo/<requirement-category>/<requirement-slug>/implementation-record.md`
 during implementation and finalize it with
 [implementation-record-template.md](assets/implementation-record-template.md)
 and [document-contract.md](references/document-contract.md).
 
 Record actual changed files, slice status, Red/Green evidence, unit and
-integration outcomes, quality checks, test-case adjustments, plan deviations,
-known limitations, latest verification evidence, and remaining risks. Claim
-"implementation complete" only when the latest evidence supports it.
+integration outcomes, quality checks, plan deviations, known limitations,
+latest verification evidence, and remaining risks. Claim "implementation
+complete" only when the latest evidence supports it.
 
 After verifying the record, report:
 
 - both workflow-document paths;
 - implemented behavior and major changed files;
 - actual test and quality-check results;
-- test-plan and test-case adjustments recorded in the implementation record;
 - unfinished work, blockers, and remaining risks.
 
 Do not claim final independent review or a final test gate. Do not continue
-automatically into review, broad E2E generation, acceptance execution,
-deployment, or another workflow stage.
+automatically into browser acceptance execution, deployment, or another
+capability's work.

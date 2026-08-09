@@ -2,7 +2,7 @@
 
 Use this as an internal rendering template. Replace every brace-delimited
 instruction with confirmed content in the selected output language. Localize
-all headings while keeping the filename `01-prd.md` in English. Do not copy
+all headings while keeping the filename `prd.md` in English. Do not copy
 this instruction block into the generated document.
 
 ```markdown

@@ -11,15 +11,16 @@ design content, not as the skill's primary purpose.
 
 ## Inputs and output
 
-Accept conversation context, text, Markdown, TXT, office documents, PDFs,
-images, an existing PRD, `01-prd.md`, issues, tasks, change or bug descriptions,
-project requirement documents, current project code, and multiple related
-materials.
+Accept requirement context from the current conversation, text, Markdown, TXT,
+office documents, PDFs, images, issues, tasks, change or bug descriptions,
+current project code, and an optionally explicitly supplied or already
+established `prd.md`. A `prd.md` is simply a requirement artifact; the skill
+does not care which capability produced it.
 
 Create only:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/02-technical-design.md
+docs/wewo/<requirement-category>/<requirement-slug>/technical-design.md
 ```
 
 Keep the filename and path segments in English. Conduct user interaction and
@@ -30,56 +31,57 @@ interaction language, and otherwise Chinese.
 
 ### 1. Establish context and resolve the workspace
 
-Run independently. Use `01-prd.md` or other upstream material only when the
-user explicitly selects it: an explicitly provided workspace, an explicit
-reference, or an explicit request to continue an existing requirement. Never
-require it, never ask the user to create it first, and never scan the
-repository to find it. Establish the minimum requirement context within this
-skill when no authorized upstream material exists.
+Run independently. Use `prd.md` or other requirement artifacts only when the
+user explicitly supplies them, explicitly references them, or the current
+conversation already establishes them. Never require them, never ask the user
+to create them first, and never scan the repository to find them. Establish the
+minimum requirement context within this skill when no usable artifact exists.
 
 Resolve the requirement workspace before creating a document:
 
 1. Use an explicit workspace supplied by the user.
 2. Otherwise reuse the workspace already established for this requirement.
 3. Otherwise infer a candidate from the requirement, issue, branch, or
-   available upstream documents.
+   explicitly supplied or referenced material.
 4. Ask before writing when more than one workspace is plausible.
 
-Never select the most recently modified workspace by default. Use
-`features`, `bugs`, `refactors`, or `maintenance`; default to `features` only
-when no evidence favors another category. Use a concise lowercase English
-kebab-case slug.
+Never infer a workspace from the existence of workflow artifacts. Never select
+the most recently modified workspace by default. Use `features`, `bugs`,
+`refactors`, or `maintenance`; default to `features` only when no evidence
+favors another category. Use a concise lowercase English kebab-case slug.
 
 Create missing parent directories only after resolution is unambiguous. Never
-mix different requirements in one workspace without explicit confirmation.
-Do not create an empty PRD or any later-stage document.
+mix different requirements in one workspace without explicit confirmation. Do
+not create documents owned by other capabilities.
 
 ### 2. Assess requirements and analyze the project
 
 Read and apply
 [requirements-and-project-analysis.md](references/requirements-and-project-analysis.md).
 
-Combine the user's current request with materials explicitly provided in this
-interaction, explicitly referenced, or explicitly confirmed. Do not scan
-`docs/wewo/` or the repository for historical requirement documents; a
-discovered candidate may be used only after explicit user confirmation. Do not
-treat any single file as the only truth. Surface material conflicts and ask
-which requirement governs.
+Combine the user's current request with materials explicitly supplied or
+referenced in this interaction. Do not scan `docs/wewo/` or the repository for
+historical requirement documents. Do not treat any single file as the only
+truth. Surface material conflicts and ask which requirement governs.
+
 Determine whether the goal, affected users or modules, core business result,
 scope, and implementation-shaping rules are clear enough for design. Ask only
-the missing questions needed here; suggest full product clarification only
-when the user explicitly wants it, never as a prerequisite.
+the missing questions needed here; request additional requirement clarification
+or requirement context only when the user explicitly wants it, never as a
+prerequisite.
 
-When project code is available, inspect the relevant stack, structure,
-layers, modules, interfaces, data models, authorization, error handling,
-logging, configuration, dependency management, integrations, similar
-implementations, and conventions. Obtain project facts directly instead of
-asking the user to repeat them.
+For an existing project, analyze only the portions of the repository needed to
+produce a grounded design. Inspect the relevant stack, structure, layers,
+modules, interfaces, APIs, data models, permissions, authentication and
+authorization implications, validation, transactions, concurrency, idempotency,
+security, reliability, dependencies, migration, compatibility, observability,
+similar implementations, and conventions. Obtain project facts directly instead
+of asking the user to repeat them.
 
 Do not invent paths, classes, functions, interfaces, tables, modules, or
 frameworks. If a source format cannot be read with current capabilities, state
-the limitation and request an accessible export or the relevant pasted
-content. Do not claim it was analyzed.
+the limitation and request an accessible export or the relevant pasted content.
+Do not claim it was analyzed.
 
 ### 3. Establish the impact scope and candidate design
 
@@ -94,9 +96,12 @@ Adapt the design to the actual requirement type using
 frontend, backend, interface, data, integration, migration, compatibility, and
 operational concerns.
 
-Separate verified project facts from technical decisions. Develop an
-evidence-based candidate solution, but do not record a recommendation as final
-until the user confirms every choice that materially changes implementation.
+Separate repository facts from engineering decisions. Obtain discoverable
+repository facts directly; do not ask the user to decide them. Ask or confirm
+material engineering decisions only when alternatives have meaningful
+trade-offs or irreversible consequences. Develop an evidence-based candidate
+solution, but do not record a recommendation as final until the user confirms
+every choice that materially changes implementation.
 
 ### 4. Resolve decisions progressively
 
@@ -131,7 +136,18 @@ Convert each real risk into a concrete design measure and an enforceable
 implementation constraint. Security here is pre-implementation design, not
 post-implementation review.
 
-### 6. Check the generation gate
+### 6. Define testability and verification seams
+
+Where useful, define focused Testability / Verification Seams: engineering
+boundaries suitable for implementation verification, for example an
+application-service boundary, a domain-operation boundary, an API boundary, or
+an integration seam. These are engineering-design boundaries, not QA test
+cases. Do not turn them into detailed test steps, test-plan content, or
+execution-tool decisions. The design's Verification Focus section records the
+directions later verification must emphasize, without generating a full test
+plan or test cases.
+
+### 7. Check the generation gate
 
 Do not generate the technical design while any condition holds:
 
@@ -147,11 +163,11 @@ Do not generate the technical design while any condition holds:
 
 When the design is ready, summarize its sources, impact scope, overall
 approach, module responsibilities, interface and data changes, key security
-measures, reliability measures, code-structure constraints, and unresolved
-questions. Ask the user to correct or explicitly confirm the summary. Generate
-nothing until confirmation.
+measures, reliability measures, code-structure constraints, testability seams,
+and unresolved questions. Ask the user to correct or explicitly confirm the
+summary. Generate nothing until confirmation.
 
-### 7. Generate the confirmed technical design
+### 8. Generate the confirmed technical design
 
 Before writing, read
 [technical-design-document.md](references/technical-design-document.md) and
@@ -160,7 +176,7 @@ Localize headings and prose while preserving the required structure and
 English filename.
 
 Write only to
-`docs/wewo/<requirement-category>/<requirement-slug>/02-technical-design.md`.
+`docs/wewo/<requirement-category>/<requirement-slug>/technical-design.md`.
 If that file exists, treat an explicit update request as authorization;
 otherwise ask before replacing it.
 
@@ -168,13 +184,14 @@ Do not modify production code or executable tests. Do not create a separate ERD
 file. Include a Mermaid ER diagram inside the technical design only when
 database entities or relationships change; use a clear textual schema
 description if diagram rendering is unavailable. Do not add empty irrelevant
-sections.
+sections. Do not create QA test plans, test cases, or execution-tool decisions.
 
 After a successful write, report:
 
 - the exact document path;
 - the core technical approach;
 - whether database changes and an ER diagram are involved;
+- the testability and verification seams;
 - whether unresolved questions remain.
 
 Do not continue automatically into implementation, task planning, test

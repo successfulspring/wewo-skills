@@ -2,7 +2,7 @@
 
 Use this internal template after the baseline is established. Replace every
 brace-delimited instruction with verified content in the selected output
-language. Localize headings while keeping `05-implementation-plan.md` in
+language. Localize headings while keeping `implementation-plan.md` in
 English. Do not copy this instruction block into the generated document.
 
 ```markdown
@@ -17,14 +17,14 @@ English. Do not copy this instruction block into the generated document.
 ### 4.2 {Out of Scope}
 
 ## 5. {Global Implementation Constraints}
-## 6. {TDD Candidate Evaluation}
+## 6. {TDD and Implementation Verification Strategy}
 ## 7. {Test Seams}
 ## 8. {Vertical Implementation Slices}
 
 ### Slice-001 {Slice name}
 
 - **{Business goal}:**
-- **{Requirement or case}:**
+- **{Requirement or behavior}:**
 - **{Observable result}:**
 - **{Test seam}:**
 - **{Test level}:**

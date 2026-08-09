@@ -1,4 +1,34 @@
-"""Validate the portable wewo-skills repository and synchronized mirrors."""
+"""Validate the portable wewo-skills repository and synchronized mirrors (V2).
+
+Check groups:
+
+A. Reliable static invariants
+- required repository files;
+- exactly the expected six skills;
+- SKILL.md structure and frontmatter;
+- distinct skill descriptions;
+- valid local Markdown references;
+- no legacy numbered workflow filenames in canonical runtime trees;
+- no cross-skill runtime routing to another named wewo-* capability;
+- runtime self-containment (no shared/ or specs/ dependency);
+- Build invariants (no Testplan artifacts / adjustment contracts);
+- Testplan invariants (no removed TDD / automation / execution-stage markers);
+- Test invariants (no Build/Review process artifacts as standard inputs);
+- artifact ownership output contracts;
+- canonical/mirror equality.
+
+B. Useful contract heuristics
+- Testplan execution-tool boundary marker present;
+- Review input-exclusion heuristic (forbidden artifact names only inside the
+  approved negative statement).
+
+C. Runtime behavior explicitly NOT statically provable
+- whether a test ever uses a fixed wait;
+- whether production code is ever modified;
+- whether Required Evidence Level is ever downgraded.
+
+Those are runtime acceptance concerns and are not asserted here.
+"""
 
 from __future__ import annotations
 
@@ -43,6 +73,18 @@ ROOT_OUTPUT_PATTERN = re.compile(
     re.IGNORECASE,
 )
 STABLE_FILENAMES = (
+    "prd.md",
+    "technical-design.md",
+    "test-plan.md",
+    "test-cases.md",
+    "implementation-plan.md",
+    "implementation-record.md",
+    "test-execution.md",
+    "manual-test-checklist.md",
+    "code-review.md",
+    "security-review.md",
+)
+LEGACY_FILENAMES = (
     "01-prd.md",
     "02-technical-design.md",
     "03-test-plan.md",
@@ -75,6 +117,50 @@ STOPWORDS = {
     "user",
     "when",
 }
+
+# V2 architecture contracts.
+SKILL_NAMES = set(EXPECTED_SKILLS)
+OTHER_SKILL_NAME_PATTERN = re.compile(r"wewo-(?:prd|erd|testplan|build|test|review)")
+OWNED_ARTIFACTS = {
+    "wewo-prd": ("prd.md",),
+    "wewo-erd": ("technical-design.md",),
+    "wewo-testplan": ("test-plan.md", "test-cases.md"),
+    "wewo-build": ("implementation-plan.md", "implementation-record.md"),
+    "wewo-test": ("test-execution.md", "manual-test-checklist.md"),
+    "wewo-review": ("code-review.md", "security-review.md"),
+}
+BUILD_FORBIDDEN_MARKERS = (
+    "test-plan.md",
+    "test-cases.md",
+    "test-case-adjustments",
+)
+TESTPLAN_FORBIDDEN_MARKERS = (
+    "TDD Candidate",
+    "TDD Collaboration",
+    "TDD Case List",
+    "Automation Candidate",
+    "E2E Automation Candidate",
+    "Suggested Automation Method",
+    "Recommended Execution Stage",
+)
+TESTPLAN_TOOL_BOUNDARY_MARKER = (
+    "does not inspect, select, configure, or reason about concrete test tools, "
+    "test runners, browser installations, or execution infrastructure"
+)
+TEST_FORBIDDEN_PROCESS_ARTIFACTS = (
+    "implementation-plan.md",
+    "implementation-record.md",
+    "code-review.md",
+    "security-review.md",
+)
+REVIEW_FORBIDDEN_INPUTS = (
+    "test-plan.md",
+    "test-cases.md",
+    "implementation-plan.md",
+    "implementation-record.md",
+    "test-execution.md",
+)
+SELF_CONTAINMENT_FORBIDDEN = ("shared/", "specs/")
 
 
 class Validation:
@@ -386,6 +472,133 @@ def validate_required_repository_files(
     validation.checked("Required repository files")
 
 
+def _iter_text_files(root: Path):
+    for path in root.rglob("*"):
+        if path.is_file():
+            yield path
+
+
+def validate_no_legacy_filenames(repo_root: Path, validation: Validation) -> None:
+    for path in _iter_text_files(repo_root / "skills"):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for name in LEGACY_FILENAMES:
+            if name in text:
+                validation.error(
+                    f"{path}: legacy numbered workflow filename present: {name}"
+                )
+    validation.checked("No legacy numbered workflow filenames in canonical skills")
+
+
+def validate_no_cross_skill_routing(
+    repo_root: Path, validation: Validation
+) -> None:
+    for skill_dir in (repo_root / "skills").iterdir():
+        if not skill_dir.is_dir() or skill_dir.name not in SKILL_NAMES:
+            continue
+        own = skill_dir.name
+        for path in _iter_text_files(skill_dir):
+            text = path.read_text(encoding="utf-8", errors="ignore")
+            for match in OTHER_SKILL_NAME_PATTERN.finditer(text):
+                found = match.group(0)
+                if found == own:
+                    continue
+                validation.error(
+                    f"{path}: reference to another capability {found}"
+                )
+    validation.checked("No cross-skill runtime routing in canonical skills")
+
+
+def validate_self_containment(repo_root: Path, validation: Validation) -> None:
+    for path in _iter_text_files(repo_root / "skills"):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for marker in SELF_CONTAINMENT_FORBIDDEN:
+            if marker in text:
+                validation.error(
+                    f"{path}: runtime skill depends on maintainer path {marker}"
+                )
+    validation.checked("Runtime skills are self-contained")
+
+
+def validate_artifact_ownership(repo_root: Path, validation: Validation) -> None:
+    output_prefix = "docs/wewo/<requirement-category>/<requirement-slug>/"
+    for skill_name, artifacts in OWNED_ARTIFACTS.items():
+        skill_file = repo_root / "skills" / skill_name / "SKILL.md"
+        if not skill_file.is_file():
+            continue
+        body = skill_file.read_text(encoding="utf-8")
+        for artifact in artifacts:
+            if f"{output_prefix}{artifact}" not in body:
+                validation.error(
+                    f"{skill_file}: missing required output contract for {artifact}"
+                )
+    validation.checked("Artifact ownership output contracts")
+
+
+def validate_build_invariants(repo_root: Path, validation: Validation) -> None:
+    for path in _iter_text_files(repo_root / "skills" / "wewo-build"):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for marker in BUILD_FORBIDDEN_MARKERS:
+            if marker in text:
+                validation.error(
+                    f"{path}: build declares Testplan artifact or adjustment "
+                    f"contract marker: {marker}"
+                )
+    validation.checked("Build invariants (no Testplan coupling)")
+
+
+def validate_testplan_invariants(repo_root: Path, validation: Validation) -> None:
+    for path in _iter_text_files(repo_root / "skills" / "wewo-testplan"):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for marker in TESTPLAN_FORBIDDEN_MARKERS:
+            if marker in text:
+                validation.error(
+                    f"{path}: testplan contains removed contract marker: {marker}"
+                )
+    validation.checked("Testplan invariants (no TDD/automation/execution-stage)")
+
+
+def validate_testplan_tool_boundary(
+    repo_root: Path, validation: Validation
+) -> None:
+    skill_file = repo_root / "skills" / "wewo-testplan" / "SKILL.md"
+    if skill_file.is_file():
+        body = skill_file.read_text(encoding="utf-8")
+        normalized = re.sub(r"\s+", " ", body)
+        if TESTPLAN_TOOL_BOUNDARY_MARKER not in normalized:
+            validation.error(
+                f"{skill_file}: missing testplan execution-tool boundary marker"
+            )
+    validation.checked("Testplan execution-tool boundary contract (heuristic)")
+
+
+def validate_test_invariants(repo_root: Path, validation: Validation) -> None:
+    for path in _iter_text_files(repo_root / "skills" / "wewo-test"):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for marker in TEST_FORBIDDEN_PROCESS_ARTIFACTS:
+            if marker in text:
+                validation.error(
+                    f"{path}: test depends on process artifact: {marker}"
+                )
+    validation.checked("Test invariants (no Build/Review process artifacts)")
+
+
+def validate_review_invariants(repo_root: Path, validation: Validation) -> None:
+    for path in _iter_text_files(repo_root / "skills" / "wewo-review"):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        paragraphs = re.split(r"\n\s*\n", text)
+        for marker in REVIEW_FORBIDDEN_INPUTS:
+            for paragraph in paragraphs:
+                if marker in paragraph and (
+                    "does not include" not in paragraph
+                    and "not include" not in paragraph
+                ):
+                    validation.error(
+                        f"{path}: review declares {marker} as a standard input"
+                    )
+                    break
+    validation.checked("Review invariants (no Testplan/Build-process inputs)")
+
+
 def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     validation = Validation()
@@ -394,6 +607,17 @@ def main() -> int:
     descriptions = validate_skill_structure(repo_root, validation)
     validate_distinct_descriptions(descriptions, validation)
     validate_local_references(repo_root, validation)
+
+    validate_no_legacy_filenames(repo_root, validation)
+    validate_no_cross_skill_routing(repo_root, validation)
+    validate_self_containment(repo_root, validation)
+    validate_artifact_ownership(repo_root, validation)
+    validate_build_invariants(repo_root, validation)
+    validate_testplan_invariants(repo_root, validation)
+    validate_testplan_tool_boundary(repo_root, validation)
+    validate_test_invariants(repo_root, validation)
+    validate_review_invariants(repo_root, validation)
+
     validate_mirrors(repo_root, validation)
 
     if validation.errors:

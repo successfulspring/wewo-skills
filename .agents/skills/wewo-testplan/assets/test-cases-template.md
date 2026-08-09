@@ -2,7 +2,7 @@
 
 Use this as an internal rendering template. Replace every brace-delimited
 instruction with confirmed content in the selected output language. Localize
-headings while keeping the filename `04-test-cases.md` in English. Do not copy
+headings while keeping the filename `test-cases.md` in English. Do not copy
 this instruction block into the generated document.
 
 ```markdown
@@ -21,11 +21,6 @@ this instruction block into the generated document.
 - **{Test category or perspective}:**
 - **{Recommended test level}:**
 - **{Required evidence level}:** e.g., Unit or higher / E2E / Manual; omit when no level is required
-- **{Recommended execution stage}:**
-- **{TDD candidacy}:**
-- **{Automation candidacy}:**
-- **{Suggested automation method}:**
-- **{Manual-test candidacy}:**
 - **{Preconditions}:**
 - **{Test data}:**
 - **{Dependencies and blockers}:**
@@ -38,9 +33,11 @@ this instruction block into the generated document.
 - **{Cleanup considerations}:**
 - **{Notes and open questions}:**
 
-## 5. {TDD Case List}
-## 6. {E2E Automation Candidate List}
-## 7. {Manual Test List}
-## 8. {Case Review Result}
-## 9. {Unresolved Questions and Blockers}
+## 5. {Manual Evidence Index}
+
+{Cases whose Required Evidence Level is Manual; index only, not an execution
+workflow}
+
+## 6. {Case Review Result}
+## 7. {Unresolved Questions and Blockers}
 ```

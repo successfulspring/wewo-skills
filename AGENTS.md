@@ -50,7 +50,7 @@ override an authoritative skill specification.
 - While authoring a reusable skill, do not run its runtime workflow or create
   real workflow documents, reports, evidence, production code, or executable
   project tests.
-- Do not create empty documents for neighboring workflow stages.
+- Do not create empty documents owned by other capabilities.
 - Do not combine separate requirements in one
   `docs/wewo/<requirement-category>/<requirement-slug>/` workspace without
   explicit confirmation.
