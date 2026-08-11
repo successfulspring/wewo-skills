@@ -1,136 +1,64 @@
 # Implementation Document Contract
 
-Use this guide to create and maintain the two workflow documents.
+Create only the Build-owned workflow artifacts:
 
-## Contents
+- `implementation-plan.md`
+- `implementation-record.md`
 
-- [Implementation plan](#implementation-plan)
-- [Implementation record](#implementation-record)
-- [Final document checks](#final-document-checks)
+Do not create or modify product, design, QA planning/case, independent-review,
+security-review, acceptance-execution, or other capability-owned documents.
+Keep production assets and developer tests in normal project paths.
+
+Localize headings and prose while keeping stable filenames in English. Use
+verified facts and actual evidence. Omit irrelevant sections; never add empty
+sections or fake evidence to satisfy a template.
 
 ## Implementation plan
 
-Use every core section in this order:
+Keep the plan lean:
 
-1. Implementation Goal
-2. Implementation Basis
-3. Current Project Analysis
-4. Implementation Scope
-   - In Scope
-   - Out of Scope
-5. Global Implementation Constraints
-6. TDD and Implementation Verification Strategy
-7. Test Seams
-8. Vertical Implementation Slices
-9. Interface, Database, and Dependency Changes
-10. Verification Plan
-11. Git and Worktree Strategy
-12. Risks and Unresolved Questions
+1. **Goal & Binding Constraints** - minimum Binding Implementation Obligations,
+   including explicit non-goals.
+2. **Repository Reality** - only facts or conflicts material to implementation.
+3. **Implementation Units** - colocate Goal, `Blocked by`, Binding obligations,
+   Expected scope, Verification seam, `TDD: Yes / No`, and Done when.
+4. **Material Changes / Open Gaps** - include only when relevant.
+5. **Confirmation** - show that no implementation asset changes before the
+   user's explicit confirmation.
 
-Localize headings and prose. Keep the filename `implementation-plan.md` in
-English.
-
-Record only actual sources and verified project facts. Identify the final
-capability and completion result, affected and unaffected scope, global
-constraints, test framework and seams, quality commands, and Git state.
-
-Use a verification-strategy table:
-
-```markdown
-| Implementation behavior | Evaluation | Final test level | Test seam | Notes |
-|---|---|---|---|---|
-```
-
-Define every slice:
-
-```markdown
-### Slice-001 {Name}
-
-- **Business goal:**
-- **Requirement or behavior:**
-- **Observable result:**
-- **Test seam:**
-- **Test level:**
-- **Expected change scope:**
-- **Implementation constraints:**
-- **Verification commands:**
-- **Completion conditions:**
-- **Dependent slices:**
-```
-
-State when focused, integration, type, lint, build, migration, regression, and
-broader-suite commands run. Never invent commands.
+Do not duplicate unit content in a global contract matrix or separate
+verification-strategy table. Add adaptive detail only when it materially helps
+execution.
 
 ## Implementation record
 
-Use every core section in this order:
+Create or update the record only after actual implementation evidence exists;
+do not create an empty skeleton before confirmation. Keep:
 
-1. Implementation Result Overview
-2. Actual Changed Files
-3. Vertical Slice Status
-4. TDD Execution Record
-5. Unit and Integration Test Results
-6. Quality Check Results
-7. Deviations from the Implementation Plan
-8. Unfinished Work and Known Limitations
-9. Final Verification Evidence
-10. Final Conclusion
+- actual result and changed-file summary;
+- Binding Obligation traceability;
+- unit-level execution evidence;
+- fresh final verification;
+- deviations and confirmations;
+- remaining blockers and risks;
+- honest final status.
 
-Localize headings and prose. Keep the filename `implementation-record.md`
-in English.
-Update the record continuously rather than reconstructing evidence from memory.
+For a TDD unit, record TDD Red only when the target behavior was still
+unimplemented, the focused test executed and failed, and the failure matched
+the intended missing or incorrect behavior. Then record Green, Refactor if
+performed, and post-refactor focused plus affected-regression verification.
 
-Record changed files:
+If implementation came first, do not fabricate Red/Green/Refactor history.
+Classify later failures as Debug / Implementation Failure, Regression Failure,
+Environment / Infrastructure Failure, or another truthful status. Record
+non-TDD implementation and sufficient verification directly.
 
-```markdown
-| File | Change type | Actual change |
-|---|---|---|
-```
+For final evidence, distinguish Passed, Failed, Blocked, and Not Run; include
+actual command or direct-check scope, exit status, counts, time, and limitations.
 
-Record slices:
+## Final document check
 
-```markdown
-| Slice | Status | Test status | Quality-check status | Notes |
-|---|---|---|---|---|
-```
-
-Use slice status not started, in progress, completed, blocked, or cancelled.
-Do not label implementation-time quality checks as independent review.
-
-Record each TDD behavior:
-
-```markdown
-### Slice-001 / Behavior-001
-
-- **Test file:**
-- **Red command and result:**
-- **Valid failure reason:**
-- **Implementation:**
-- **Green command and result:**
-- **Refactor:**
-- **Post-refactor verification:**
-```
-
-Record checks:
-
-```markdown
-| Check | Command | Result | Evidence or notes |
-|---|---|---|---|
-```
-
-For final evidence, include execution time, command, exit status, passed and
-failed counts when available, unrun items, blockers, and remaining risks.
-
-## Final document checks
-
-Verify that:
-
-- sources and project facts are real;
-- scope and constraints match confirmed requirements;
-- every command and outcome is actual;
-- Red and Green claims have evidence;
-- changed-file and slice tables match the repository;
-- deviations and confirmations are explicit;
-- unavailable checks and remaining risks are transparent;
-- no independent-review or final-test-gate claim appears;
-- no document owned by another capability was created.
+Verify that sources, changed files, obligations, commands, and results match
+repository reality; material conflicts and confirmations are explicit; no
+passing focused test is presented as completion by itself; no unresolved gap
+is hidden; and no other capability's document was created or modified.

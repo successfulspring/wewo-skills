@@ -1,208 +1,174 @@
 ---
 name: wewo-build
-description: Plan and implement a scoped software change through repository-aware vertical slices, TDD where appropriate, executable unit and integration tests, per-slice quality checks, and fresh verification evidence. Use when a user asks to modify production code, tests, configuration, migrations, or implementation assets and document the actual result. Do not use for full product discovery, design-only work, independent code or security review, final acceptance-test execution, test-gate reporting, merging, or deployment unless those external actions are explicitly requested and authorized.
+description: Plan, implement, and close a scoped production software change through explicit plan confirmation, coherent implementation units, hard test-first sequencing where TDD applies, material-conflict escalation, and fresh executable evidence. Use when a user asks to change production code or implementation configuration and developer tests may drive or directly verify that change. Do not use for test-only coverage work, acceptance-test creation or execution, independent review, product discovery, design-only work, merging, or deployment unless the corresponding production implementation is in scope and authorized.
 ---
 
 # Wewo Build
 
-Plan, construct, and verify a confirmed software change using the target
-repository's conventions and actual command evidence.
+Plan, confirm, implement one coherent unit at a time, verify truthfully, and
+close the actual production change.
 
-## Runtime inputs and outputs
+## Inputs, outputs, and boundaries
 
-Accept a clear implementation intent or requirement, conversation context,
-issues or bugs, source documents, project code, existing tests, Git diffs, and
-repository conventions. High-value context when available: confirmed
-technical-design decisions already established in the conversation, an
-explicitly supplied `prd.md`, and an explicitly supplied `technical-design.md`.
-A formal technical-design artifact is not a prerequisite.
+Accept a clear implementation goal, current conversation context, explicitly
+supplied or referenced source material, and the actual repository. Use an
+explicitly supplied or current-context `prd.md` or `technical-design.md` when
+available; never require one or discover workflow documents implicitly. Never
+consume QA planning or case artifacts as implementation inputs.
 
-Create workflow documents only at:
+Create only:
 
 ```text
 docs/wewo/<requirement-category>/<requirement-slug>/implementation-plan.md
 docs/wewo/<requirement-category>/<requirement-slug>/implementation-record.md
 ```
 
-Create or modify production code, executable unit, integration, and focused API
-tests, fixtures, migrations, configuration, and other confirmed implementation
-assets only in the project's normal paths. Never make `docs/wewo/...` a source
-or executable-test tree.
+Keep production code, implementation configuration, migrations, and developer
+tests in normal project paths. Developer tests belong in this workflow only
+when they drive or directly verify the production implementation in scope.
+Browser-level acceptance work, independent review, deployment, and unrelated
+test-only work are outside the runtime workflow.
 
-Keep workflow filenames and workspace segments in English. Conduct user
-interaction and write workflow documents in an explicitly requested language,
-otherwise the dominant interaction language, and otherwise Chinese. Follow
-repository conventions for code names, tests, comments, and formatting.
+Resolve one requirement workspace before writing: use an explicit path, else
+the workspace already established for this requirement, else one unambiguous
+candidate inferred from the requirement or explicitly supplied context. Ask if
+multiple candidates remain. Never select by artifact existence or modification
+time. Use `features`, `bugs`, `refactors`, or `maintenance`, with a concise
+lowercase English kebab-case slug. Keep workflow filenames in English; use the
+requested or dominant language for documents and conversation.
 
-## Mandatory workflow
+## Binding Implementation Obligations
 
-### 1. Resolve scope and workspace
+From the requirement, available design, confirmed context, and relevant code,
+extract only:
 
-Run independently. Use `prd.md` and `technical-design.md` only when the user
-explicitly supplies or references them, or the current conversation already
-establishes them. Never require them, create empty predecessors, or scan the
-repository for them. Establish the minimum implementation context from the
-user, issue or task, current code, affected interfaces, existing tests, and
-repository conventions when no usable artifact exists.
+1. What must be true?
+2. What must not change?
+3. What material constraints bind implementation?
+4. Where can the important behavior be verified?
 
-Resolve exactly one requirement workspace before writing workflow documents:
+Preserve source labels when useful, but do not restate or classify the whole
+design. Never reinterpret a confirmed requirement, constraint, or non-goal to
+make implementation easier.
 
-1. Use an explicit workspace supplied by the user.
-2. Otherwise reuse the workspace established for this requirement.
-3. Otherwise infer a candidate from the requirement, issue, branch, or
-   explicitly supplied or referenced material.
-4. Ask before writing if multiple candidates are plausible.
+## Gate 1: Plan
 
-Never infer a workspace from the existence of workflow artifacts. Never choose
-the most recently modified workspace by default. Use `features`, `bugs`,
-`refactors`, or `maintenance`; default to `features` only when no evidence
-favors another category. Use a concise lowercase English kebab-case slug.
-Create parent directories only after resolution is unambiguous, and never
-combine separate requirements without confirmation.
-
-Clarify any missing business or design decision that materially changes
-observable behavior, authorization, consistency, security, scope, interface,
-database, dependency, or completion criteria. Do not weaken or silently change
-requirements to simplify implementation.
-
-### 2. Analyze the repository and establish a baseline
-
-Read and apply
-[project-analysis.md](references/project-analysis.md).
-
-Inspect repository instructions, language, framework, package manager,
-architecture, modules, similar implementations, public interfaces, tests,
-build/lint/type/format commands, security conventions, persistence and
-transactions, dependencies, configuration, current branch, and worktree
-status. Read commands from project configuration rather than guessing.
-
-Preserve unrelated and uncommitted user work. Never overwrite, delete, revert,
-or absorb it into this change. Suggest a branch or worktree for risky,
-large-scope, or dirty-worktree work when useful; do not force creation when the
-host cannot support it.
-
-Summarize the implementation baseline: included and excluded behavior,
-confirmed expectations, technical constraints, actual sources, and unresolved
-questions. Do not invent files, classes, functions, interfaces, tables, tests,
-or commands.
-
-### 3. Create and confirm the implementation plan
-
-Read and apply
-[planning-and-slicing.md](references/planning-and-slicing.md) and
+Read [project-analysis.md](references/project-analysis.md),
+[planning-and-slicing.md](references/planning-and-slicing.md), and
 [dependency-and-tool-policy.md](references/dependency-and-tool-policy.md).
 
-Before modifying production code:
+Before confirmation, perform only read-only discovery, non-mutating feasibility
+checks, and creation of `implementation-plan.md`. Inspect enough repository
+reality to identify the change surface, important entry points, likely seams,
+material conflicts, unrelated user work, and credible repository-native
+commands.
 
-- derive implementation behaviors from the requirement, technical design when
-  available, and actual code;
-- determine the implementation verification strategy: for each relevant
-  behavior, identify the observable behavior, the verification seam, whether
-  TDD is appropriate, the implementation-time verification level, and the
-  reason;
-- define global implementation constraints;
-- identify affected and unaffected files or modules;
-- split work into small, independently verifiable vertical slices;
-- identify interface, database, migration, compatibility, dependency,
-  security, and reliability implications;
-- assign actual verification commands and completion conditions;
-- make blockers explicit.
+Choose the simplest honest implementation shape: one Small Atomic Change,
+Vertical Slices for behavioral work, or a staged Expand-Migrate-Contract style
+migration when needed. Define coherent units with:
 
-Generate
+- goal or observable result;
+- `Blocked by` dependencies;
+- binding obligations;
+- expected scope;
+- verification seam;
+- `TDD: Yes / No`;
+- done conditions.
+
+Write
 `docs/wewo/<requirement-category>/<requirement-slug>/implementation-plan.md`
-using [implementation-plan-template.md](assets/implementation-plan-template.md).
-Summarize it and obtain confirmation before code modification. If the user
-explicitly requests direct execution and the goal is already sufficiently
-clear, keep confirmation concise, but still create the plan as the execution
-basis.
+from [implementation-plan-template.md](assets/implementation-plan-template.md),
+summarize material scope and gaps, and explicitly ask the user to confirm.
 
-Do not begin broad implementation until the plan is sufficiently concrete.
+Before explicit confirmation, do not modify any implementation asset,
+including production source, developer tests, migrations, implementation
+configuration, Docker/container files, dependency manifests or lockfiles, CI,
+or deployment files. A direct-execution request may shorten confirmation but
+cannot bypass this gate. Do not create an empty record skeleton merely because
+the plan exists.
 
-### 4. Implement one vertical slice at a time
+## Gate 2: TDD / Implementation Unit
 
-For each planned slice:
+Execute only a confirmed, dependency-ready unit. Before it, inspect the exact
+files and mechanisms it needs. If a binding obligation relies on an existing
+helper, wrapper, persistence operation, transaction, lock, cache, index,
+retry, delete method, library behavior, or service, inspect its actual relevant
+semantics; never infer behavior from a name, comment, or design prose alone.
 
-1. Select one observable behavior and one primary test seam.
-2. Apply the TDD protocol in
-   [tdd-protocol.md](references/tdd-protocol.md) when a valid seam exists.
-3. Make only the production, test, fixture, configuration, or migration change
-   required for that slice.
-4. Run focused and relevant regression verification.
-5. Apply the compliance and quality checks in
-   [slice-quality.md](references/slice-quality.md).
-6. Fix in-scope issues and rerun affected checks.
-7. Update the implementation record with commands, outcomes, changes, and
-   deviations.
+For `TDD: Yes`, keep Red -> Green -> Refactor -> Verify and follow this sequence
+without exception:
 
-Do not batch many unverified tests with a large implementation. Preserve the
-loop of one behavior, one seam, one valid failing test, and one minimum
-implementation when TDD is appropriate.
+1. Write the smallest focused test for the target behavior.
+2. Run it.
+3. Observe a valid **TDD Red**.
+4. Only then modify the target production behavior.
+5. Run to Green.
+6. Refactor if useful.
+7. Rerun the focused test and relevant affected regression.
 
-If no valid testing seam exists or another approach is more appropriate,
-record the reason and use the best available verification. Never fabricate a
-Red or Green result.
+Do not partially implement the target production behavior before valid Red.
+A failure is TDD Red only when the target behavior is still unimplemented, the
+focused test actually ran and failed, and the failure matches the intended
+missing or incorrect behavior. Environment, fixture, unrelated dependency,
+syntax/import, pre-existing, regression, and post-implementation failures are
+not automatically TDD Red. Never relabel a debug failure found after production
+implementation as Red.
 
-Browser-level acceptance testing is outside this capability's implementation
-verification scope. Do not inspect, install, configure, generate, or execute
-browser acceptance tests, and do not reason about concrete browser-test tools.
-Do not track browser acceptance as deferred workflow state or create a handoff
-to another capability. Record the actual scope of implementation verification
-performed in the implementation record.
+For `TDD: No`, implement the unit and run sufficient repository-native
+verification. Use TDD for behavior or rules with a stable executable seam; do
+not manufacture Red for declarative, mechanical, or wiring work.
 
-### 5. Use repository-native tools and controlled dependencies
+Keep Refactor unit-local, behavior-preserving, and preserving binding
+obligations. Apply [tdd-protocol.md](references/tdd-protocol.md) and close the
+unit against [slice-quality.md](references/slice-quality.md). Create or update
+the implementation record only when actual implementation evidence exists; it
+may begin after the first unit closes or at the end.
 
-Prefer the project's declared tools, package manager, versions, scripts, and
-configuration. Distinguish restoring declared dependencies from introducing
-new ones. Do not silently upgrade versions, switch package managers, or make
-material dependency, lockfile, CI, service, or system-level changes without
-the required confirmation.
+## Gate 3: Material Gap
 
-When a required tool is missing, inspect project configuration first. Record
-installation or restoration failure and continue with available verification
-where possible. Do not claim an unavailable command ran.
+Ask one question when repository reality conflicts with the plan:
 
-Default to no commit, merge, push, release, or deployment. Perform those
-external changes only when the user explicitly requests them and the current
-environment permits them.
+Can the issue be solved while preserving confirmed behavior, public contracts,
+material architecture and persistence decisions, security boundaries, binding
+invariants, and explicit non-goals?
 
-### 6. Verify each slice and the completed implementation
+- If yes, make the ordinary implementation adjustment and record it when
+  meaningful.
+- If no or uncertain, stop, explain the conflict and its impact, recommend a
+  resolution, and ask the user to confirm before continuing.
 
-Use [evidence-and-completion.md](references/evidence-and-completion.md).
+Do not reason away a confirmed boundary as something the user "probably" did
+not mean. When a shared component serves both in-scope and explicitly excluded
+behavior, check whether the change affects the excluded behavior; if yes or
+uncertain, stop at this gate.
 
-After each slice, verify requirement compliance, the focused test, relevant
-regression, applicable integration behavior, type or compile status, lint, and
-scope/constraint adherence. An implementation-time self-check is not an
-independent code or security review and does not create those reports.
+Unplanned material dependency, schema or migration strategy, public API,
+Docker/container, production-environment, CI/CD, infrastructure,
+authentication/authorization, security-boundary, or deployment-topology
+changes normally trigger this gate. Use the existing repository-native tool
+and approval rules in
+[dependency-and-tool-policy.md](references/dependency-and-tool-policy.md).
 
-Before completion, freshly rerun the commands that prove the implementation:
-new tests, affected-module tests, necessary integration and regression tests,
-and applicable type-check, lint, formatting, migration, build, or runnable
-suite commands. Read complete output and exit status.
+## Gate 4: Completion
 
-Classify every check as passed, failed, not run, blocked, unavailable, or
-limited to partial scope. Do not rely solely on earlier output, another
-agent's claim, or code inspection.
+Use [evidence-and-completion.md](references/evidence-and-completion.md) and
+[document-contract.md](references/document-contract.md).
 
-### 7. Finalize the implementation record
+Close a unit only when its target result is complete, binding obligations are
+preserved, required verification actually ran, failures are visible, and every
+material gap is resolved or confirmed. A passing focused test alone is not
+enough.
 
-Maintain
+After all required units close, run fresh relevant verification and finalize
 `docs/wewo/<requirement-category>/<requirement-slug>/implementation-record.md`
-during implementation and finalize it with
-[implementation-record-template.md](assets/implementation-record-template.md)
-and [document-contract.md](references/document-contract.md).
+from [implementation-record-template.md](assets/implementation-record-template.md).
+Record actual changes, obligation traceability, unit evidence, TDD Red versus
+debug/regression/environment failures, Passed/Failed/Blocked/Not Run checks,
+confirmations, remaining risks, and honest final status.
 
-Record actual changed files, slice status, Red/Green evidence, unit and
-integration outcomes, quality checks, plan deviations, known limitations,
-latest verification evidence, and remaining risks. Claim "implementation
-complete" only when the latest evidence supports it.
-
-After verifying the record, report:
-
-- both workflow-document paths;
-- implemented behavior and major changed files;
-- actual test and quality-check results;
-- unfinished work, blockers, and remaining risks.
-
-Do not claim final independent review or a final test gate. Do not continue
-automatically into browser acceptance execution, deployment, or another
-capability's work.
+Claim completion only when the record matches repository reality and no
+failure, blocker, unrun requirement, or unresolved material gap is hidden.
+Report the two document paths, changed behavior and files, executed evidence,
+open risks, and incomplete work. Do not claim independent review, final
+acceptance, deployment readiness, or a test gate, and do not continue
+automatically into another capability.

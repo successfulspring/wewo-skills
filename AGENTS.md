@@ -104,6 +104,38 @@ be the final validation after synchronization.
 - Follow the target business repository's conventions for source-code and test
   naming, comments, and formatting.
 
+## Focused Subagent Execution
+
+Subagents and fresh contexts are optional host/runtime execution strategies,
+not capability contracts. A capability defines what correct work requires; the
+host decides whether to use the current context, a fresh context, or a
+subagent. Every skill and task must remain executable without subagent support.
+
+Use a fresh subagent only after work is decomposed into a coherent unit with a
+clear goal and completion condition, and when a focused context would reduce
+unnecessary context load or drift without weakening plan or confirmation
+gates. Keep small or already-focused work in the current context.
+
+Delegate sequentially by default: execute one ready unit, return its changes
+and evidence, let the parent check closure, then select the next unit. The
+parent retains the overall plan, user-confirmation gates, dependency ordering,
+confirmed requirements and material constraints, material-conflict
+escalation, cross-unit integration, final fresh verification, and completion
+reporting. Never delegate a material decision that requires user confirmation.
+
+Give the subagent only the unit goal, relevant completed dependency outcomes,
+binding constraints, expected scope, verification seam, applicable TDD rule,
+and repository context needed to inspect and execute the unit. The subagent
+must stay within that unit, run focused verification, return actual changes and
+evidence, and report failures, blockers, or material conflicts to the parent
+without expanding scope or choosing a material resolution.
+
+Use parallel delegation only for clearly independent units. Treat shared source
+files, interfaces or contracts, mutable runtime or database state, test
+infrastructure, generated artifacts, dependency ordering, or verification
+baselines as reasons to avoid parallel work. When independence is uncertain,
+execute sequentially.
+
 ## Workflow workspace
 
 Store workflow documents, reports, execution evidence, and generated test

@@ -1,41 +1,45 @@
 # Reusable Implementation Plan Template
 
-Use this internal template after the baseline is established. Replace every
-brace-delimited instruction with verified content in the selected output
-language. Localize headings while keeping `implementation-plan.md` in
-English. Do not copy this instruction block into the generated document.
+Replace brace-delimited instructions with verified content in the selected
+output language. Localize headings while keeping `implementation-plan.md` in
+English. Omit irrelevant optional sections and do not copy this instruction
+block into the document.
 
 ```markdown
 # {Localized title: Implementation Plan}
 
-## 1. {Implementation Goal}
-## 2. {Implementation Basis}
-## 3. {Current Project Analysis}
-## 4. {Implementation Scope}
+## {Goal & Binding Constraints}
 
-### 4.1 {In Scope}
-### 4.2 {Out of Scope}
+{State the goal, what must be true, what must not change, material constraints,
+explicit non-goals, and important verification boundary. Keep only obligations
+that affect implementation.}
 
-## 5. {Global Implementation Constraints}
-## 6. {TDD and Implementation Verification Strategy}
-## 7. {Test Seams}
-## 8. {Vertical Implementation Slices}
+## {Repository Reality}
 
-### Slice-001 {Slice name}
+{Record only verified facts or conflicts that materially affect feasibility,
+scope, sequencing, or verification.}
 
-- **{Business goal}:**
-- **{Requirement or behavior}:**
-- **{Observable result}:**
-- **{Test seam}:**
-- **{Test level}:**
-- **{Expected change scope}:**
-- **{Implementation constraints}:**
-- **{Verification commands}:**
-- **{Completion conditions}:**
-- **{Dependent slices}:**
+## {Implementation Units}
 
-## 9. {Interface, Database, and Dependency Changes}
-## 10. {Verification Plan}
-## 11. {Git and Worktree Strategy}
-## 12. {Risks and Unresolved Questions}
+### {Unit-X: Name}
+
+- **{Goal / observable result}:**
+- **{Blocked by}:**
+- **{Binding obligations}:**
+- **{Expected scope}:**
+- **{Verification seam}:**
+- **{TDD: Yes / No}:** {Brief reason when No is not obvious}
+- **{Done when}:**
+
+## {Material Changes / Open Gaps}
+
+{Include only when relevant. Record material conflicts, high-impact changes,
+confirmation needs, and accepted resolutions. Add adaptive detail only where
+it materially helps execution.}
+
+## {Confirmation}
+
+- **{Material plan summary}:**
+- **{Confirmation requested}:**
+- **{Implementation assets}:** Not modified before explicit confirmation
 ```

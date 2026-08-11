@@ -1,65 +1,56 @@
-# Verification Evidence and Completion
+# Evidence and Completion
 
-Use actual command output, exit status, and current repository state.
+Record actual commands, scope, output, exit status, and repository state. Never
+reconstruct or improve the history after the fact.
 
-## Per-slice evidence
+## Evidence truthfulness
 
-Record:
+Distinguish, where applicable:
 
-- focused Red command and valid failure reason;
-- focused Green command and result;
-- post-refactor verification;
-- relevant existing and integration tests;
-- type, compile, lint, or format result;
-- requirement and code-quality self-check result;
-- changed files and scope;
-- blockers or unavailable checks.
+- **TDD Red:** a focused test executed and failed for the intended behavior
+  while that target production behavior was still unimplemented;
+- **Debug / Implementation Failure:** implementation exists and verification
+  exposed a defect in it;
+- **Regression Failure:** existing behavior failed outside the focused target;
+- **Environment / Infrastructure Failure:** setup or infrastructure prevented
+  valid behavior evidence;
+- **Passed**, **Failed**, **Blocked**, and **Not Run**.
 
-## Final fresh verification
+TDD Red is not a debug failure. A post-implementation failure may be valuable
+evidence, but never record it as Red. State partial command scope explicitly;
+do not imply full regression from a focused test or create synthetic logs.
 
-After all slices, identify commands that prove the current implementation and
-rerun applicable:
+## Unit evidence and closure
 
-- all new tests;
-- affected-module tests;
-- necessary integration tests;
-- relevant regression tests;
-- type-check;
-- lint and formatting verification;
-- build and migrations;
-- currently executable broader suite.
+For each unit, record its target, binding obligations, actual changes, executed
+verification, failures, material gaps, confirmations, and status. For a true
+TDD unit, include valid Red, Green, optional Refactor, and post-refactor
+focused plus affected-regression evidence. For non-TDD or implementation-first
+work, record what actually happened without fake Red/Green/Refactor fields.
 
-Read complete output, exit status, failure count, and current timestamp. Do not
-reuse an earlier result as final evidence, and do not trust another agent's
-summary without main-flow verification.
+Close a unit only when:
 
-## Result vocabulary
+- its target result is complete;
+- binding obligations are preserved;
+- required verification actually ran;
+- failures are visible;
+- every material gap is resolved or confirmed.
 
-Classify each check explicitly:
+A passing focused test alone is not completion.
 
-- passed: executed successfully with supporting output;
-- failed: executed and returned failure;
-- not run: intentionally omitted;
-- blocked: prevented by a known external condition;
-- unavailable: command or required capability does not exist;
-- partial: only a stated subset ran.
+## Fresh final verification
 
-Never equate code inspection with a passing test. State when the full suite was
-not run.
+After all units close, rerun the relevant current commands that prove the
+implementation: new and affected tests, necessary integration or regression,
+and applicable type, lint, format, build, or migration checks. Read complete
+output, exit status, counts when available, time, and actual scope. Do not reuse
+old output as final evidence.
 
-## Completion decision
+## Completion gate
 
-Before claiming completion, verify:
-
-- confirmed behavior and scope are implemented;
-- every slice has current evidence or a transparent blocker;
-- failures are resolved or reported;
-- latest quality commands support the conclusion;
-- plan deviations are documented;
-- the actual scope of implementation verification performed is recorded,
-  including the browser-acceptance boundary;
-- known limitations and remaining risks are explicit;
-- implementation record matches actual files and commands.
-
-Do not claim independent review, final acceptance, deployment readiness, or a
-test gate unless that work was separately performed and authorized.
+Claim completion only when all required units close, fresh relevant
+verification ran, Failed/Blocked/Not Run items are explicit, no unresolved
+material gap is hidden, and `implementation-record.md` matches repository
+reality. Otherwise report the honest incomplete or blocked status. Do not
+claim independent review, final acceptance, deployment readiness, or a test
+gate without separately authorized evidence.

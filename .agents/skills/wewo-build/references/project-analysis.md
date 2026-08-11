@@ -1,72 +1,41 @@
-# Project Analysis and Implementation Baseline
+# Progressive Implementation Discovery
 
-Use this guide before creating the implementation plan.
+Discover repository facts only when they support a credible plan or the next
+implementation unit.
 
-## Check task sufficiency
+## Before the plan
 
-Confirm:
+Inspect enough to establish:
 
-- the change to implement, modify, or fix;
-- user- or caller-observable outcomes;
-- mandatory business rules;
-- explicit exclusions;
-- authorization and security requirements;
-- consistency requirements;
-- permission to change interfaces, database, or dependencies;
-- evidence that will establish completion.
+- the requested production outcome and explicit non-goals;
+- Binding Implementation Obligations;
+- important entry points and likely affected paths;
+- likely stable verification seams and repository-native commands;
+- material feasibility conflicts, overlapping user work, and dirty-worktree
+  risk.
 
-Ask only for missing decisions that materially change implementation. Suggest
-full requirement clarification only when the user wants it; never make another
-skill a prerequisite.
+Read applicable repository instructions and current configuration. Do not
+broadly scan unrelated files, auto-discover workflow documents, or invent
+repository facts and commands.
 
-## Analyze the actual project
+## Before each unit
 
-Read relevant:
+Inspect the exact affected files, tests, seams, dependencies, and runtime
+mechanisms more deeply. Preserve unrelated user changes and stop when safe
+isolation is impossible.
 
-- repository instruction files;
-- language, framework, package manager, and directory structure;
-- layers, pages, components, modules, and services;
-- public interfaces and data models;
-- authentication and authorization;
-- dependency injection and object lifetimes;
-- persistence and transactions;
-- errors, logs, cache, queues, schedules, and integrations;
-- test framework, directories, fixtures, data setup, mocks, and fakes;
-- lint, formatter, type-check, build, migration, and test commands;
-- similar implementations;
-- current Git repository, branch, and worktree state.
+If a binding obligation depends on an existing mechanism's semantics, inspect
+that mechanism before relying on it. This includes helpers, wrappers,
+persistence operations, transactions, locks, caches, indexes, retries, delete
+methods, libraries, and services. Do not infer behavior from its name, comments,
+or design prose alone.
 
-Do not invent project content or commands. Prefer existing architecture, test
-seams, shared capability, response formats, and conventions.
+When the mechanism does not behave as the plan assumed, apply the Material Gap
+Gate: proceed with an ordinary adjustment only if all binding obligations and
+explicit non-goals remain preserved; otherwise stop for confirmation.
 
-## Protect user work
+## Record only material reality
 
-Inspect uncommitted changes before editing. Determine whether overlapping
-changes belong to the user or current task. Preserve unrelated work and stop
-when safe isolation is impossible.
-
-Suggest a separate branch or worktree for broad, risky, or overlapping work.
-Do not automatically commit, merge, or discard changes.
-
-## Establish global implementation constraints
-
-Derive applicable constraints:
-
-- follow existing architecture and layers;
-- reuse modules and shared capability;
-- avoid unjustified patterns, singleton state, and global mutable state;
-- keep user and request state out of shared objects;
-- never hardcode secrets or environment configuration;
-- enforce authorization at the server boundary;
-- do not swallow exceptions;
-- avoid unrelated changes;
-- never change expectations or weaken assertions to pass tests;
-- never add test-only behavior or hardcode responses for test inputs;
-- require confirmation for new dependencies;
-- preserve clear testing seams and project style.
-
-## Summarize the baseline
-
-Record what is in scope, what is excluded, required observable behavior,
-technical constraints, source material, and unresolved blockers. Use verified
-facts, not assumptions.
+Keep the plan and record focused on verified facts that change scope,
+sequencing, verification, or feasibility. Do not create a broad repository
+inventory.

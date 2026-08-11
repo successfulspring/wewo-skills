@@ -1,77 +1,39 @@
-# TDD and Test Quality Protocol
+# Hard TDD Sequence
 
-Use TDD for behavior with a valid, valuable testing seam.
+Use TDD only for a unit marked `TDD: Yes`.
 
-## Red
+## Gate
 
-For one observable behavior:
+Follow exactly:
 
-1. Use the project's existing test framework.
-2. Add or identify one focused test through the selected seam.
-3. Run the exact test.
-4. Confirm that it fails.
-5. Confirm failure is caused by missing or incorrect target behavior.
+```text
+Test -> Execute -> Valid TDD Red -> Production implementation -> Green -> Refactor -> Verify
+```
 
-Syntax errors, import failures, missing fixtures, missing dependencies,
-database connection failure, startup failure, framework misconfiguration, and
-pre-existing project errors are not valid Red evidence. Fix or resolve the
-environment problem before implementation, or record TDD as blocked.
+Do not modify or partially implement the target production behavior before a
+valid TDD Red has been observed.
 
-Do not write production behavior without valid Red evidence when TDD is
-applicable.
+## Valid TDD Red
 
-## Green
+Record TDD Red only when all are true:
 
-Implement the minimum production change that:
+- the target production behavior is still unimplemented;
+- the focused test actually ran;
+- it failed;
+- the failure matches the intended missing or incorrect behavior.
 
-- satisfies the current behavior;
-- fits existing architecture;
-- follows global constraints;
-- remains evolvable;
-- preserves existing behavior.
+Environment setup, unrelated dependencies, fixture defects, unrelated
+syntax/import failures, pre-existing defects, regressions elsewhere, and bugs
+found after production implementation are not automatically TDD Red. Label
+them truthfully; never retrofit a test-first history.
 
-Never hardcode test inputs, add test-environment branches, remove or weaken
-assertions, change business expectations, implement later slices early,
-change unrelated code, introduce premature abstraction, duplicate reusable
-logic, swallow exceptions, or add an unconfirmed dependency.
+## Test seam and implementation
 
-Run the focused test and record actual Green evidence.
+Use a stable public or repository-established seam. Test observable behavior,
+not private methods, internal call order, or collaborator call counts. Mock
+uncontrolled external boundaries rather than internal implementation.
 
-## Refactor
-
-After Green, make only small in-scope improvements such as naming, obvious
-deduplication, splitting a newly long function, extracting a small helper,
-simplifying conditions, or matching surrounding style. Avoid broad
-architecture changes, unrelated cleanup, mass renames, complex abstraction,
-and behavior outside the slice.
-
-Rerun relevant tests after every refactor.
-
-## Unit and integration balance
-
-Use unit or application-service tests for fast rules, validation, state,
-authorization, transformations, boundaries, exceptions, idempotency, and
-isolated behavior.
-
-Use integration evidence for persistence, transactions, API-service
-collaboration, cache, messaging, filesystem, external adapters, and
-multi-module behavior. Mocks cannot replace real integration evidence when the
-risk is collaboration or transaction correctness.
-
-Prefer input, public behavior, and observable result. Mock uncontrolled system
-boundaries such as external payment, email, SMS, time, randomness, HTTP,
-filesystem, or messaging. Avoid mocking internal collaborators merely to
-assert calls.
-
-## E2E boundary
-
-Browser-level acceptance testing is outside this capability's implementation
-verification scope. Do not make it part of the implementation loop, do not
-inspect whether browser-test tooling or browsers are installed, and do not
-install or run browser acceptance tests. Do not reason about concrete
-browser-test tools. When a planned behavior is classified as browser
-acceptance, preserve its expected business behavior, keep it outside this
-capability's execution, never mark it Passed, and record the scope boundary in
-the implementation record. Browser scripts, compatibility, visual checks,
-exploration, full acceptance, and large performance tests are outside this
-capability's implementation verification scope.
+After valid Red, implement the minimum production behavior that preserves the
+unit's binding obligations and run to Green. Refactor only if useful, keeping it
+unit-local, behavior-preserving, and obligation-preserving. Then rerun the
+focused test and relevant affected regression.

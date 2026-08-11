@@ -1,91 +1,52 @@
-# Implementation Planning and Vertical Slicing
+# Implementation Planning and Units
 
-Create the plan before production-code modification.
+Produce an executable plan quickly from the Binding Implementation Obligations
+and verified change surface.
 
-## Determine the implementation verification strategy
+## Choose the simplest honest shape
 
-Derive implementation behaviors from the confirmed requirement, technical
-design when available, and actual code and architecture. For each relevant
-behavior, determine where useful:
+- **Small Atomic Change:** one coherent low-scope behavior or fix.
+- **Vertical Slice:** one observable behavior across only the necessary layers;
+  prefer this to separate model/service/interface/test phases.
+- **Staged migration:** Expand, Migrate, Contract or another compatible sequence
+  for a wide structural change that cannot honestly be independent behavior.
 
-- the observable behavior;
-- the verification seam;
-- whether TDD is appropriate;
-- the implementation-time verification level;
-- the reason.
+Do not repeatedly debate the shape. Choose the simplest one that exposes real
+dependencies and verification.
 
-Classify each verification approach as:
+## Define executable units
 
-- adopt directly;
-- change test level;
-- split;
-- merge;
-- outside implementation verification scope, including browser-level
-  acceptance;
-- do not adopt;
-- blocked by environment;
-- pending confirmation.
+For each unit, colocate only:
 
-Focus on inputs, caller behavior, and observable result rather than proposed
-classes, methods, mock style, or internal structure. The verification strategy
-is derived from implementation behavior, not from QA test-case documents.
+- Goal / observable result
+- `Blocked by`
+- Binding obligations
+- Expected scope
+- Verification seam
+- `TDD: Yes / No`
+- Done when
 
-When no formal design document exists, extract the minimum implementation
-behaviors from confirmed requirements, code, and existing tests. Summarize
-them for confirmation without generating a full test plan.
+Use dependency edges to order execution; never start a blocked unit. Keep a
+unit small enough for one focused implementation context. Reject giant
+multi-behavior units and layer-only decomposition when a behavioral unit is
+practical.
 
-## Select test seams
+Prefer a stable public seam already used by the repository. Use TDD for
+behavior or rules with a stable executable seam. Mark declarative, mechanical,
+or wiring work `TDD: No` when artificial Red adds little value; add a brief
+reason only when it is not obvious.
 
-Prefer stable public boundaries already used by the project:
+Do not duplicate unit obligations in a global contract matrix or repeat unit
+verification in a second strategy table. Add adaptive detail for API,
+persistence, migration, dependencies, containers, CI, production environment,
+compatibility, rollback, or integration only when it materially affects the
+plan.
 
-- domain object public behavior;
-- application service;
-- HTTP API;
-- repository plus test database;
-- message consumer;
-- command-line entry;
-- public frontend component behavior.
+## Plan confirmation
 
-Avoid private methods, internal call order, internal call counts, and extensive
-mocks that freeze implementation. Ask only when multiple viable seams
-materially change the solution.
-
-## Slice by observable capability
-
-Create vertical slices rather than separate model, service, controller, and
-test phases. Each slice must include:
-
-- business goal;
-- observable result;
-- linked requirement or behavior;
-- primary test seam and level;
-- expected file or module scope;
-- implementation constraints;
-- verification commands;
-- completion conditions;
-- dependencies on other slices.
-
-Keep each slice small enough for independent testing and quality checking.
-
-## Plan required changes and risks
-
-Identify:
-
-- affected and unaffected files or modules;
-- interface, database, migration, and configuration changes;
-- compatibility and historical-data concerns;
-- dependency and tool changes;
-- security and authorization controls;
-- transaction, concurrency, idempotency, and failure handling;
-- concrete build, test, type, lint, format, and migration commands;
-- blockers and unresolved decisions.
-
-Never invent commands or files.
-
-## Confirmation gate
-
-Summarize the objective, sources, project analysis, scope, global constraints,
-TDD evaluation, seams, slices, structural changes, verification, risks, and
-open questions. Obtain confirmation before code changes unless the user
-explicitly requested direct execution and the goal is already clear; even
-then, retain the written plan as the execution basis.
+Write `implementation-plan.md`, summarize the material scope, units,
+dependencies, gaps, and verification, and explicitly ask the user to confirm.
+Until confirmation, perform no implementation edits: not production code,
+developer tests, migrations, implementation configuration, dependency or
+lockfiles, container files, CI, or deployment files. Direct execution cannot
+bypass this gate.
