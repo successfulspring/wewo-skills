@@ -461,10 +461,6 @@ def validate_required_repository_files(
         repo_root / "scripts/sync_skills.py",
         repo_root / "scripts/validate_skills.py",
     ]
-    required.extend(
-        repo_root / "specs" / f"{skill}-requirements.md"
-        for skill in EXPECTED_SKILLS
-    )
     for path in required:
         if not path.is_file():
             validation.error(f"Missing required repository file: {path}")

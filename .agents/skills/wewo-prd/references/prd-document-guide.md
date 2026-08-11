@@ -2,11 +2,13 @@
 
 Read this guide only after the user confirms the overall requirement summary.
 
-## Content contract
+## Semantic contract
 
 Write clear, precise business language in the selected output language.
-Include only facts and product decisions covered by the user's confirmation.
-Do not state an AI inference or unaccepted recommendation as a requirement.
+Include only current-state facts and product decisions supported by valid
+provenance and covered by the user's confirmation. Do not state an AI
+inference, unaccepted recommendation, implementation convenience, or
+unsupported general claim as a product requirement.
 
 Keep the PRD product-semantic. Make functional requirements specific enough
 for design, business rules understandable to developers, and acceptance
@@ -16,66 +18,71 @@ function or class names, test file names, code snippets, internal architecture
 decisions, or database implementation details, unless one of those is itself
 an explicit business or technical constraint provided by the user.
 
-Preserve unresolved issues in the final section. Write the localized equivalent
-of “None” when no unresolved issues remain.
+## Required Semantic Coverage
 
-## Required core structure
+Represent every material product-semantic dimension relevant to the confirmed
+requirement. Candidate dimensions include:
 
-Use every core section in this order:
-
-1. Requirements Overview
-2. Background and Problem
-3. Requirement Goals
-4. Users and Usage Scenarios
-5. Requirement Scope
-   - In Scope
-   - Out of Scope
-6. Functional Requirements
-7. Business Rules
-8. Exceptions and Edge Cases
-9. Acceptance Criteria
-10. Unresolved Questions
-
-Localize the headings; do not translate the filename `prd.md`.
-
-## Optional dynamic sections
-
-Add only sections supported by the confirmed requirement:
-
-- Page and interaction requirements
-- User roles and permissions
-- Data requirements
-- Import and export
-- Messages and notifications
-- Third-party system interactions
-- Historical-data handling
+- Problem / Motivation
+- Goal / Observable Outcome
+- Users / Actors
+- Scope / Non-goals
+- Observable Behavior
+- Main Flow
+- Business Rules
+- Permissions
+- State / Lifecycle
+- Business/Data Consequences
+- Exceptions / Failure Behavior
 - Compatibility
-- Performance
-- Privacy or compliance
-- Glossary
-- References
+- Acceptance Outcomes
+- Unresolved / Deferred Decisions
 
-Do not add empty optional sections. Insert applicable sections without removing
-or changing the order of the required core sections.
+Relevant dimensions must be represented. Irrelevant dimensions must not be
+added merely to satisfy a document shape. Related dimensions may be combined;
+section names and order should reflect the actual requirement. Do not create
+empty or low-value sections, and do not create an unresolved section merely to
+say “None” unless it materially improves clarity.
+
+Use [prd-structure-patterns.md](prd-structure-patterns.md) only as optional
+composition guidance. The patterns are not templates or schemas. Keep the
+filename `prd.md` in English and localize document headings and prose.
 
 ## Acceptance criteria
 
 Describe verifiable results rather than aspirations. Cover the confirmed normal
 result and the material rejection, duplicate, or failure behaviors. Use a
 structured format only when it improves clarity; do not force one syntax on
-every requirement.
+every requirement. Acceptance outcomes should normally remain explicit even
+when other semantic dimensions are combined.
+
+## Synthesis provenance
+
+Apply the Synthesis Provenance Audit before and during composition. Every
+material product rule must trace conceptually to a valid source. A repository
+fact may describe current state but cannot choose desired future behavior. If a
+rule is only an AI recommendation, AI assumption, implementation convenience,
+or unsupported best-practice claim, omit it and reopen clarification when the
+product outcome itself is unresolved.
+
+When the product outcome is confirmed but the implementation choice is not,
+rewrite at the product-semantic level. For example, write “The system remembers
+the user's previous output-mode preference” rather than requiring
+`localStorage` or another unconfirmed storage mechanism.
 
 ## Final quality check
 
 Before writing, verify that:
 
 - the user confirmed the overall understanding;
-- goal, primary users, core flow, outcome-changing rules, and scope are clear;
+- all relevant material semantic dimensions are represented;
 - source conflicts affecting behavior are resolved or explicitly retained as
   unresolved;
-- no temporary assumption appears as a confirmed requirement;
+- every material product rule has valid provenance;
+- no AI recommendation, temporary assumption, repository fact, or
+  implementation convenience appears as an unconfirmed future rule;
 - technical implementation has not replaced product behavior;
 - each acceptance criterion is observable;
-- every optional section has relevant content;
+- every included section has relevant content;
 - the destination is the resolved isolated workspace;
 - no unrelated requirement is combined into this document.

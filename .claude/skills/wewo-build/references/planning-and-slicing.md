@@ -20,7 +20,8 @@ Classify each verification approach as:
 - change test level;
 - split;
 - merge;
-- defer to later independent verification;
+- outside implementation verification scope, including browser-level
+  acceptance;
 - do not adopt;
 - blocked by environment;
 - pending confirmation.
@@ -56,7 +57,7 @@ test phases. Each slice must include:
 
 - business goal;
 - observable result;
-- linked requirement or case;
+- linked requirement or behavior;
 - primary test seam and level;
 - expected file or module scope;
 - implementation constraints;

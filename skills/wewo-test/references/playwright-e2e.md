@@ -51,6 +51,10 @@ spec.
 Automatic retries are diagnostic support. Preserve first-failure evidence and
 mark mixed unchanged-code/environment outcomes Flaky.
 
-If no safe browser execution path exists, mark the scenario Blocked or route
-it to an executable manual task. Never fabricate screenshots, traces, or
-browser results.
+If no safe browser execution path exists and the Required Evidence Level is
+E2E, keep the required E2E verification Blocked or Not Run. An executable
+manual task may provide supplementary evidence, but it must not satisfy or
+replace the required E2E evidence; the report must state that the required E2E
+level was not achieved. If E2E is only the Recommended Test Level and is not
+required evidence, a justified Manual route may be used where appropriate.
+Never fabricate screenshots, traces, or browser results.

@@ -2,9 +2,8 @@
 
 `wewo-skills` is a portable library of six independently executable,
 artifact-composable software-engineering capabilities for Codex and Claude
-Code. The repository provides shared conventions, per-capability requirement
-specifications, canonical runtime implementations, and portable
-synchronization and validation tooling.
+Code. The repository provides shared conventions, canonical runtime
+implementations, and portable synchronization and validation tooling.
 
 ## Capabilities
 

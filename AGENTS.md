@@ -13,13 +13,15 @@ workflow.
 
 ## Source-of-truth model
 
-- `shared/global-conventions.md` is the source for collection-wide behavior.
-- `specs/<skill-name>-requirements.md` is the authoritative requirement source
-  for that skill.
-- `skills/<skill-name>/` contains the canonical reusable implementation,
-  including `SKILL.md`, references, assets, and any justified scripts.
+- `AGENTS.md`, `CLAUDE.md`, and `shared/global-conventions.md` define
+  repository-wide maintenance and collection behavior.
+- `skills/<skill-name>/` is the canonical runtime source for that capability,
+  including `SKILL.md`, local references, assets when needed, and any justified
+  scripts.
 - `.agents/skills/` is the generated Codex mirror.
 - `.claude/skills/` is the generated Claude Code mirror.
+- `scripts/validate_skills.py` checks repository structure and runtime
+  invariants. It does not define or require a separate specification layer.
 
 Never edit either mirror directly. Change canonical files under `skills/`,
 validate the canonical change, synchronize, and then verify equality.
@@ -30,22 +32,20 @@ Before making a material change, compare:
 
 - the user's current explicit instruction;
 - `shared/global-conventions.md`;
-- the affected skill specification;
 - the affected canonical implementation;
 - these repository-maintenance instructions.
 
 Do not apply a simplistic precedence rule or silently choose one side when
 these sources materially disagree. Stop before the conflicting modification
 and report the exact statements, file paths and line locations, practical
-impact, and a recommended resolution. Repository guidance must not silently
-override an authoritative skill specification.
+impact, and a recommended resolution.
 
 ## Change boundaries
 
 - Modify only the requested skill or repository-level file.
 - Do not modify another skill merely to make implementations look consistent.
-- Do not change `shared/global-conventions.md` or a file under `specs/` unless
-  the user explicitly requests that authoritative change.
+- Do not change `shared/global-conventions.md` unless the user explicitly
+  requests that collection-wide change.
 - Preserve unrelated, uncommitted, or pre-existing user work.
 - While authoring a reusable skill, do not run its runtime workflow or create
   real workflow documents, reports, evidence, production code, or executable
@@ -60,18 +60,17 @@ override an authoritative skill specification.
 Before changing a skill:
 
 1. Read `shared/global-conventions.md` completely.
-2. Read the affected `specs/<skill-name>-requirements.md` completely.
-3. Inspect the complete canonical implementation under
+2. Inspect the complete canonical implementation under
    `skills/<skill-name>/`.
-4. Identify material conflicts, missing decisions, and unresolved ambiguity.
-5. Modify only the canonical skill.
-6. Validate the canonical skill with the available skill-authoring validator
+3. Identify material conflicts, missing decisions, and unresolved ambiguity.
+4. Modify only the canonical skill.
+5. Validate the canonical skill with the available skill-authoring validator
    before synchronization. Do not invent a validator command if none is
    available in the current host.
-7. Synchronize only after canonical validation passes.
-8. Run repository validation and verify that canonical, Codex, and Claude Code
+6. Synchronize only after canonical validation passes.
+7. Run repository validation and verify that canonical, Codex, and Claude Code
    copies are equal.
-9. Report omissions, partial implementation, assumptions, and unresolved
+8. Report omissions, partial implementation, assumptions, and unresolved
    ambiguity.
 
 The repository validator compares complete mirror trees, so it is expected to
@@ -172,10 +171,9 @@ file-digest equality checks.
 ## Scope restraint
 
 Keep repository-wide guidance concise and durable. Leave detailed runtime
-behavior in the relevant specification, canonical `SKILL.md`, references, and
-assets.
+behavior in the canonical `SKILL.md`, references, and assets.
 
 Do not introduce universal slogans such as always removing backward
 compatibility, always avoiding migrations, always choosing the smallest
 possible implementation, or never introducing abstractions. Those decisions
-depend on the affected skill specification and the current requirement.
+depend on the affected runtime contract and the current requirement.

@@ -135,9 +135,13 @@ For every P0/P1 scenario with a documented Required Evidence Level of E2E,
 execute E2E and classify it `Passed` or `Failed`, or mark it `Blocked` with a
 concrete blocker, or `Not Run` with an explicit justified reason. Never
 silently replace required E2E evidence with unit, component, integration, or
-API evidence. When E2E is only recommended, another level may be used when it
-provides equivalent direct evidence; record the reason for the routing
-decision.
+API evidence. If E2E evidence cannot be produced, manual evidence may be
+recorded only as supplementary evidence; it does not satisfy or replace the
+required E2E evidence, and the report must state that the Required Evidence
+Level was not achieved. When E2E is only the Recommended Test Level and the
+Required Evidence Level does not require E2E, another level, including a
+justified Manual route, may be used when appropriate; record the reason for
+the routing decision.
 
 Classify automation feasibility as `Direct Automation`,
 `Automation with Setup`, `Change Test Level`, `Infrastructure Required`,
@@ -238,8 +242,10 @@ reason to silently lower the evidence level.
 
 Browser control, MCP, and host browser tools are optional. Fall back to the
 project's configured CLI runner; when no safe executable browser path exists,
-route the scenario to Blocked or an executable manual task rather than
-fabricating browser evidence.
+keep required E2E verification `Blocked` or `Not Run`. An executable manual
+task may be added as supplementary evidence, but it cannot satisfy or replace
+required E2E evidence. If E2E is only recommended, a justified Manual route
+may be used where appropriate. Never fabricate browser evidence.
 
 ### 7. Manage manual execution
 

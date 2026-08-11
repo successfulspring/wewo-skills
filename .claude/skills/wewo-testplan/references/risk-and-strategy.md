@@ -66,11 +66,17 @@ Define current scope, regression scope, and explicit exclusions. Prioritize:
 Use actual risk rather than generation order. Record risk-to-test responses in
 the plan.
 
-## Environment and data strategy
+## Coverage Conditions and Test-Data Assumptions
 
-Identify required services, accounts, roles, browsers or devices, databases,
-external dependencies, mocks, data setup, isolation, cleanup, and destructive
-side effects. Mark unknown facts as pending confirmation.
+Identify product-scope coverage conditions and test-data assumptions that
+materially affect the scenarios: required product platforms or device
+categories, user roles, locales, business configuration variants, required
+data states, whether test data may be created or deleted, destructive-data
+constraints, and external-dependency behavior that changes expected outcomes.
+Mark unknown facts as pending confirmation.
 
-Define entry and exit conditions from the actual project and requirement. Do
-not invent fixed coverage percentages, pass rates, environments, or data.
+Define test-design entry and exit conditions from the confirmed requirement
+and product context. Do not determine whether a test environment exists, a
+test database is ready, browsers or test runners are installed, or concrete
+services or tools are available or configured for execution. Do not invent
+fixed coverage percentages, pass rates, environments, or data.

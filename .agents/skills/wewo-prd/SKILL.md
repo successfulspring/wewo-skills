@@ -27,6 +27,28 @@ interaction language, and otherwise Chinese.
 
 ## Mandatory workflow
 
+```text
+Requirement Intake
+-> Explicit Source / Repository Fact Analysis
+-> Dynamic Decision Map
+-> Decision Topic Clarification
+-> User Answer
+-> Update Decision Map
+-> Expand Material Dependent Branches
+-> Repeat
+-> Coverage Audit
+-> Branch Expansion Audit
+-> Structured Requirement Summary
+-> Synthesis Provenance Audit
+-> Final User Confirmation
+-> Adaptive PRD Composition
+-> prd.md
+```
+
+This flow creates no intermediate workflow artifact. The Decision Map and
+audits are internal runtime reasoning protocols; the only owned business
+artifact remains `prd.md`.
+
 ### 1. Establish context and resolve the workspace
 
 Start from the user's current request and confirmed conversation context.
@@ -93,30 +115,88 @@ Do not pretend the source was analyzed.
 ### 4. Clarify progressively
 
 Read and apply
-[clarification-guide.md](references/clarification-guide.md).
+[clarification-guide.md](references/clarification-guide.md) and
+[decision-map.md](references/decision-map.md).
 
 Build a dynamic decision tree from the material. Discuss one topic per round
-and normally ask one to three tightly related questions. Start with
-high-impact, higher-level decisions and revisit the tree after each answer.
+using this model:
+
+```text
+Requirement
+-> Decision Topic
+-> Decision Questions
+-> Dependent Branches
+```
+
+One round means exactly one Decision Topic, not one question. A substantial
+topic should normally contain around 2–5 tightly related Decision Questions;
+a simple topic may contain one. This is a preference, never a maximum, minimum,
+or stopping rule. Questions in the same round should normally be answerable in
+parallel. Defer a question when its relevance, options, or existence depends
+materially on an unanswered prerequisite.
+
+Maintain the internal Decision Map throughout the conversation. After every
+material answer, resolve the current decision, record valid provenance, update
+the requirement understanding, eliminate irrelevant branches, expand newly
+unlocked material dependent branches, keep those branches unresolved, and
+choose the highest-value unresolved Decision Topic. Do not treat a resolved
+answer as merely finished or ask a question merely because it appeared in the
+initial map. Never write the map under `docs/wewo/...` or present it as a
+business artifact.
+
+Number topics `Topic 1`, `Topic 2`, and so on. Within them use stable question
+IDs `Q1.1`, `Q1.2`, then `Q2.1`, and so on. Once assigned, do not reuse an ID
+for a different decision. For each individual closed or semi-closed question,
+label options `A`, `B`, `C`, `D` as applicable and restart at `A`; do not mix
+lettered and numbered option references. Keep these identifiers stable, but
+localize surrounding user-facing labels to the conversation language.
 
 For each material decision:
 
 - explain why it matters;
 - state the current evidence-based understanding;
-- offer a recommended option when useful;
+- where appropriate, offer 2–4 materially distinct options and an Other or
+  custom route when useful;
+- when evidence supports a recommendation for a single-choice question,
+  recommend exactly one listed option by its actual letter and explain the
+  reason, important tradeoff, or assumption;
+- when evidence is insufficient, explicitly say that no option can yet be
+  recommended;
 - ask the user to confirm, reject, or revise it.
 
 Recommendations are proposals, never confirmations. Surface source conflicts
 and material assumptions explicitly. Do not silently decide permissions,
 allowed states, result behavior, notifications, historical-data handling, or
-failure behavior.
+failure behavior. Ground recommendations preferentially in confirmed user
+goals, confirmed requirements, verified repository facts, explicit
+constraints, and directly explainable tradeoffs. Present general patterns only
+as general guidance; do not use unsupported claims such as "industry
+standard," "mainstream products," or "best practice" as factual evidence.
 
-Avoid exhaustive questioning. Gather enough product detail to support later
-design and development, but do not design code, database fields, API paths,
-technical architecture, test tooling, or deployment. Record user-supplied
-technical details only as constraints or references.
+Prefer semantically explicit business options over confusing yes/no or
+negated phrasing. Be exhaustive about material requirement branches, not about
+theoretical possibilities. A question is material when its answer can change
+scope, visible behavior, rules, roles or permissions, lifecycle, main flow,
+business or data consequences, exception behavior, compatibility, acceptance
+outcomes, or material business risk. Do not expand into code, database fields,
+API paths, technical architecture, test tooling, or deployment. Record
+user-supplied technical details only as constraints or references.
 
 ### 5. Check the stopping conditions
+
+Before presenting the final requirement summary, read and apply
+[completeness-audit.md](references/completeness-audit.md). Run all three layers:
+Coverage Audit, Branch Expansion Audit, and Synthesis Provenance Audit. Reopen
+clarification when a relevant material dimension is unresolved, a confirmed
+decision created an unresolved second-order product branch, or a planned
+material rule lacks valid provenance.
+
+A material branch is complete only when it is `Confirmed`, `Explicitly Out of
+Scope`, `Explicitly Deferred by the User`, or `Intentionally Unresolved with
+the User Accepting the Remaining Risk`. Never guess an unanswered product
+decision or convert an unknown into a recommended choice. There is no maximum
+number of rounds, questions, or interview duration; stop based on material
+requirement completeness, not question count or elapsed conversation length.
 
 Do not generate the PRD while any of these conditions holds:
 
@@ -128,10 +208,17 @@ Do not generate the PRD while any of these conditions holds:
 - the user has not confirmed the overall requirement understanding;
 - the workspace or source authorization is ambiguous.
 
-When the main questions are resolved, summarize the problem, target users,
-core capability, key rules, main exceptions, in-scope work, and explicitly
-out-of-scope work. Ask the user to correct omissions or confirm that this
-summary accurately represents the requirement.
+If the user asks to stop questioning or generate the PRD early, identify the
+remaining material unresolved branches, state that the skill will not decide
+them automatically, and ask the user to confirm acceptance of those unresolved
+or deferred items. Proceed only after that confirmation, preserving them in
+the summary and PRD where appropriate.
+
+After the audit, summarize confirmed scope, users and roles, main flows,
+business rules, relevant exception behavior, out-of-scope items, and deferred
+or unresolved items. Ask the user to correct omissions or explicitly confirm
+that this summary accurately represents the requirement. Only that final
+confirmation authorizes writing `prd.md`.
 
 ### 6. Synthesize the confirmed PRD
 
@@ -141,10 +228,12 @@ interview, unless genuinely new ambiguity appears that requires more
 clarification.
 
 Before writing, read
-[prd-document-guide.md](references/prd-document-guide.md) and use
-[prd-template.md](assets/prd-template.md). Localize headings and prose to the
-output language while preserving the required structure and the English
-filename.
+[prd-document-guide.md](references/prd-document-guide.md) and optionally consult
+[prd-structure-patterns.md](references/prd-structure-patterns.md). Compose the
+document adaptively from the confirmed requirement's relevant semantic
+dimensions. Do not force identical headings, section counts, or ordering, and
+do not create empty or low-value sections merely to satisfy a document shape.
+Keep the filename `prd.md` in English while localizing headings and prose.
 
 Keep the PRD product-semantic. Do not normally include implementation file
 paths, function or class names, test file names, code snippets, internal
@@ -152,10 +241,14 @@ architecture decisions, or database implementation details, unless one of
 those is itself an explicit business or technical constraint provided by the
 user.
 
-Include only content covered by the confirmed overall understanding. Preserve
-remaining known open questions in the final section; write the localized
-equivalent of "None" when there are none. Do not present an AI guess as a
-confirmed requirement. Record the actual requirement sources used.
+Include only content covered by the confirmed overall understanding and valid
+decision provenance. Preserve material unresolved or deferred decisions where
+useful, but do not create an empty unresolved section merely to say "None."
+Do not present an AI recommendation, assumption, implementation convenience,
+unsupported general claim, or repository current-state fact as a confirmed
+future product rule. When a product outcome is confirmed but an implementation
+choice is not, write only the product-semantic outcome. Record the actual
+requirement sources used.
 
 Write only to the resolved
 `docs/wewo/<requirement-category>/<requirement-slug>/prd.md` path. If that
