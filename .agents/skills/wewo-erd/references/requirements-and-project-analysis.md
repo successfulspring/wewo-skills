@@ -1,94 +1,103 @@
-# Requirements and Project Analysis
+# Requirements and Progressive Project Analysis
 
-Use this guide before proposing a technical design.
+Use this guide before and during engineering design. Repository investigation
+is decision-driven and progressive, not exhaustive by default.
 
 ## Assess requirement sufficiency
 
-Establish at least:
+Establish enough confirmed context to understand:
 
-- what must be implemented, changed, or fixed;
-- affected users, business situations, or system modules;
-- the core business result;
+- what behavior must be implemented, changed, or fixed;
+- affected users, situations, or system boundaries;
+- the observable business result;
 - primary scope boundaries;
-- rules that materially constrain implementation.
+- product, business, security-policy, and technical constraints that materially
+  shape engineering design.
 
-Proceed directly to project analysis when this is clear. If only a few details
-are missing, ask for those details inside this skill, such as roles, historical
-data compatibility, interface or database change permission, rollback versus
-partial success, audit needs, or new-dependency permission.
+Proceed to project analysis when this is sufficient. If a missing product,
+business, or security-policy decision blocks legitimate design, classify it as
+a Blocking Requirement Ambiguity and ask the user. Never make another
+capability a prerequisite.
 
-If the goal is too vague to select a basic implementation direction, clarify
-it progressively. Request additional requirement clarification or requirement
-context only when the user wants a complete product rediscovery; never make
-another capability a prerequisite.
+## Combine only authorized requirement material
 
-## Combine input material
+Use sources explicitly supplied or referenced in this interaction, or already
+established in the current conversation. Do not scan `docs/wewo/` or the
+repository for historical workflow documents.
 
-Use only sources the user explicitly provides or references in this
-interaction, or that the current conversation already establishes. Do not scan
-`docs/wewo/` or the repository for historical requirement documents.
+A `prd.md` is an optional, producer-agnostic requirement artifact. Accept the
+current conversation, requirement descriptions, Markdown, TXT, office
+documents, PDFs, images, issues, tasks, change notes, bug reports, explicitly
+identified requirement documents, current project code, and multiple related
+sources.
 
-A `prd.md` is simply a requirement artifact; this skill does not care which
-capability produced it.
+Preserve source identity, distinguish confirmed statements from proposals, and
+surface material conflicts for user resolution. If a format cannot be
+inspected, request an accessible export or excerpt and do not claim it was
+analyzed.
 
-Accept and synthesize:
+Repository facts describe the current system. They do not decide desired
+product behavior or silently broaden a user constraint.
 
-- current conversation and requirement descriptions;
-- Markdown, TXT, office documents, and PDFs;
-- screenshots, prototypes, and other images;
-- existing PRDs, including `prd.md`;
-- issues, tasks, change notes, and bug reports;
-- relevant project requirement documents;
-- current project code;
-- multiple related sources.
+## Decision-driven progressive technical discovery
 
-Do not assume one file is the sole source of truth. Preserve source identity,
-distinguish confirmed statements from proposals, and surface conflicts for
-user resolution.
+For an existing project:
 
-Use capabilities available in the current host to read supported formats. If a
-format or image cannot be inspected, request an accessible export, screenshot,
-or pasted excerpt and continue with the available evidence.
+1. Identify the requirement's initial affected entry points.
+2. Trace relevant control and data flow far enough to understand current
+   responsibilities, boundaries, and reuse points.
+3. Form the current Engineering Impact Map.
+4. Identify which current engineering decision lacks evidence.
+5. Inspect additional modules only when that design branch requires it.
+6. Stop investigation for the decision when enough verified repository
+   evidence supports engineering reasoning.
 
-## Inspect the existing project
+Do not perform exhaustive whole-repository exploration by default. Do not use
+an arbitrary tool-call, file-count, or token limit; evidence sufficiency for the
+current decision is the stopping condition.
 
-When code exists, inspect only what is relevant to the requirement:
+The Engineering Impact Map conceptually records relevant existing entry points,
+control and data flow, responsibility boundaries, interfaces, persistence and
+state, authentication and authorization, lifecycle, dependencies, operations,
+and likely change surfaces. It is internal reasoning state, not an artifact.
 
-- technology stack and directory structure;
-- system layers and module boundaries;
-- pages, components, modules, and services;
-- existing interfaces and data models;
-- authentication and authorization;
-- error handling, logging, and auditing;
-- configuration management;
-- dependency injection and object lifetimes;
-- cache, queues, scheduled work, and third-party services;
-- similar implementations;
-- coding and architecture conventions.
+Inspect repository instruction files and relevant areas such as stack,
+structure, layers, modules, interfaces, models, authorization, validation,
+error handling, transactions, concurrency, idempotency, configuration,
+dependency injection, object lifetime, integrations, migration, compatibility,
+observability, similar implementations, and conventions only as the current
+design requires.
 
-Use repository instruction files when needed for conventions. Trace relevant
-control flow far enough to understand existing responsibilities and reuse
-points.
+## Existing versus proposed design
 
-Never invent a file path, class, function, interface, table, shared module, or
-framework. Label an inference as an inference and verify it before using it as
-a design fact.
+Label important claims conceptually as:
 
-## Separate facts from decisions
+- `Existing`: verified current repository behavior or structure;
+- `Proposed`: a justified new or changed engineering design;
+- `Constraint`: an explicit requirement or technical boundary;
+- `Decision`: a confirmed material choice or a grounded Engineering Default.
 
-Obtain project facts directly, including framework, layering, existing
-services, database, dependency management, response formats, error handling,
-authorization, and similar features.
+Never present proposed design as verified repository fact. Verify an existing
+path, class, function, interface, table, module, framework, convention, or
+behavior before relying on it as current state. Label uncertain current-state
+claims as inferences and investigate them when material.
 
-Ask the user only about choices whose answers materially change the solution,
-such as:
+Proposed design may introduce responsibilities, modules, interfaces, data
+structures, tables or fields, components, configuration, and dependencies when
+the confirmed design justifies them. Describe them as proposed. Avoid
+over-specifying exact file, class, or function names unless verified project
+structure or the design genuinely needs that precision.
 
-- changing versus adding an interface;
-- allowing a new dependency or database change;
-- supporting old data or clients;
-- failure, retry, or partial-success behavior;
-- consistency guarantees and audit needs;
-- synchronous versus asynchronous processing;
-- performance, consistency, and complexity tradeoffs.
+## Feed evidence into decision ownership
 
-Recommend a choice based on verified project facts, then request confirmation.
+Use repository evidence to classify issues under the Engineering Decision Map:
+
+- discover Repository Facts directly;
+- preserve User Technical Constraints;
+- decide routine Engineering Defaults;
+- ask for explicit confirmation of Material Engineering Decisions;
+- surface Blocking Requirement Ambiguities to the user.
+
+Recommendations must cite the relevant evidence and explain trade-offs. Do not
+substitute implementation convenience or an unsupported pattern for verified
+project reasoning.

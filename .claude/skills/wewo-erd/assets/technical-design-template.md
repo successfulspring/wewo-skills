@@ -1,70 +1,65 @@
-# Reusable Technical Design Template
+# Adaptive Engineering Design Composition Scaffold
 
-Use this as an internal rendering template. Replace every brace-delimited
-instruction with confirmed content in the selected output language. Localize
-all headings while keeping the filename `technical-design.md` in English.
-Do not copy this instruction block into the generated document.
+Use this only as an internal composition aid after final confirmation. It is
+not a fixed schema. Preserve the Stable Core semantics, but combine, rename,
+reorder, or omit sections when the confirmed design is clearer. Insert only
+relevant adaptive detailed-design sections. Do not copy this instruction block
+or empty placeholders into `technical-design.md`.
 
 ```markdown
-# {Localized title: Technical Design Document}
+# {Localized engineering design title}
 
-## 1. {Localized heading: Design Overview}
+## {Design Goal and Constraints}
 
-{Goal, functionality, systems, modules, and core problem}
+{Requirement outcome, actual sources, explicit constraints, non-goals, and
+design-shaping forces}
 
-## 2. {Localized heading: Requirement Sources}
+## {Existing System and Impact Scope}
 
-{Actual source material, inspected project areas, and confirmed dialogue}
+{Verified existing entry points, responsibilities, boundaries, interfaces,
+data/state/lifecycle, reusable capabilities, proposed changes, and explicit
+non-changes. Label Existing, Proposed, Constraint, and Decision clearly.}
 
-## 3. {Localized heading: Existing System Analysis}
+## {Proposed Engineering Design}
 
-{Verified project facts and reusable capabilities}
+{Responsibilities, dependency direction, collaboration, control/data flow,
+interfaces, state/lifecycle, persistence, failure behavior, and rationale}
 
-## 4. {Localized heading: Requirement Impact Scope}
+{Add, combine, rename, reorder, or omit only relevant detailed sections such as
+frontend, backend, interface/API, data model, ER diagram, state/lifecycle,
+transactions, concurrency/idempotency, cache, queue/background work, files,
+integrations, migration/backfill, compatibility, release/rollback, and
+observability. Integrate each area's security, consistency, reliability, and
+resource controls where that area is designed.}
 
-{Additions, modifications, and explicit non-modifications}
+## {Engineering Risk Controls and Invariants}
 
-## 5. {Localized heading: Overall Technical Approach}
+| {Risk and boundary} | {Design control} | {Implementation constraint} | {Engineering invariant} |
+|---|---|---|---|
+| ... | ... | ... | ... |
 
-{Module placement, collaboration, data flow, processing, and result}
+{Use only for admitted material risks and invariants. A compact summary may
+point back to controls already integrated in detailed design.}
 
-## 6. {Localized heading: Detailed Design}
+## {Verification Seams}
 
-{Only applicable frontend, backend, interface, data, state, transaction,
-concurrency, idempotency, cache, queue, scheduled work, file, integration,
-exception, migration, compatibility, release, and rollback subsections}
-
-{Include a Mermaid ER diagram here only for entity or relationship changes}
-
-## 7. {Localized heading: Security and Engineering Risk Analysis}
-
-### 7.1 {Localized heading: Application Security}
-
-{Relevant risks, design controls, and implementation constraints}
-
-### 7.2 {Localized heading: Reliability and Business Correctness}
-
-{Relevant risks, design controls, and implementation constraints}
-
-### 7.3 {Localized heading: Code Structure and Maintainability}
-
-{Relevant risks, design controls, and implementation constraints}
-
-## 8. {Localized heading: Implementation Constraints}
-
-{Concrete rules later code must obey}
-
-## 9. {Localized heading: Verification Focus}
-
-{Important later verification directions, not full test cases}
-
-## 10. {Localized heading: Design Decision Summary}
-
-| {Localized: Decision} | {Localized: Final approach} | {Localized: Reason} |
+| {Linked invariant or behavior} | {Stable engineering seam} | {Observable property} |
 |---|---|---|
 | ... | ... | ... |
 
-## 11. {Localized heading: Unresolved Questions}
+{Engineering boundaries only; no QA cases, test steps, tools, or TDD workflow.}
 
-{Non-blocking unresolved questions, or the localized equivalent of "None"}
+## {Engineering Decision Record}
+
+| {Decision} | {Context / Evidence} | {Final Approach} | {Reason} | {Trade-offs / Consequences} | {Reversibility} |
+|---|---|---|---|---|---|
+| ... | ... | ... | ... | ... | ... |
+
+{Record only material implementation-shaping decisions. Add considered options
+when they materially explain the choice.}
+
+## {Optional: Deliberately Unresolved or Deferred Issues}
+
+{Include only when actual non-blocking items remain and the user accepted them;
+otherwise omit this section.}
 ```
