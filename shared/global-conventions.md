@@ -59,14 +59,12 @@
 
    - `prd.md`
    - `technical-design.md`
-   - `test-plan.md`
    - `test-cases.md`
    - `implementation-plan.md`
    - `implementation-record.md`
    - `test-execution.md`
    - `manual-test-checklist.md`
-   - `code-review.md`
-   - `security-review.md`
+   - `review.md`
 
 10. Skill implementation files must be written in English, including:
 
@@ -92,9 +90,13 @@
     proprietary frontmatter, or capabilities that may be unavailable in the
     other agent.
 
-15. Host-specific capabilities such as subagents, browser control, MCP tools,
-    or special metadata should be treated as optional enhancements with a
-    documented fallback.
+15. Host-specific capabilities such as browser control, MCP tools, or special
+    metadata should be treated as optional enhancements with a documented
+    fallback. Subagents are also optional by default. A capability may require
+    isolated reviewer contexts only when independence is explicitly part of
+    correctness; if unavailable, report unable to conclude rather than
+    simulating independence in one shared context. This exception does not
+    apply to other capabilities implicitly.
 
 16. Skills may create missing parent directories only after the requirement
     workspace has been resolved unambiguously.
@@ -126,10 +128,10 @@
 
 22. Each workflow document is owned by the capability that produces it:
     `prd.md` by wewo-prd, `technical-design.md` by wewo-erd,
-    `test-plan.md` and `test-cases.md` by wewo-testplan,
+    `test-cases.md` by wewo-testplan,
     `implementation-plan.md` and `implementation-record.md` by wewo-build,
     `test-execution.md`, `manual-test-checklist.md`, and `test-artifacts/` by
-    wewo-test, and `code-review.md` and `security-review.md` by wewo-review.
+    wewo-test, and `review.md` by wewo-review.
     A skill must not normally modify a workflow document owned by another
     capability. Deviations, adjustments, and execution states belong in the
     owning capability's own documents, or are handled through explicit user

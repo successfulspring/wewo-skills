@@ -1,224 +1,166 @@
 ---
 name: wewo-testplan
-description: Design a risk-based test strategy and detailed, traceable test cases before or alongside implementation, including appropriate test levels, coverage conditions and test-data assumptions, regression scope, and manual coverage. Use when a user asks what and how a feature, bug, refactor, or maintenance change should be tested. Do not use to implement code, generate final executable tests, execute tests, record Passed or Failed results, create execution evidence, or perform code review.
+description: Design comprehensive, executable test cases from authoritative requirements and risks, then classify the already-designed cases by test level and downstream automation route. Use when a user asks what behaviors and failure scenarios should be verified for a feature, bug, refactor, or maintenance change. Do not use to implement or execute tests, modify product code, record test results, or perform code review.
 ---
 
-# Wewo Test Plan
+# Wewo Requirement-Driven Test Case Design
 
-Define what must be tested and the expected evidence without implementing or
-executing tests.
+Design semantic test scenarios and executable cases from authoritative
+requirements and risks first. Only after the case set passes coverage and
+oracle audits, annotate it with Test Level and Automation. The only owned
+project artifact is `test-cases.md`.
 
-## Inputs and outputs
+## Inputs and output
 
-Accept requirement context, an optionally explicitly supplied or already
-established `prd.md` and `technical-design.md`, text and office files, PDFs,
-images, API documents, issues or tasks, current project code, historical
-defects, and multiple related materials.
+Work from a sufficiently clear current user requirement, an explicitly
+supplied or established `prd.md`, or both. An optional `technical-design.md` or
+explicit external contract may define authoritative technical behavior.
+Requirement and design evidence are sufficient; implementation code and other
+capabilities are not prerequisites.
 
-Create only:
+Do not discover historical QA documents, workflow artifacts, or old case
+libraries unless explicitly supplied or authorized. Write only:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/test-plan.md
 docs/wewo/<requirement-category>/<requirement-slug>/test-cases.md
 ```
 
-Keep filenames and path segments in English. Conduct user interaction and
-write both documents in an explicitly requested language, otherwise the
-dominant interaction language, and otherwise Chinese.
+Do not create a test plan or intermediate risk, coverage, automation, or audit
+artifact. Keep the filename and workspace path in English. Use the requested
+language, otherwise the interaction's dominant language, and otherwise Chinese
+for the document.
 
-## Mandatory workflow
+## Runtime workflow
 
 ### 1. Resolve the requirement workspace
 
-Run independently. Use `prd.md` and `technical-design.md` only when the user
-explicitly supplies them, explicitly references them, or the current
-conversation already establishes them. Never require them, create empty
-replacements, scan for them, or block because another capability has not run.
+Use an explicit workspace, then one established in the current requirement
+context, then one unambiguous candidate inferred from the requirement, issue,
+branch, or explicitly referenced material. Ask before writing when multiple
+candidates are plausible. Never select by discovered artifact or modification
+time. Use `features`, `bugs`, `refactors`, or `maintenance`; default to
+`features` only when no evidence favors another category. Never mix different
+requirements without confirmation.
 
-Resolve exactly one workspace before creating documents:
+### 2. Establish authoritative requirements and repository mode
 
-1. Use an explicit workspace supplied by the user.
-2. Otherwise reuse the workspace established for this requirement.
-3. Otherwise infer a candidate from the requirement, issue, branch, or
-   explicitly supplied or referenced material.
-4. Ask before writing if multiple workspaces are plausible.
+Read [context-analysis.md](references/context-analysis.md). Requirement defines
+expected behavior; repository implementation reveals implemented behavior.
+Resolve material oracle ambiguity without using current implementation as a
+fallback requirement oracle.
 
-Never infer a workspace from the existence of workflow artifacts. Never select
-a workspace because it was modified most recently. Use `features`, `bugs`,
-`refactors`, or `maintenance`; default to `features` only when no evidence
-favors another category. Use a concise lowercase English kebab-case slug.
-Create parent directories only after resolution is unambiguous, and never mix
-different requirements without explicit confirmation.
+In default requirement-driven mode, do not broadly inspect implementation
+source, functions, classes, providers, pages, current tests, runners, or
+fixtures. Use implementation-aware mode only when the user requests it, source
+code is explicitly supplied or referenced, current behavior is the requested
+basis because authoritative requirements are absent, or an authoritative
+technical-design seam requires repository grounding.
 
-### 2. Establish sufficient test context
+### 3. Model requirements, behavior, risks, and scenarios
 
-Read and apply
-[context-analysis.md](references/context-analysis.md).
+Read [risk-and-strategy.md](references/risk-and-strategy.md). Before any
+implementation inspection, derive and trace the authoritative behaviors,
+rules, outcomes, risks, and material test obligations. Ask what can fail, what
+must be verified, what scenarios provide distinct evidence, and what exact
+observable outcome means pass or fail.
 
-Combine the user's current request with the requirement, design, and project
-materials explicitly provided, referenced, or confirmed. Do not scan
-`docs/wewo/` or the repository for historical documents. Do not treat one
-source as the only truth. Surface critical conflicts and ask which expectation
-governs. Inspect requirement, product, and design context needed to understand
-test behavior: affected modules, public interfaces, roles, business rules, and
-historical defects when available. Do not inspect concrete test tools, test
-frameworks, test runners, browsers, or execution-environment readiness; those
-belong to test execution.
+Apply applicable business-flow, input/data, business-rule, lifecycle, access,
+reliability, security, user-experience, and critical-journey lenses. Create
+semantic scenarios from distinct evidence needs, not from test levels,
+repository functions, requirement sentences, fixed ratios, or test-pyramid
+quotas.
 
-Establish the minimum necessary context when usable artifacts are absent.
-Do not fabricate pages, interfaces, roles, states, environments, data, or
-business rules. Ask when an unresolved expected behavior materially changes
-test design. If a source format cannot be read with current capabilities,
-state the limitation and request an accessible export or pasted content.
+Lock requirement-derived obligations before implementation-aware enrichment.
+Missing implementation is a potential test failure, not a reason to omit the
+test case. Only authoritative evidence may mark behavior optional, future,
+out-of-scope, or not required for this delivery.
 
-Clarify progressively rather than presenting a comprehensive questionnaire.
-Discuss one test topic per round and normally ask one to three tightly related
-questions. State the evidence, risk, recommendation, reason, and exact
-confirmation needed. After each answer, re-evaluate resolved conditions, new
-risks, remaining case-changing uncertainties, and readiness to generate.
+### 4. Optionally enrich from implementation
 
-### 3. Analyze risk and define scope
+When implementation-aware mode applies, inspect progressively only after the
+requirement-derived scenario and oracle model is locked. Repository facts may
+add regression risks, technical seams, compatibility cases, executable setup,
+public interfaces, or automation-suitability evidence. They must not remove or
+weaken a requirement-derived case, redefine its oracle, turn missing behavior
+into out-of-scope work, or rewrite expected behavior to match implementation.
 
-Read and apply
-[risk-and-strategy.md](references/risk-and-strategy.md).
+Do not create Unit cases merely because code exposes functions or classes.
+Prefer user, business, or public-interface semantics unless an authoritative
+technical contract or explicit implementation-aware request makes a concrete
+seam itself the evidence target.
 
-Identify the test object, in-scope behavior, regression scope, explicit
-exclusions, business and quality risks, coverage conditions, test-data
-assumptions, external dependencies, and blocking conditions. Cover relevant
-normal, negative, boundary, authorization, security, consistency, concurrency,
-migration, compatibility, performance, reliability, and regression risks.
+### 5. Generate executable semantic cases
 
-Coverage conditions describe product scope only, such as required platforms,
-required browser or device categories, roles, locales, and configurations.
-Test-data assumptions include whether data may be created or deleted,
-destructive-data constraints, and required state or setup assumptions. These
-are design inputs, not execution-infrastructure discovery.
+Read [test-case-quality.md](references/test-case-quality.md). Create the full
+semantic case set before selecting Test Level or Automation. Use stable IDs,
+business-readable scenarios, adaptive Preconditions and Notes, concrete Steps,
+and authority-grounded Expected Results. Keep Traceability, Objective,
+Technique, Coverage Lens, Risk Category, Repository Fact, and Evidence Need
+internal.
 
-Select test-design methods that fit the rules, such as equivalence classes,
-boundaries, decision tables, state transitions, scenarios, causal analysis,
-permission matrices, combinations, concurrency analysis, risk-driven testing,
-and historical-defect regression.
+Compress equivalent or low-value duplicates with partitions, boundaries,
+decision tables, state matrices, parameterization, representative combinations,
+or pairwise coverage. Never rewrite a difficult or missing-implementation case
+to fit a tool.
 
-Prioritize by business risk rather than document order. Do not invent fixed
-coverage targets, pass rates, environments, accounts, or test data.
+### 6. Audit semantic coverage and oracles
 
-### 4. Select the testing strategy and levels
+Before classification, run the requirement, happy-path, negative/alternative,
+boundary, business-rule, state-transition, permission/ownership,
+failure/recovery, security, critical-journey, oracle-authority, duplicate-value,
+and Cross-case Oracle Consistency audits in `test-case-quality.md`, applying
+each where relevant. Fix missing cases, vague or unsupported oracles,
+contradictions, and unnecessary duplicates. Do not invent thresholds.
 
-Read and apply
-[test-level-selection.md](references/test-level-selection.md).
+Every published case must have one authoritative and executable pass/fail
+oracle for each material expected behavior. Reject materially different
+`A or B`, `A and/or B`, current-implementation, or mock-behavior fallbacks.
+Different wording is acceptable only when it preserves the same required
+business outcome. Propagate confirmed clarifications consistently across every
+case that shares the rule.
 
-Use abstract test-level labels only: Unit, Component, Integration, API,
-Contract, E2E, Security Behavior, Migration/Data, Performance/Reliability, and
-Manual. The skill does not inspect, select, configure, or reason about concrete
-test tools, test runners, browser installations, or execution infrastructure,
-unless the user explicitly requests a tool-specific test-design task.
+If material ambiguity remains after clarification is declined or unavailable,
+publish unaffected cases and optionally disclose only the material unresolved
+item; do not publish a definitive oracle for the affected evidence need.
 
-For every risk or scenario, recommend the lowest-cost, fastest, most stable
-level that provides direct and trustworthy evidence. Use complementary levels
-only when each adds distinct evidence. Do not force every scenario through
-unit, integration, API, and E2E, and never equate verification with browser
-testing.
+### 7. Classify the completed cases
 
-Define applicable black-box and white-box perspectives, unit and component
-candidates, integration, API and contract coverage, E2E, security behavior,
-data and migration, performance and reliability, regression, and manual
-testing.
+Only after the semantic case set passes audit, read
+[test-level-selection.md](references/test-level-selection.md) and assign one
+Recommended Test Level to each case. Test Level describes where an
+already-designed case is best proven; it never decides whether the case exists.
 
-### 5. Classify the recommended and required evidence levels
+Then read [automation-classification.md](references/automation-classification.md),
+classify Automation Feasibility, select a concrete Automation Route when
+semantics determine it, otherwise deliberately defer the route and render
+`Auto`. Automation is a final annotation: it must not generate or remove a
+case, rewrite steps, weaken an oracle, or suppress unimplemented required
+behavior.
 
-Classify each scenario using:
+Use Playwright only when browser behavior itself supplies the evidence. Use an
+explicit API, Integration, Component, or Contract route when authoritative
+technical evidence defines that seam. Use `Auto` when automation is clearly
+appropriate but choosing the cheapest stable route requires downstream
+repository inspection. `Auto` is neither a Test Level nor a concrete tool. Keep
+Manual narrow to intrinsic human judgment and preserve named conditions in
+`Conditional · Auto` or other Conditional values.
 
-- **Recommended Test Level**: advisory guidance for later verification.
-- **Required Evidence Level**: the minimum evidence level considered sufficient
-  to verify the scenario (a specific level, or "X or higher"). It defines only
-  the evidence requirement; it does not define who executes it, which capability
-  consumes it, or which concrete tool executes it.
+Except for the fixed Browser-to-Playwright convention, the skill does not
+inspect, select, configure, or reason about concrete test tools, test runners,
+browser installations, or execution infrastructure. Concrete non-browser tools
+belong downstream. Do not implement or run automation.
 
-Recommended Test Level and Required Evidence Level may both be, for example,
-E2E, without deciding whether or how the scenario will be automated. A Manual
-Required Evidence Level is appropriate for scenarios requiring subjective
-human judgment, such as visual or UX quality.
+### 8. Finalize the lean artifact
 
-### 6. Design traceable test cases
+Read [document-contract.md](references/document-contract.md) and use
+[test-cases-template.md](assets/test-cases-template.md). If the file exists,
+treat an explicit update request as authorization; otherwise ask before
+overwriting it. Start near-immediately with cases. Do not publish passing audit
+narratives, coverage mappings, automation statistics, repository inventories,
+or internal methodology by default. Add only a compact Unresolved Items
+section when material oracle issues remain.
 
-Read and apply
-[test-case-quality.md](references/test-case-quality.md).
-
-Design cases only after requirement analysis, risk analysis, and strategy
-selection. Each case must state the confirmed expected business behavior
-separately from the adjustable execution method. Where useful, distinguish the
-Recommended Test Level from the Required Evidence Level. Set a Required
-Evidence Level only where business risk or observable behavior requires it; do
-not require E2E for every scenario. Use stable case IDs and trace requirements
-and risks to cases.
-
-Do not mechanically convert each requirement sentence into a case. Do not
-require a one-to-one mapping between a documented case and a future test
-function; later verification may split, merge, parameterize, or change the test
-level without changing the confirmed business expectation.
-
-### 7. Review and confirm the design
-
-Perform the internal case review defined in `test-case-quality.md`. Revise
-duplicates, coverage gaps, unreasonable levels, weak expectations, unsupported
-assumptions, and poor evidence-level classifications before presenting the
-design.
-
-Do not generate final documents while any condition holds:
-
-- the basic test object is unclear;
-- core business rules conflict;
-- a key expected result is unknown;
-- result-changing roles or permissions are unconfirmed;
-- test or regression scope is unclear;
-- a critical coverage condition or test-data assumption changes the cases but
-  is unknown;
-- source materials contain an unresolved critical conflict;
-- the user has not confirmed the final test design;
-- the workspace is ambiguous.
-
-Summarize the test object, scope, top risks, selected levels, coverage
-conditions and test-data assumptions, and unresolved questions. Ask the user to
-correct or explicitly confirm the design. Generate nothing before confirmation.
-
-### 8. Generate the two confirmed documents
-
-Before writing, read
-[document-contract.md](references/document-contract.md) and use
-[test-plan-template.md](assets/test-plan-template.md) and
-[test-cases-template.md](assets/test-cases-template.md). Include the
-Recommended Test Level and, where required, the Required Evidence Level for
-each case. Localize headings and prose while preserving the fixed English
-filenames.
-
-Write only to:
-
-```text
-docs/wewo/<requirement-category>/<requirement-slug>/test-plan.md
-docs/wewo/<requirement-category>/<requirement-slug>/test-cases.md
-```
-
-If either file exists, treat an explicit update request as authorization;
-otherwise ask before replacing it. Include the internal review result in
-`test-cases.md`. Derive all overview counts from the cases actually
-documented.
-
-Keep a Manual Test List only as an index of scenarios whose Required Evidence
-Level is Manual.
-
-Do not write executable test code under `docs/wewo/...` or elsewhere. Do not
-modify production code or databases, start the project, run a test suite,
-create execution evidence, record actual results, assign Passed or Failed, or
-generate review reports.
-
-After both files are successfully written and verified, report:
-
-- both exact paths;
-- test scope and primary risks;
-- the actual count of cases by Recommended Test Level;
-- the actual count of cases with a Manual Required Evidence Level;
-- blockers and unresolved questions.
-
-Do not automatically continue into implementation, executable-test creation,
-test execution, triage, manual-test tracking, gates, or code review. Claim only
-the document-generation work that was actually completed.
+Do not create executable tests, start services, install tools, modify product
+code or databases, record actual results, or continue into execution or review.
+Report the exact path and any material unresolved oracle issues. Claim only
+completed work.

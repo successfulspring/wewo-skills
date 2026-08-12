@@ -1,126 +1,49 @@
-# Review Document Contract
+# Unified Review Document Contract
 
-Create both reports for the same resolved workspace and review scope. Localize
-headings and prose while keeping both filenames in English.
+Create exactly one `review.md` for one fixed scope and workspace. Localize
+prose while keeping the filename and canonical `REV-*` IDs in English. Omit
+irrelevant adaptive subsections and empty checklists.
 
-## Contents
+## Stable core
 
-- [Code review report](#code-review-report)
-- [Security review report](#security-review-report)
-- [Cross-report checks](#cross-report-checks)
+1. Review Conclusion & Gates
+2. Scope & Baseline
+3. Independent Review Coverage
+4. Requirement / Design Consistency
+5. Static Analysis & Engineering Rules
+6. Contextual Security Assessment
+7. Confirmed Findings
+8. Potential / Unverified / Existing Issues
+9. Verification & Tool Evidence
+10. Quantitative Metrics
+11. Limitations & Residual Risk
 
-## Code review report
+Show Overall Review Conclusion and Security Gate separately. Record the fixed
+Diff/baseline, tracked scope, applicable untracked files, material excluded or
+unrelated untracked scope, exclusions, all three lane statuses, and Requirement
+or Design Compliance as `Not Evaluated` when explicit evidence is absent.
 
-Use these sections in order:
+## Unified findings and evidence
 
-1. Review Conclusion
-2. Review Scope and Baseline
-3. Review Evidence
-4. Change Size and Risk Overview
-5. Independent Reviewer Execution
-6. Tool Installation and Verification
-7. Requirement and Design Compliance
-8. Repository Standards and Code Structure
-9. Code Correctness
-10. Test Quality
-11. Impact and Compatibility
-12. Confirmed Findings
-13. Potential Risks and Unverified Items
-14. Existing Issues
-15. Quantitative Metrics
-16. Merge Gate
-17. Recommended Fix Order
-18. Review Limitations
+Keep candidate IDs lane-local. After admission and deduplication, assign
+sequential `REV-001`, `REV-002`, and later IDs. One root cause is one canonical
+finding even when multiple lanes detected it or it has correctness and security
+impact. Security classification follows category and impact, not detecting
+lane; reference security findings from Contextual Security without duplication.
 
-Use the filename `code-review.md`.
+Record only useful ID, state, severity, category, detected-by lanes, metric
+scope, location, evidence, expected/actual behavior, trigger/path, impact,
+attribution, remediation, verification, and limitation.
 
-## Security review report
+Record deterministic commands/outcomes, Semgrep acquisition/status, raw
+warning/error counts, coverage completeness and limitation, cleanup, and other
+material evidence. Keep raw tool candidates separate from admitted findings.
 
-Use these sections in order:
+Show each density with numerator, denominator, result, and exclusions. Show
+deduplicated absolute counts by metric scope, severity, and security
+classification. Label detected-by counts overlapping/non-additive.
 
-1. Security Gate Conclusion
-2. Review Scope
-3. Attack-Surface Overview
-4. L1 Dangerous-Pattern Checks
-5. L2 Semantic Diff Review
-6. L3 Cross-file and Business-flow Review
-7. Authentication and Authorization
-8. Input, Injection, and File Safety
-9. Sensitive Data and Configuration
-10. Business Security
-11. Transactions, Concurrency, and Idempotency
-12. External Systems and Supply Chain
-13. Security Tools and Test Evidence
-14. Confirmed Security Findings
-15. Potential Risks and Unverified Items
-16. Existing Security Issues
-17. Security Metrics
-18. Residual Risks and Verification Recommendations
-19. Review Limitations
-
-Use the filename `security-review.md`.
-
-## Shared evidence tables
-
-Scope:
-
-```markdown
-| Field | Value |
-|---|---|
-| Baseline | |
-| Target | |
-| Current commit | |
-| Diff command or query | |
-| Included commits | |
-| Uncommitted changes | |
-| Included files | |
-| Exclusions | |
-```
-
-Commands:
-
-```markdown
-| Check | Command | Scope | Result | Evidence |
-|---|---|---|---|---|
-```
-
-Use `Passed`, `Failed`, `Not run`, `Blocked`, or `Unavailable`; never convert
-missing evidence to Passed.
-
-Reviewer execution:
-
-```markdown
-| Dimension | Independent reviewer | Status | Limitations |
-|---|---|---|---|
-```
-
-Candidate ledger:
-
-```markdown
-| Candidate | State | Root cause | Current-change attribution | Final disposition |
-|---|---|---|---|---|
-```
-
-Metrics:
-
-```markdown
-| Metric | Value | Numerator | Denominator | Exclusions or limitation |
-|---|---|---|---|---|
-```
-
-## Cross-report checks
-
-Verify:
-
-- identical baseline and included Diff;
-- consistent evidence and command outcomes;
-- consistent shared finding state and severity;
-- no duplicate root-cause counts;
-- historical issues excluded from current-change metrics;
-- unsupported metrics marked not calculable;
-- Critical and High blockers reflected in both gates;
-- an incomplete or failed security gate never yields merge readiness;
-- missing requirements and non-independent fallback are disclosed;
-- conclusions use the latest Diff and command evidence;
-- no source or test file was modified;
-- no document owned by another capability was created.
+Disclose missing lanes, unavailable requirement/design evidence, partial
+Semgrep coverage, and residual risk. Do not claim merge readiness when the
+Security Gate fails or is incomplete. Do not modify source/test code or another
+capability's documents.

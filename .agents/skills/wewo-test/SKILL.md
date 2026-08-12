@@ -55,11 +55,11 @@ Use these final gate values only:
 
 ### 1. Resolve the workspace and execution scope
 
-Run independently. Use `test-plan.md` and `test-cases.md` only when the user
-explicitly supplies or references them, or the current conversation already
-establishes them. Never require them, create empty earlier documents, or scan
-the repository for them. The skill does not depend on any other capability's
-completion, deferred state, or workflow report.
+Run independently. Use `test-cases.md` only when the user explicitly supplies
+or references it, or the current conversation already establishes it. Never
+require it, create empty earlier documents, or scan the repository for it. The
+skill does not depend on any other capability's completion, deferred state, or
+workflow report.
 
 Resolve exactly one requirement workspace before writing reports or artifacts:
 
@@ -89,13 +89,20 @@ Use current user goals, requirements, code, Diff, public interfaces, pages,
 existing tests, repository instructions, environment and account information,
 and known risks.
 
-When the user explicitly provides or references them, or the current
-conversation already establishes them, reuse `test-plan.md` and `test-cases.md`.
-Treat an explicitly established `test-cases.md` as the primary scenario
-inventory and an explicitly established `test-plan.md` as optional scope and
-strategy context. Never scan `docs/wewo/` or the repository to discover these
-documents. Existing executable test code in the repository may be used because
-it is a repository fact.
+When the user explicitly provides or references it, or the current conversation
+already establishes it, reuse `test-cases.md` as the primary scenario
+inventory. Never scan `docs/wewo/` or the repository to discover it. Existing
+executable test code in the repository may be used because it is a repository
+fact.
+
+When a supplied case uses Automation `Auto`, treat it as a deferred-routing
+signal, not a framework, Test Level, or execution status. Inspect the actual
+repository and choose the lowest-cost reliable concrete seam and repository-
+native tool that preserves the documented behavior and oracle. For
+`Conditional · Auto`, also preserve and satisfy or report the named condition.
+The selected route may be Unit, Integration, API, Playwright, or another
+repository-supported seam; record the execution-time routing decision without
+rewriting the case's expected behavior.
 
 When usable testing artifacts are absent, derive the minimum matrix from the
 user goal, actual Diff, interfaces, pages, existing tests, repository behavior,

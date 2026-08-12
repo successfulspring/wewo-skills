@@ -16,6 +16,21 @@ Use the first applicable scope:
 Ask when competing scopes would materially change attribution or conclusions.
 Never infer that the target is `main` or `master` without repository evidence.
 
+## Applicable untracked files
+
+Before freezing scope, inspect read-only status such as `git status
+--porcelain`. Formal scope is the tracked Git Diff plus untracked files Main
+explicitly selects as applicable from the user's target, requirement/change
+scope, affected paths, and branch context. Never assume all untracked files
+belong to one change.
+
+Review each selected untracked file as a complete new file from `/dev/null`,
+include it in reviewer packets and metrics, and classify it by the same
+production, test, configuration/migration, or exclusion rules. Pass selected
+paths explicitly to the metrics utility. Do not run `git add`, mutate the
+index, create a synthetic repository patch, or disturb unrelated untracked
+work.
+
 For a PR or MR, prefer the provider's authoritative base and head revisions
 when available. When provider access is unavailable, reconstruct the range
 from local refs and disclose the limitation.
@@ -37,6 +52,7 @@ Record:
 - included commits;
 - staged and unstaged inclusion;
 - included and excluded files;
+- applicable and excluded/unrelated untracked scope;
 - incomplete, binary, generated, or unavailable content;
 - unrelated changes present in the range.
 

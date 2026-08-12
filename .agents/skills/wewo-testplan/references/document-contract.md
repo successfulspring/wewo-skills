@@ -1,121 +1,77 @@
-# Test Design Document Contract
+# Test Cases Document Contract
 
-Read this guide only after the user confirms the final test design.
+Produce exactly one project artifact: `test-cases.md`. Make it a lean,
+execution-oriented test-case document, not a QA strategy, methodology, AI
+reasoning, coverage-analysis, automation-statistics, or repository-inspection
+report.
 
-## Contents
+## Default structure
 
-- [Test plan structure](#test-plan-structure)
-- [Test plan section contract](#test-plan-section-contract)
-- [Test cases structure](#test-cases-structure)
-- [Test case document contract](#test-case-document-contract)
-- [Final quality gate](#final-quality-gate)
-
-## Test plan structure
-
-Use every core section in this order:
-
-1. Test Overview
-2. Test Basis
-3. Test Object and Requirement Understanding
-4. Test Scope
-5. Quality Risk Analysis
-6. Test Strategy
-7. Test Design Methods
-8. Verification Method and Evidence Levels
-9. Coverage Conditions and Test-Data Assumptions
-10. Test-Data Strategy
-11. Test Priority
-12. Test Entry Conditions
-13. Test Exit Conditions
-14. Test Deliverables
-15. Blockers and Unresolved Questions
-
-Localize headings and content. Keep `test-plan.md` in English.
-
-## Test plan section contract
-
-- State the test object, goals, core quality concern, and whether code already
-  exists.
-- List only actual requirement, design, project, and confirmed-dialogue
-  sources.
-- Separate current scope, regression scope, and out-of-scope behavior.
-- Use a risk table with ID, description, impact, level, and test response.
-- Assign each applicable test level a clear responsibility.
-- Identify selected design methods and the rules they cover.
-- Describe the Verification Method and Evidence Levels: the Recommended Test
-  Level per scenario and the Required Evidence Level where business risk or
-  observable behavior requires it.
-- Describe coverage conditions (product scope) and test-data assumptions as
-  design inputs, without inspecting execution infrastructure.
-- Describe only verified project capabilities and data; mark unknowns.
-- Derive entry and exit conditions from the project without inventing fixed
-  coverage or pass-rate targets.
-
-Add only relevant strategy subsections for unit, component, integration, API,
-frontend, E2E, authorization/security, performance/reliability, manual,
-regression, compatibility, files, external systems, or data migration.
-
-## Test cases structure
-
-Use every core section in this order:
-
-1. Document Notes
-2. Test Case Overview
-3. Requirement Coverage
-4. Detailed Test Cases
-5. Manual Evidence Index
-6. Case Review Result
-7. Unresolved Questions and Blockers
-
-Localize headings and content. Keep `test-cases.md` in English.
-
-## Test case document contract
-
-Group detailed cases only by relevant normal flow, rules/state, negative,
-boundary, authorization/security, consistency, API, frontend, integration,
-E2E, regression, performance, compatibility, or exploratory areas.
-
-Use the reusable case template. Record the Recommended Test Level and, where
-business risk or observable behavior requires it, the Required Evidence Level
-for each case. Build the overview counts from the actual documented cases:
+Start near-immediately with actual cases:
 
 ```markdown
-| Test level | Total | P0 | P1 | P2 | Required evidence |
-|---|---:|---:|---:|---:|---:|
+# <Requirement Name> Test Cases
+
+## Test Cases
+
+### TC-001 — <Business-readable scenario>
+...
 ```
 
-Map requirement IDs when they exist, otherwise concise business rules:
+Localize headings and content while keeping the filename in English. Do not
+include Test Basis, Coverage Summary, Coverage Mapping, Automation Summary, or
+Coverage Audit by default. Do not list inspected repository files. Publish
+analysis or statistics only when the user explicitly requests them.
 
-```markdown
-| Requirement or rule | Test cases | Coverage |
-|---|---|---|
-```
+## Visible case schema
 
-Keep a Manual Evidence Index listing cases whose Required Evidence Level is
-Manual. It is an index only; it is not an execution workflow.
+Each case contains only:
 
-Include the internal review result and remaining gaps.
+- ID and business-readable scenario in the heading;
+- Module;
+- business/test Priority (`P0`, `P1`, or `P2`);
+- Recommended Test Level;
+- human-facing Automation;
+- Preconditions only when meaningful;
+- concrete numbered Steps;
+- concrete numbered Expected Results;
+- Automation Condition only for Conditional cases;
+- Notes only when genuinely useful.
 
-## Final quality gate
+Prefer user, business, or authoritative public-interface language. Avoid
+incidental functions, private classes, repository paths, and source-line detail
+unless an authoritative technical contract or explicit implementation-aware
+request makes that seam the evidence target. Keep a requirement-derived case
+when implementation is missing; later execution may fail it.
 
-Before writing both documents, verify:
+Do not expose Traceability, Objective, Technique, Coverage Lens, Risk Category,
+Repository Fact, Evidence Need, automation priority, route `None`, or a separate
+Playwright Yes/No field. Keep the internal test-level and automation-route
+decisions distinct even though the visible representation is concise.
 
-- the user confirmed the test design;
-- content matches actual requirements, design, code, and product context;
-- no page, interface, role, state, environment, account, or data is invented;
-- unknown rules are not presented as expected behavior;
-- steps are specific and expectations judgeable;
-- priority follows risk;
-- selected levels are economical and trustworthy;
-- E2E is limited to useful end-to-end evidence;
-- the Required Evidence Level is set only where business risk or observable
-  behavior requires it;
-- Recommended Test Level and Required Evidence Level classifications are
-  explicit and realistic;
-- normal, negative, boundary, high-risk, security, consistency, and regression
-  coverage is appropriate;
-- actual counts match the documented cases;
-- the internal review is complete;
-- neither document contains execution results or claims;
-- no concrete tool, runner, or execution-environment decision appears;
-- no executable test or production implementation is produced.
+Automation may be `Playwright`, `API`, `Unit`, `Integration`, `Component`,
+`Contract`, `Auto`, `Manual`, or a `Conditional · <value>` form. `Auto` means
+automation is appropriate but the concrete route is intentionally deferred to
+downstream repository analysis; it is not a Test Level or tool.
+
+## Material unresolved items
+
+Ask before finalizing when ambiguity materially changes an oracle. If the user
+declines or cannot clarify, omit the affected definitive oracle, publish
+unaffected cases normally, and optionally add one compact `Unresolved Items`
+section containing only issues that materially affect the published cases.
+Omit the section when none remain. Do not create a general assumptions section.
+
+## Final gate
+
+Before saving, verify internally that requirement/risk traceability and all
+applicable semantic coverage and oracle audits completed before Test Level and
+Automation classification; every case has a valid level and an explicit or
+deliberately deferred routing decision, concrete steps, one deterministic
+authority-grounded pass/fail oracle for each material expected behavior,
+cross-case oracle consistency, and correct Automation rendering; no material
+`A or B`, `and/or`, current-implementation, or mock-behavior fallback remains;
+Conditional dependencies are named; missing implementation suppressed no
+authoritative obligation; and the document contains no invented thresholds,
+execution results, executable tests, tool setup, long implementation
+explanations, repository inventory, or default report sections.

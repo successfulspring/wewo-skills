@@ -75,14 +75,12 @@ ROOT_OUTPUT_PATTERN = re.compile(
 STABLE_FILENAMES = (
     "prd.md",
     "technical-design.md",
-    "test-plan.md",
     "test-cases.md",
     "implementation-plan.md",
     "implementation-record.md",
     "test-execution.md",
     "manual-test-checklist.md",
-    "code-review.md",
-    "security-review.md",
+    "review.md",
 )
 LEGACY_FILENAMES = (
     "01-prd.md",
@@ -124,10 +122,10 @@ OTHER_SKILL_NAME_PATTERN = re.compile(r"wewo-(?:prd|erd|testplan|build|test|revi
 OWNED_ARTIFACTS = {
     "wewo-prd": ("prd.md",),
     "wewo-erd": ("technical-design.md",),
-    "wewo-testplan": ("test-plan.md", "test-cases.md"),
+    "wewo-testplan": ("test-cases.md",),
     "wewo-build": ("implementation-plan.md", "implementation-record.md"),
     "wewo-test": ("test-execution.md", "manual-test-checklist.md"),
-    "wewo-review": ("code-review.md", "security-review.md"),
+    "wewo-review": ("review.md",),
 }
 BUILD_FORBIDDEN_MARKERS = (
     "test-plan.md",
@@ -150,6 +148,7 @@ TESTPLAN_TOOL_BOUNDARY_MARKER = (
 TEST_FORBIDDEN_PROCESS_ARTIFACTS = (
     "implementation-plan.md",
     "implementation-record.md",
+    "review.md",
     "code-review.md",
     "security-review.md",
 )

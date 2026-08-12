@@ -1,77 +1,71 @@
-# Test Level Selection
+# Post-Generation Test Level Classification
 
-Choose the lowest-cost, fastest, most stable level that directly proves the
-behavior. Add a complementary level only when it supplies different evidence.
+Apply this classification only after semantic scenarios and executable cases
+exist and pass coverage and oracle audits. Test Level answers where an
+already-designed behavior can be proven most economically and reliably. It
+does not answer what cases should exist.
 
-## Perspectives
+Keep Objective, Technique, Recommended Test Level, Automation Feasibility, and
+Automation Route distinct. Objectives and techniques remain internal; do not
+expose a mixed generic Test Type field.
 
-- Use black-box design for externally observable behavior, contracts, and
-  business outcomes without depending on internals.
-- Use white-box design when verified implementation structure exposes
-  meaningful branches, seams, state, error paths, or collaboration boundaries.
+## Recommended Test Level
 
-Use both perspectives when they cover different risks.
+Assign one primary level without changing the case's behavior, steps, or
+Expected Results:
 
-## Candidate levels and types
+- **Unit**: deterministic calculations, transformations, validation, or
+  isolated decisions.
+- **Component**: bounded UI or service-component behavior with controlled
+  dependencies.
+- **Integration**: database, transaction, adapter, messaging, cache,
+  filesystem, or multi-module collaboration.
+- **API**: request validation, authorization, response semantics, or endpoint
+  behavior.
+- **Contract**: producer/consumer or external-interface compatibility.
+- **System**: complete running-application behavior whose distinct evidence is
+  local to one feature.
+- **E2E**: a realistic user-observable journey across meaningful boundaries,
+  from entry/interface through business behavior and persistence/external
+  effect to an observable outcome.
 
-### Unit
+Levels are not a hierarchy or generation quota. Do not produce cases by level,
+seek a balanced pyramid, use `Unit or higher`, or force every requirement
+through multiple levels. Manual is Automation Feasibility, not a level.
 
-Prefer for isolated business rules, validation, state decisions, permission
-logic, transformations, boundaries, exceptions, duplicate-operation rules, and
-independent module behavior.
+## Classification rule
 
-### Component
+Choose the lowest reliable and economical level that directly proves the
+already-designed evidence need. Consider observability, controllability,
+isolation, determinism, fidelity, diagnostic value, and maintenance cost. Add
+another semantic case or level only when it supplies genuinely distinct
+evidence, not to satisfy a ratio.
 
-Prefer for a UI component or bounded service component with controlled
-dependencies and meaningful behavior above a single unit.
+Do not force a case into Unit merely because source code exposes a convenient
+function. Repository functions/classes do not create obligations. Conversely,
+an authoritative technical design may legitimately make an API, transaction,
+integration, database, state, idempotency, or producer/consumer contract the
+direct evidence target before code exists.
 
-### Integration
+Generate E2E candidacy from critical user or business journeys whose complete
+path supplies evidence isolated cases cannot provide. Do not create E2E to
+meet a count or percentage, and do not turn every Browser/System case into E2E.
 
-Prefer for service-repository collaboration, database behavior, transactions,
-multiple modules, cache, messaging, filesystem, or external-service adapters.
+## Test Level versus Automation Route
 
-### API and contract
+Test Level describes where the behavior is proven. Automation Route describes
+which downstream execution path implements the case: `Browser`, `API`, `Unit`,
+`Integration`, `Component`, `Contract`, or `None`. Select both only after case
+design; neither may determine whether the case exists.
 
-Prefer API testing for request validation, authorization, response behavior,
-and endpoint semantics. Use contract testing when compatibility between
-producers, consumers, or external integrations is the direct risk.
+Browser route means Playwright within wewo-skills but does not imply E2E.
+`System + Playwright`, `E2E + Playwright`, and `E2E + API` are valid. Exact
+non-browser tools and detailed implementation-level construction belong to the
+downstream execution capability.
 
-### E2E
-
-Use for a small number of critical complete user journeys when the UI,
-environment, selectors, data, and outcome are stable enough. Do not duplicate
-every lower-level rule in E2E.
-
-### Security behavior
-
-Design observable tests for authentication, authorization, ownership, input
-handling, sensitive-data exposure, business-rule bypass, and abuse controls.
-This is test design, not code review or an executed security scan.
-
-### Data and migration
-
-Use for schema changes, transformations, backfills, constraints, old data,
-retention, rollback, and compatibility.
-
-### Performance and reliability
-
-Use when latency, throughput, capacity, concurrency, retry, failover,
-stability, recovery, or resource behavior matters. Do not invent thresholds;
-record missing targets for confirmation.
-
-### Regression
-
-Select existing behavior plausibly affected by the change, shared capability,
-schema, interface, or historical defect.
-
-### Manual
-
-Use for visual quality, subjective usability, exploratory work, unstable or
-uncontrolled third parties, real-device behavior, hardware, captcha, and
-experiences requiring human observation.
-
-## Complementary evidence
-
-For a rule spanning layers, use a focused combination, such as unit evidence
-for state rules, integration evidence for transaction consistency, and one E2E
-case for the critical user journey. Explain why each level is necessary.
+Test Level remains independent when the Automation route is deferred. `Auto`
+is a human-facing deferred-routing signal, not a Test Level or tool. Valid
+combinations include `Unit + Auto`, `System + Auto`, `System + Playwright`,
+`E2E + Playwright`, and `API + API`. A recommended level may express the best
+semantic evidence location even when downstream repository inspection must
+choose the actual concrete seam.

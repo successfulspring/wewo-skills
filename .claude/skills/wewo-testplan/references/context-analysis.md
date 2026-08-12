@@ -1,102 +1,84 @@
-# Context Analysis
+# Requirement Authority and Repository Modes
 
-Use this guide before risk analysis or case design.
+Resolve expected-behavior authority and build the requirement model before any
+implementation inspection.
 
-## Determine sufficiency
+## Sufficient authoritative input
 
-Establish at least:
+Operate from a sufficiently clear current user requirement, an explicitly
+supplied or established `prd.md`, a PRD plus optional `technical-design.md`, or
+an explicit business/API/compatibility contract. This evidence is sufficient
+for normal requirement-driven test design before product code exists. Do not
+discover historical QA or workflow artifacts merely because they exist.
 
-- the test object;
-- core users or roles;
-- core business flow;
-- key business rules;
-- permitted and prohibited states;
-- main exceptions and boundaries;
-- current and regression scope;
-- expected business outcomes.
+Use this order for Expected Results:
 
-Proceed directly when the information is sufficient. Ask only for missing
-details that change the plan, such as covered roles, coverage conditions
-(required platforms, browsers, or devices as part of the requirement), whether
-test data may be created or deleted, mockability of external dependencies,
-captcha or external login, regression boundaries, destructive-test permission,
-and priority risks. Do not ask about test-environment readiness or installed
-tooling; those belong to test execution.
+1. current explicit user clarification;
+2. authoritative current requirement or PRD;
+3. authoritative technical design or external contract;
+4. an explicit compatibility requirement.
 
-If the expected behavior is too vague to judge results, clarify it instead of
-creating speculative cases. Request additional requirement clarification or
-requirement context only when the user wants a complete rediscovery; never
-make another capability a prerequisite.
+Repository implementation is not a fallback requirement oracle. Keep distinct:
 
-## Clarify in focused rounds
+- **Requirement authority**: what the system must do.
+- **Repository fact**: what the current implementation appears to do.
+- **Test-design decision**: what evidence verifies the required behavior.
 
-Discuss one test topic per round and normally ask one to three tightly related
-questions. Select from scope, business risk, roles and permissions, coverage
-conditions and test-data assumptions, external services and mocks, regression,
-and verification method and evidence requirements according to current need.
+An authoritative technical design may define a testable API, transaction,
+idempotency, state, data-integrity, or producer/consumer contract even before
+product code exists. Distinguish that contract from incidental implementation
+detail.
 
-For each material question:
+## Requirement-derived obligation invariant
 
-- state what the current material establishes;
-- identify the test risk;
-- recommend a testing approach;
-- explain why it is appropriate;
-- ask the user to confirm the missing condition or expectation.
+Derive and lock requirement behaviors, rules, expected outcomes, and test
+obligations before consulting implementation. Repository facts must not
+redefine an oracle, suppress an obligation, replace required behavior with
+current behavior, or manufacture an outcome for an ambiguous requirement.
 
-After every answer, re-evaluate which conditions are settled, which new risks
-emerged, which uncertainties still change cases, and whether final generation
-is ready. Do not present a long fixed questionnaire.
+Missing implementation is a potential test failure, not a reason to omit the
+test case. Keep the case and its requirement-derived Expected Results. An
+optional concise Note may state that the current implementation may not expose
+the capability. Omit behavior only when authoritative evidence explicitly
+marks it optional, future, out of scope, or not required for this delivery.
 
-## Combine available material
+## Repository access modes
 
-Use relevant:
+Use default requirement-driven mode when authoritative requirements and
+optional design evidence are sufficient. Do not broadly inspect source code,
+functions, classes, providers, pages, current tests, runners, or fixtures merely
+to detail the case set.
 
-- user instructions and conversation context;
-- requirement and design documents;
-- `prd.md` and `technical-design.md` when explicitly supplied or already
-  established in the current conversation;
-- Markdown, TXT, office documents, PDFs, images, prototypes, and diagrams;
-- API documentation, issues, tasks, changes, and defects;
-- current project code;
-- historical defects;
-- multiple related sources.
+Use implementation-aware mode only when:
 
-Do not assume one file is the only truth. Preserve provenance, distinguish
-confirmed expectations from proposals, and surface conflicts for user
-resolution.
+- the user explicitly requests implementation-aware or regression design;
+- source code is explicitly supplied or referenced as input;
+- authoritative requirement artifacts are absent and current repository
+  behavior is the requested basis; or
+- a specific authoritative technical-design seam requires repository grounding.
 
-## Understand product and design context
+In implementation-aware mode, use two passes:
 
-Inspect only what is needed to understand test behavior:
+1. derive and lock the requirement-driven scenario and oracle model;
+2. inspect progressively from a specific risk or seam and enrich the locked
+   model.
 
-- affected modules and public interfaces;
-- roles, business rules, and state transitions;
-- existing product behavior and its observable outcomes;
-- related historical defects and regression concerns.
+The second pass may add regression risk, setup, public-interface detail,
+compatibility coverage, or automation-suitability evidence. It may not remove
+or weaken locked obligations, reinterpret missing behavior as out of scope, or
+rewrite requirement outcomes to match code.
 
-Do not inspect concrete test tools, test frameworks, test runners, browser
-installations, test directories, fixtures, test databases, or CI test stages
-to decide how tests will be executed; those belong to test execution. Do not
-invent infrastructure, accounts, data, interfaces, or test seams.
+## Material oracle ambiguity
 
-## Coverage conditions and test-data assumptions
+Ask a targeted clarification when missing information changes pass/fail,
+expected state, permission or ownership, a business rule, an acceptance
+threshold, or an externally visible contract. State the evidence and exact
+missing decision. Do not block for execution details that do not change the
+oracle.
 
-Record product-scope coverage conditions and test-data assumptions as design
-inputs:
-
-- required platforms, browsers, or device categories when they are part of the
-  requirement;
-- roles, locales, and configurations that affect expected behavior;
-- whether test data may be created or deleted;
-- destructive-data constraints;
-- required state or setup assumptions.
-
-These are design inputs, not execution-infrastructure discovery.
-
-## Separate expectations from execution choices
-
-Treat confirmed business behavior as stable. Treat test level, method, and
-evidence-level recommendations as adjustable engineering guidance. Ask the
-user when business behavior, permissions, state transitions, failure outcomes,
-or scope is unresolved. The skill does not decide which concrete tool executes
-a scenario.
+If clarification is declined or authority remains silent, generate unaffected
+cases, keep the affected evidence need unresolved, optionally record only the
+material rule in Unresolved Items, and never copy current behavior into Expected
+Results. Never use `follow current implementation`, `follow current mock
+behavior`, or equivalent language as an Expected Result. Do not add a general
+assumptions or repository-facts report.

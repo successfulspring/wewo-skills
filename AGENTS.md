@@ -93,8 +93,10 @@ be the final validation after synchronization.
 ## Portability and language
 
 - Preserve a portable core that works in both Codex and Claude Code.
-- Do not require subagents, MCP servers, browser-control tools, proprietary
-  APIs, hooks, or host-specific metadata for the core workflow.
+- Do not require MCP servers, browser-control tools, proprietary APIs, hooks,
+  or host-specific metadata for the core workflow. Subagents remain optional
+  unless a capability explicitly makes isolated contexts part of correctness
+  under the narrow exception below.
 - Treat host-specific capabilities as optional enhancements and document a
   functional fallback.
 - Write reusable implementation files in English.
@@ -106,10 +108,15 @@ be the final validation after synchronization.
 
 ## Focused Subagent Execution
 
-Subagents and fresh contexts are optional host/runtime execution strategies,
-not capability contracts. A capability defines what correct work requires; the
-host decides whether to use the current context, a fresh context, or a
-subagent. Every skill and task must remain executable without subagent support.
+Subagents and fresh contexts are optional host/runtime execution strategies by
+default, not ordinary capability contracts. A capability defines what correct
+work requires; the host normally decides whether to use the current context, a
+fresh context, or a subagent. A capability may explicitly require isolated
+reviewer contexts only when independence itself is part of correctness. If the
+host cannot provide those contexts, report the capability as unavailable or
+unable to conclude; never simulate independence in one shared context. This is
+a narrow exception and does not make subagents mandatory for other skills or
+tasks.
 
 Use a fresh subagent only after work is decomposed into a coherent unit with a
 clear goal and completion condition, and when a focused context would reduce

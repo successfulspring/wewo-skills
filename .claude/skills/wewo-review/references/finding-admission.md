@@ -1,117 +1,53 @@
-# Finding Admission, Evidence, and Severity
+# Finding Admission
 
-Maintain a candidate ledger before producing formal findings.
+A reviewer or tool candidate is not automatically a formal finding. Main owns
+admission and the compact candidate ledger.
 
-## Contents
+## IDs and states
 
-- [Candidate states](#candidate-states)
-- [Admission checklist](#admission-checklist)
-- [Root-cause deduplication](#root-cause-deduplication)
-- [Evidence levels](#evidence-levels)
-- [Severity](#severity)
-- [Finding formats](#finding-formats)
+Reviewer candidates keep lane-local `REQ-*`, `STATIC-*`, or `SEC-*` IDs. After
+admission and root-cause deduplication, Main assigns one sequential canonical
+`REV-*` ID and records every detecting lane as non-additive provenance.
 
-## Candidate states
+- `Confirmed`: evidence establishes a current-change defect.
+- `Potential / Unverified`: a plausible issue lacks decisive evidence.
+- `Rejected`: evidence disproves, duplicates, or makes it irrelevant.
+- `Existing Issue`: it predates the Diff and is not materially expanded or
+  newly reachable because of it.
 
-- `Confirmed`: evidence establishes the defect or security/reliability issue.
-- `Potential`: a reasonable risk exists but evidence is insufficient.
-- `Unverified`: missing code, environment, permission, or tooling prevents a
-  decision.
-- `Rejected`: evidence does not support the candidate, it is irrelevant, or it
-  is a false positive.
-- `Existing Issue`: the issue predates and is not materially exposed or
-  amplified by the current change.
+Only Confirmed current-change findings enter formal totals and gates.
 
-Only Confirmed current-change findings count in formal totals, densities, and
-gates. Preserve other states in separate report sections for transparency.
+## Admission gate
 
-## Admission checklist
+Verify actual evidence, exact location/root cause, realistic trigger or stated
+limitation, concrete impact, current-Diff attribution, deduplication, and
+severity based on impact, reachability/exploitability, scope, and reversibility.
+Reject generic advice, unsupported possibility, style preference, raw warning,
+duplicate symptom, and unrelated history.
 
-Admit a formal finding only when all are present:
+## Metric scope
 
-1. actual code or execution evidence;
-2. a causal link to the current change;
-3. exact file and line or tight code range;
-4. a realistic trigger condition;
-5. a concrete impact;
-6. actionable remediation;
-7. suggested verification;
-8. a unique root cause;
-9. calibrated severity and supported evidence level.
+Assign each Confirmed finding one density classification: `Production Code`,
+`Test Code`, or `Out of Density`. This controls density inclusion only, never
+reality, severity, or gate effect. Configuration/migration defects remain real
+and may block even when out of density.
 
-Reject generic advice, unsupported possibility, personal style preference,
-unverified raw warnings, duplicated symptoms, and unrelated history.
+## Security and tool candidates
 
-## Root-cause deduplication
+Classify security from category, reachable impact, and evidence, not detecting
+lane. A confirmed Semgrep SQL injection and a confirmed Requirement-lane
+authorization failure are security findings.
 
-Group symptoms produced by one defect into one finding. List affected paths and
-impacts under that root cause. Split findings only when they require different
-fixes or can occur independently. Do not inflate counts by reporter, tool,
-endpoint, or repeated occurrence.
+Every Semgrep warning starts as a tool candidate. Confirm only after checking
+code, reachability, controllable input where applicable, defenses, semantics,
+Diff attribution, unique root cause, and impact. Raw warnings never become the
+formal count without admission.
 
-## Evidence levels
+## Severity and record
 
-| Level | Evidence |
-|---|---|
-| E1 | Static code and an explicit reachable path |
-| E2 | Code evidence plus a repository-native static tool |
-| E3 | Code evidence plus an actual test, build, or runtime result |
-| E4 | Code evidence plus a specialty tool and independent verification |
+Use `Critical`, `High`, `Medium`, or `Low`; confirmed current-change Critical
+and High findings block merge. Tool labels do not set severity.
 
-Evidence level measures confidence, not severity. Never assign a level whose
-supporting check did not run.
-
-## Severity
-
-- `Critical`: remote code execution, systemic authorization bypass,
-  large-scale sensitive-data exposure, major financial/data loss, or valid
-  production-secret disclosure. Block merge and release.
-- `High`: resource or administrative authorization bypass, SQL or command
-  injection, core business failure, transaction/data-consistency corruption,
-  arbitrary file access, or severe compatibility break. Block merge.
-- `Medium`: important boundary or error-handling gap, sensitive logging,
-  important test gap, localized data risk, or material maintainability defect.
-  Fix or obtain explicit risk acceptance.
-- `Low`: localized readability, minor duplication, non-blocking convention
-  issue, or low-impact hardening. Record for later handling.
-
-Calibrate severity from reachable impact and exploitability, not from tool
-labels alone.
-
-## Finding formats
-
-Code finding:
-
-```markdown
-### REV-001 {Title}
-
-- **Status:**
-- **Severity:**
-- **Review dimension:**
-- **File and location:**
-- **Requirement or design:**
-- **Code evidence:**
-- **Trigger:**
-- **Impact:**
-- **Remediation:**
-- **Suggested verification:**
-- **Evidence level:**
-```
-
-Security finding:
-
-```markdown
-### SEC-001 {Title}
-
-- **Status:**
-- **Severity:**
-- **Security category:**
-- **File and location:**
-- **Attacker capability:**
-- **Entry point and attack path:**
-- **Code evidence:**
-- **Impact:**
-- **Remediation:**
-- **Suggested security test:**
-- **Evidence level:**
-```
+Record canonical ID, state, detecting lanes, severity, category, metric scope,
+location, evidence, expected/actual behavior, trigger/path, impact,
+attribution, remediation, verification, and limitation.

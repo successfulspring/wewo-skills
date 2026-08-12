@@ -1,108 +1,107 @@
-# Test Case Quality
+# Semantic Test Case Quality and Oracle Audit
 
-Design cases after requirement analysis, risk analysis, and strategy selection.
+Generate complete semantic scenarios and executable cases before assigning Test
+Level or Automation.
 
-## Required case fields
+## Internal design model
 
-Include when applicable:
+Retain stable IDs, Requirement/Rule/Risk -> Case traceability, evidence needs,
+objectives, techniques, coverage-lens decisions, and oracle provenance
+internally. These decide what cases exist. Test Level and Automation are later
+annotations and must not generate, remove, split, weaken, or rewrite cases.
 
-- stable test-case ID;
-- requirement and risk traceability;
-- title;
-- priority;
-- test objective;
-- preconditions;
-- test data;
-- steps or behavior description;
-- expected result;
-- recommended test level;
-- required evidence level (only where business risk or observable behavior
-  requires it);
-- test category or perspective;
-- dependencies and blockers;
-- cleanup considerations;
-- notes and open questions.
+## Executable semantic case
 
-Never include actual result, Passed or Failed status, execution time, or defect
-ID during test design.
+Each case first contains:
 
-## ID and traceability rules
+- ID and business-readable scenario;
+- Module using requirement/product language;
+- business/test Priority (`P0`, `P1`, or `P2`);
+- Preconditions only when meaningful;
+- concrete numbered Steps in user, business, or public-interface terms;
+- concrete numbered Expected Results grounded in authority;
+- Notes only when genuinely useful.
 
-Use stable IDs such as `TC-001`. Preserve existing IDs when updating a
-document, do not recycle removed IDs casually, and do not create a complex
-requirement numbering scheme only for appearance.
+After the semantic audits pass, add Recommended Test Level, human-facing
+Automation, and Automation Condition for Conditional cases. Keep Traceability,
+Objective, Technique, Coverage Lens, Risk Category, Repository Fact, and
+Evidence Need internal. Do not publish a Coverage Mapping by default.
 
-When requirements have IDs, map them directly. Otherwise use concise business
-rule descriptions. Trace requirements and risks to one or more cases and show
-coverage without implying that one documented case must become one future test
-function.
+Avoid unnecessary function names, private classes, provider methods,
+repository paths, and source-line details. Use implementation language only
+when an authoritative technical contract or explicit implementation-aware
+request makes the seam itself the evidence target. Missing implementation does
+not invalidate or remove a requirement-derived case; later execution may fail.
 
-## Behavior versus execution
+## Expected-result and oracle quality
 
-Keep two concepts explicit:
+Every published case must have one authoritative and executable pass/fail
+oracle for each material expected behavior. Ground each oracle in current
+explicit clarification, authoritative requirement/PRD, authoritative technical
+design or external contract, or an explicit compatibility requirement. Current
+implementation and mock behavior are not fallback requirement oracles.
 
-1. confirmed expected business behavior;
-2. suggested execution method or level.
+Reject a material alternative such as `A or B`, `A and/or B`, `either A or B`,
+`follow current implementation`, or `follow current mock behavior` when the
+alternatives change the product contract or pass/fail meaning. Do not use
+ambiguity to avoid clarification or publish an assertion that allows mutually
+different outcomes.
 
-The first is a requirement expectation. The second is adjustable. Later
-verification may split, merge, parameterize, or change the level without
-silently changing the expectation.
+Flexible wording is acceptable when it preserves one business outcome. For
+example, `show a clear error message` is deterministic when exact copy is not
+contractual, and `provide an actionable way back to product browsing` is
+deterministic when the specific link is not required. Different implementation
+wording is not material ambiguity; different required behavior is.
 
-## Recommended test level versus required evidence level
+Prefer numbered outcomes for multiple effects, such as response semantics,
+visible state, persistence, restored inventory, or absence of a side effect.
+Reject `works normally`, `response is correct`, `no abnormal behavior`, and
+unmeasurable performance or reliability claims. Do not mix implementation
+explanation into the result unless it is part of the authoritative contract.
 
-Keep two concepts explicit when useful:
+Require an authoritative measurable oracle for performance, capacity,
+availability, latency, throughput, resource use, or reliability acceptance.
+Never invent thresholds. If a material oracle remains undefined after targeted
+clarification, keep the evidence need unresolved rather than copying current
+behavior.
 
-1. Recommended Test Level: advisory guidance for later verification.
-2. Required Evidence Level: the minimum evidence level considered sufficient
-   to verify the scenario (a specific level, or "X or higher"). It defines only
-   the evidence requirement.
+## Pre-classification audit order
 
-Examples:
+Audit the semantic case set before Test Level or Automation classification:
 
-- pure formatting logic: Recommended Unit; Required Unit or higher;
-- cross-page critical browser journey: Recommended E2E; Required E2E;
-- subjective visual quality: Recommended Manual; Required Manual.
+1. Requirement Coverage: every required behavior/rule has evidence; only
+   authoritatively optional, future, or out-of-scope behavior is omitted.
+2. Happy Path and Critical Journey: core business flows and representative
+   complete journeys have distinct evidence.
+3. Negative and Alternative Flow: invalid, rejected, alternate, and error
+   outcomes are covered where meaningful.
+4. Boundary and Equivalence: partitions and just-below/at/just-above boundaries
+   are covered where they change outcomes.
+5. Business Rules: conditions, combinations, calculations, repeated actions,
+   and duplicates are covered economically.
+6. State Transition: valid/invalid transitions, persistence, rollback, retry,
+   refresh, and recovery are covered where applicable.
+7. Permission and Ownership: roles, authorization, ownership, isolation, and
+   bypass risks are covered where applicable.
+8. Failure and Recovery: timeout, partial failure, concurrency, idempotency,
+   and consistency are covered only when authoritative evidence or real risk
+   supports them.
+9. Security and Trust Boundaries: relevant input, authorization, injection,
+   untrusted-content, and sensitive-data risks have evidence.
+10. Oracle Authority and Determinism: every Expected Result has authoritative
+    support and one executable pass/fail meaning; no material alternative or
+    implementation/mock fallback remains.
+11. Cross-case Oracle Consistency: cases sharing a boundary, rule, state,
+    permission, contract, error, calculation, side effect, or lifecycle agree.
+    A user clarification overrides earlier assumptions and is propagated to
+    every affected case; one case must not allow what another forbids.
+12. Duplicate/Low-value Compression: every remaining case provides distinct
+    evidence.
 
-Set a Required Evidence Level only where the business risk or observable
-behavior actually requires that level. Do not make every scenario require E2E.
-
-## Case design quality
-
-Each case must have a clear objective, satisfiable preconditions, concrete
-data, specific steps or behavior, and an expected result that can be judged.
-Do not use vague steps such as "operate the feature" or outcomes such as
-"works as required."
-
-Do not turn every requirement sentence into one case. Apply the selected
-design methods and group only relevant normal, state/rule, negative, boundary,
-authorization/security, consistency, API, UI, integration, E2E, regression,
-performance, compatibility, and exploratory cases.
-
-Do not convert an unresolved business question into a confirmed expectation.
-
-## Internal review
-
-Before user confirmation, review and revise:
-
-- core requirement and high-risk rule coverage;
-- normal, negative, and boundary coverage;
-- authorization and security behavior;
-- data consistency and reliability;
-- regression scope;
-- duplicate or mergeable cases;
-- lowest reasonable test level;
-- excessive E2E allocation;
-- Recommended Test Level and Required Evidence Level classifications;
-- satisfiable preconditions and data;
-- specific steps;
-- judgeable expected results;
-- unsupported assumptions;
-- dependencies, cleanup, and blockers.
-
-Record in the final case document:
-
-- core and high-risk coverage status;
-- duplicates merged or retained;
-- cases that cannot yet be designed;
-- level and evidence-level review conclusions;
-- remaining gaps and required follow-up.
+Fix gaps, contradictions, vague results, and duplicates before classification.
+If materially different outcomes remain possible, first resolve them from
+authority, then ask a targeted question when pass/fail changes. If clarification
+is explicitly declined or unavailable, do not invent a winner or publish a
+falsely deterministic Expected Result; publish unaffected cases and preserve
+the affected requirement only as a compact Unresolved Item. Keep passing audit
+details and statistics internal.

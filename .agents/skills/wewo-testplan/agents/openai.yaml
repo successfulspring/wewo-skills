@@ -1,4 +1,4 @@
 interface:
-  display_name: "Wewo Test Plan"
-  short_description: "Design risk-based test plans and cases"
-  default_prompt: "Use $wewo-testplan to design a risk-based test plan and traceable test cases for this requirement."
+  display_name: "Wewo Test Case Design"
+  short_description: "Design requirement-driven executable test cases"
+  default_prompt: "Use $wewo-testplan to derive comprehensive executable test cases from authoritative requirements and risks, then classify their test levels and automation routes."

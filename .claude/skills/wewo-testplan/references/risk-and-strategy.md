@@ -1,82 +1,97 @@
-# Risk-Based Test Strategy
+# Requirement, Risk, and Scenario Design
 
-Use this guide to identify coverage and produce the test-plan strategy.
+Turn authoritative requirements into semantic test obligations and scenarios
+before selecting Test Level or Automation. Ask for each material behavior:
 
-## Risk categories
+```text
+What can fail?
+What behavior must be verified?
+What scenario provides distinct evidence?
+What observable outcome means pass or fail?
+```
 
-Select only applicable risks.
+## Requirement and behavior model
 
-### Normal behavior
+Identify applicable actors, roles, ownership, resources, actions, inputs,
+outputs, defaults, states and transitions, rules and combinations,
+calculations, side effects, persistence, lifecycle, asynchronous behavior,
+dependencies, UI behavior, and errors. Trace each material requirement or risk
+to one or more distinct evidence needs.
 
-Cover core user paths, primary functional outcomes, valid state transitions,
-and normal data processing.
+Do not organize generation by Unit, Integration, API, System, or E2E, and do
+not seek a balanced pyramid or fixed ratios. Repository functions and classes
+are not automatic obligations. An authoritative technical design or external
+contract may legitimately define API, transaction, idempotency, state,
+database, or producer/consumer evidence before implementation exists.
 
-### Negative and boundary behavior
+## Scenario-generation lenses
 
-Cover empty, invalid, minimum, maximum, out-of-range, missing, changed-state,
-interrupted, and dependency-failure conditions.
+Apply each lens only where it can expose a distinct requirement or risk.
 
-### Authorization and security behavior
+### Business flow
 
-Cover unauthenticated use, roles, resource ownership, horizontal and vertical
-privilege escalation, sensitive data, input validation, upload and download,
-business-rule bypass, and bulk operations.
+Cover the happy path, alternative flow, negative flow, and critical user or
+business journey. Follow realistic entry, action, state/effect, and observable
+outcome rather than producing a flat feature checklist.
 
-### Reliability and business correctness
+### Input and data
 
-Cover duplicates, concurrency, idempotency, transactions, partial success,
-state conflicts, retries, duplicate messages, cache inconsistency, and
-repeated scheduled work.
+Use equivalence partitions and boundary-value analysis. Consider valid,
+invalid, empty, missing, minimum/maximum/just-inside/just-outside values,
+special characters, types/formats, defaults, and cross-field constraints when
+they change behavior or risk.
 
-### Regression
+### Business logic
 
-Cover affected pages, interfaces, shared modules, state flows, schemas,
-compatibility, old clients, old data, and related historical defects.
+Use decision tables for rule combinations and conditional outcomes. Consider
+calculations and rounding, repeated actions, duplicate submissions,
+idempotency, defaults, and combinations that change the result. Do not test
+every permutation when representative evidence is sufficient.
 
-## Test-design methods
+### Lifecycle and state
 
-Apply methods intentionally:
+Use state-transition analysis for valid and invalid transitions, persistence,
+refresh/restore, cancel, rollback, retry, recovery, terminal states, delayed
+work, and stale updates where applicable.
 
-- equivalence classes for representative valid and invalid groups;
-- boundary analysis for numeric, size, count, and time limits;
-- decision tables for interacting rules;
-- state transitions for lifecycle behavior;
-- scenarios for complete user or system flows;
-- causal analysis for inputs, events, and outcomes;
-- error guessing informed by project history;
-- permission matrices for roles and resource ownership;
-- data combinations or pairwise coverage where combinations matter;
-- concurrency and idempotency analysis for state-changing operations;
-- risk-driven testing for impact and likelihood;
-- historical-defect regression for known failure patterns.
+### Access and trust
 
-State which methods are used and where.
+Consider role, permission, ownership, unauthenticated access, unauthorized
+access, privilege bypass, cross-user isolation, and sensitive-data exposure
+when the behavior crosses an access boundary.
 
-## Scope and priority
+### Reliability and technical contracts
 
-Define current scope, regression scope, and explicit exclusions. Prioritize:
+Only when requirements, design, or an implementation-aware risk supports it,
+consider dependency failure, timeout, retry, partial failure, rollback,
+recovery, concurrency, idempotency, consistency, transactions, messages,
+caches, external adapters, migration, performance, and compatibility. Do not
+invent mechanisms or thresholds.
 
-- P0 for core flow, authorization, money, inventory, critical consistency,
-  release blockers, and severe security risk;
-- P1 for major exceptions, important boundaries, frequent actions, important
-  regression, and high business impact;
-- P2 for low-frequency behavior, ordinary compatibility, non-core experience,
-  and issues that do not block the main flow.
+### Security
 
-Use actual risk rather than generation order. Record risk-to-test responses in
-the plan.
+When relevant, model source -> trust boundary -> transformation/control ->
+sensitive sink/effect. Consider malicious or malformed input, authorization,
+injection, untrusted external or document content, prompt injection, and data
+exposure only where a real boundary or risk exists.
 
-## Coverage Conditions and Test-Data Assumptions
+### User experience
 
-Identify product-scope coverage conditions and test-data assumptions that
-materially affect the scenarios: required product platforms or device
-categories, user roles, locales, business configuration variants, required
-data states, whether test data may be created or deleted, destructive-data
-constraints, and external-dependency behavior that changes expected outcomes.
-Mark unknown facts as pending confirmation.
+When relevant, consider visibility, feedback, navigation, form validation,
+enabled state, responsive behavior, accessibility, localization, upload or
+download, refresh/history, and recovery from user-visible errors.
 
-Define test-design entry and exit conditions from the confirmed requirement
-and product context. Do not determine whether a test environment exists, a
-test database is ready, browsers or test runners are installed, or concrete
-services or tools are available or configured for execution. Do not invent
-fixed coverage percentages, pass rates, environments, or data.
+## Semantic case design and economy
+
+Express cases in user, business, or public-interface terms by default. For a
+price-tier boundary, describe quantities immediately below, at, and above the
+threshold rather than calling an incidental private function. Use a concrete
+function or class only when it is itself an authoritative public contract or
+the user explicitly requests implementation-level design.
+
+Create one case per distinct evidence need. Merge near-duplicates through
+parameterized partitions, boundaries, decision/state tables, representative
+combinations, or pairwise coverage without merging different rules, outcomes,
+risks, setup, side effects, or oracles. Prioritize by business impact,
+likelihood, security/data exposure, regression value, and detectability. Case
+count is not a completeness metric.

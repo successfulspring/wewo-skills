@@ -1,68 +1,89 @@
 # Review Tool Policy
 
-Use tools in three layers and preserve evidence integrity.
+Use tools as evidence, never authority.
+
+## TypeScript utility execution
+
+Use a supported host TypeScript mechanism, confirmed Node native TypeScript
+support, then an already available trusted `tsx`, `bun`, or `deno`. Never alter
+the target package, lockfile, tsconfig, or dependencies to obtain a runner, or
+claim an adapter ran when it did not. Without a runner, disclose the adapter
+limitation and use equivalent read-only Git evidence. Still attempt Semgrep by
+an equivalent safe approved direct invocation when available/acquirable.
 
 ## Layer 1: semantic review
 
-Always perform Diff inspection, file reading, code search, call-path tracing,
-requirements comparison, and permission, transaction, and test semantics.
-Missing specialty tools never stop this layer.
+Each lane performs its assigned semantic reasoning from the Diff and affected
+context. Tool absence never turns warnings into findings or replaces reviewer
+reasoning.
 
-## Layer 2: repository-native tools
+## Layer 2: repository-native deterministic tools
 
-Prefer configured unit and integration tests, type checking, lint, formatting
-checks, compilation, build, coverage, migration checks, and security rules.
-Read commands from repository instructions, CI, README files, Makefiles,
-manifests, or scripts. Do not guess.
+Prefer configured compiler/type, lint, coding-rule, test, build, static,
+secret, dependency, and security checks relevant to the Diff. Read commands and
+versions from repository instructions and configuration. Run only safe checks;
+record command, time, scope, exit status, and limitations.
 
-Run only checks safe for the current environment. Avoid commands that mutate
-production data, require production credentials, or create uncontrolled
-external side effects. Record command, time, scope, exit status, and relevant
-output. Classify unavailable or blocked checks honestly.
+## Layer 3: required Semgrep attempt
 
-## Layer 3: optional specialty tools
+Every formal review must attempt Semgrep. Use
+[run-semgrep.ts](../scripts/run-semgrep.ts) with this acquisition order:
 
-Select SAST, secret, dependency, configuration, container, IaC, complexity,
-contract, or license tools only when the stack and attack surface justify
-them. Their output strengthens evidence but is not a prerequisite for review.
+1. pre-existing usable Semgrep;
+2. approved ephemeral isolation using an explicit repository, organization, or
+   runtime pin when available;
+3. approved unpinned ephemeral isolation resolved at execution time;
+4. approved temporary isolated installation owned by this review;
+5. honest `Blocked` or `Unavailable`.
 
-## Controlled temporary installation
+A pin is preferred, not universally required. Its absence alone never blocks
+approved acquisition. Record whether version resolution was `pinned`,
+`runtime-resolved`, or `pre-existing`, plus the actual executed version. Binary
+acquisition permission and rule-configuration permission remain separate.
 
-Automatic temporary installation requires all of:
+Do not silently skip acquisition because Semgrep is absent. Seek required host
+approval for network access or a material download. Never install into the
+target repository, change its manifests or lockfiles, install globally,
+disable TLS, use pipe-to-shell installers, or upload source implicitly.
 
-- an approved allowlist and trusted source;
-- a fixed version;
-- an isolated temporary environment;
-- no project dependency or lockfile modification;
-- no administrator rights or global-environment pollution;
-- no persistent service;
-- no source upload;
-- complete installation and cleanup records.
+### Recoverable authorization blockers
 
-Obtain user confirmation before Docker use, large downloads, system or
-administrator installation, background services, project-environment or
-lockfile changes, source upload, production access, or any unclear source or
-version.
+Before finalizing `Blocked`, Main asks once when a specific user authorization
+is the only missing condition and an already-supported safe operation can
+materially recover the Semgrep attempt. This includes approved external
+registry/config access or isolated acquisition. State the exact permission,
+why it is needed, the external access involved, that optional telemetry is
+disabled where supported, that source is not silently uploaded, and that the
+actual configuration source and tool version will be recorded.
 
-Never use pipe-to-shell installers, unknown binaries, disabled TLS
-verification, production secrets, automatic company-source upload, or system
-security-policy changes.
+After approval, perform the authorized resolution and report the scan's actual
+outcome; approval is not scan success. After refusal, record `Blocked` and the
+refused authorization. Do not ask again when the user or repository policy
+already answered, the environment lacks a usable technical path, policy
+prohibits the action, or the permission would be unsafe or insufficient.
+Binary acquisition and rule-configuration authorization remain separate.
 
-If installation fails, continue semantic review and record the unverified
-scope. Cleanup only paths created for the temporary tool after resolving and
-checking their exact locations.
+Prefer trusted repository-local or explicitly supplied local configuration.
+Use trusted external registry rules only when outbound access is permitted;
+disable optional telemetry where supported and record registry access. Do not
+assume registry access means source upload.
 
-## Warning verification
+Record acquisition mode, actual version, configuration source, scan target,
+argv-equivalent invocation, outcome, raw warnings/errors, coverage completeness,
+stdout/stderr limitations, and cleanup. Distinguish `Completed - findings
+produced`, `Completed - no findings`, `Failed`, `Blocked`, and `Unavailable`;
+command execution alone is not a Pass. Parseable raw errors require an explicit
+partial-coverage limitation, even when the status says no findings.
 
-For every warning:
+Never uninstall or mutate a Semgrep installation that existed before review.
+Remove only isolated temporary resources created and recorded by this review,
+including after scan failure where safe. Do not delete shared caches.
 
-1. locate the relevant code;
-2. establish whether the path is reachable;
-3. determine whether input is controllable;
-4. inspect existing defenses;
-5. attribute it to the current change;
-6. deduplicate the root cause;
-7. classify it as Confirmed, Potential, Unverified, Rejected, or Existing
-   Issue.
+Every warning remains a tool candidate until Finding Admission verifies its
+semantics, reachability, attribution, impact, and root cause.
 
-Never use a raw warning count as a formal finding count.
+## Layer 4: additional specialty tools
+
+Use configured or materially useful specialty tools when safe. Do not require
+or temporarily stand up heavy platforms merely to satisfy review. Preserve
+their raw outputs separately from formal findings.

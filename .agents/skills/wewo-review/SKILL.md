@@ -1,313 +1,178 @@
 ---
 name: wewo-review
-description: Perform an independent, diff-centered, evidence-based, read-only code review and security/reliability review of actual code changes, producing separate code-review and security-gate reports. Use for unstaged or staged changes, commits, commit ranges, branch or PR/MR diffs, or explicitly scoped files and directories. Do not use to implement or automatically fix code, replace implementation self-checks, design tests, execute the final testing gate, merge, or deploy.
+description: Perform a formal, read-only, diff-centered software review through exactly three independent lanes: requirement consistency, static analysis and engineering rules, and contextual security. Use for unstaged or staged changes, commits, ranges, branches, PR/MR diffs, or explicitly scoped production and developer-test code where evidence-based findings, Semgrep evidence, KLOC metrics, and distinct overall/security gates are required in one unified review report. Do not use to implement fixes, design tests, execute a final test gate, merge, or deploy.
 ---
 
 # Wewo Review
 
-Review actual code changes independently, verify every admitted finding, and
-report code quality and security conclusions separately.
+Review one fixed Diff through three independent reviewer contexts, admit only
+verified current-change findings, and produce one concise unified report.
 
 ## Runtime contract
 
-Accept a user-specified review target or determine one from unstaged changes,
-staged changes, a commit, a commit range, a branch comparison, a PR or MR Diff,
-or specified files or directories.
+Accept an explicit review target or resolve one from unstaged/staged changes,
+a commit or range, a branch comparison, a PR/MR Diff, or explicitly scoped
+files. All changed executable production and developer-test code inside the
+resolved Diff is reviewable, including executable fixtures and helpers.
+
+Use requirement or technical-design context only when explicitly supplied,
+referenced, or already established in the current conversation. Never scan for
+historical workflow documents. Normal review input does not include
+`test-plan.md`, `test-cases.md`, `implementation-plan.md`,
+`implementation-record.md`, or `test-execution.md`.
 
 Create only:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/code-review.md
-docs/wewo/<requirement-category>/<requirement-slug>/security-review.md
+docs/wewo/<requirement-category>/<requirement-slug>/review.md
 ```
 
-Resolve exactly one requirement workspace before writing either report. Keep
-stable filenames and workspace segments in English. Write user-facing
-conversation and reports in an explicitly requested language, otherwise the
-dominant interaction language, and otherwise Chinese.
+Resolve one unambiguous requirement workspace before writing. Use an explicit
+path, else the current requirement workspace, else one candidate inferred from
+the requirement, issue, branch, or explicitly supplied material. Ask when
+multiple candidates remain. Never select by artifact existence or modification
+time. Use `features`, `bugs`, `refactors`, or `maintenance` and a concise
+lowercase English kebab-case slug.
 
-Operate read-only by default. Read code and documents, inspect Git, search
-context, run safe checks, use approved temporary tools, and write the two
-reports. Do not modify production or test code, apply fixes, revert changes,
-commit, merge, deploy, alter requirements or expected behavior, or modify a
-workflow document owned by another capability. If the user requests fixes, stop
-after review and obtain explicit authorization for a separate implementation
-task.
+Operate read-only toward production and test source. Inspect code and Git, run
+safe checks, use controlled temporary tools, and write only the resolved
+report. Do not fix, revert, commit, merge, deploy, or modify another
+capability's document. Reviewer contexts return candidate data to Main; they
+create no project artifacts.
 
-## Non-negotiable conclusion vocabulary
+Keep two distinct conclusions in the unified report:
 
-Use only these final values:
+- Overall Review Conclusion: `Pass`, `Conditional Pass`, `Fail`, or
+  `Unable to Conclude`.
+- Security Gate: `Pass`, `Fail`, or `Incomplete / Unable to Confirm`.
 
-- Code review: `Pass`, `Conditional Pass`, `Fail`, `Unable to Conclude`.
-- Security gate: `Pass`, `Fail`, `Incomplete / Unable to Confirm`.
+Critical or High confirmed current-change defects block merge. Missing a
+required independent lane prevents formal Pass. A Semgrep failure alone does
+not automatically fail the whole review, but its attempt and coverage
+limitation must be disclosed. Before finalizing a recoverable Semgrep blocker,
+Main asks once when a specific user authorization can safely unlock the scan.
+When missing evidence prevents a trustworthy high-risk security conclusion,
+use the incomplete/unable conclusion.
 
-`Blocked`, `Pending`, `Unverified`, and candidate states are not final
-conclusions. When a high-risk change lacks necessary independent review or
-critical environment-dependent verification, report:
+## Mandatory three-lane architecture
 
-```text
-Code review: Unable to Conclude
-Security gate: Incomplete / Unable to Confirm
-Merge readiness: Not ready
-```
+Formal review requires exactly three primary independent reviewer contexts:
 
-Do not invent an exception path for missing critical evidence. Risk acceptance
-can support `Conditional Pass` only for Medium or Low findings and only with an
-actual authorized owner, recorded conditions, and follow-up.
+1. **Requirement Consistency** - apply
+   [requirement-consistency.md](references/requirement-consistency.md).
+2. **Static Analysis & Engineering Rules** - apply
+   [static-analysis-and-rules.md](references/static-analysis-and-rules.md) and
+   [tool-policy.md](references/tool-policy.md).
+3. **Contextual Security** - apply
+   [contextual-security.md](references/contextual-security.md).
 
-## Mandatory workflow
+Apply [independent-review.md](references/independent-review.md). The three
+lanes must not see each other's candidates before they return. Main is the
+orchestrator and Finding Admission judge, not a fourth reviewer; do not have
+Main repeat all three reviews. If the host cannot create the required isolated
+contexts, do not simulate formal independence. Disclose the limitation and
+use `Unable to Conclude` and `Incomplete / Unable to Confirm` as applicable.
 
-### 1. Resolve the workspace and review target
+## Main review workflow
 
-Run independently. Use `prd.md` and `technical-design.md` only when the user
-explicitly supplies or references them, or the current conversation already
-establishes them. Never require or create empty earlier-stage documents, and
-never scan `docs/wewo/` or the repository for historical requirement documents.
-Normal review input does not include `test-plan.md`, `test-cases.md`,
-`implementation-plan.md`, `implementation-record.md`, or `test-execution.md`.
-A user may explicitly request additional review context through ordinary user
-instructions, but that does not make an artifact part of the standard input
-contract.
+### 1. Resolve and freeze the Diff
 
-Resolve the requirement workspace in this order:
+Apply [diff-scope-and-context.md](references/diff-scope-and-context.md). Prefer
+the user's explicit scope, then staged plus unstaged changes, then a branch
+comparison against an evidenced target. Disclose a last-commit fallback when a
+target branch cannot be established. Never assume `main` or `master`.
 
-1. Use an explicit workspace supplied by the user.
-2. Otherwise reuse the workspace established for this requirement.
-3. Otherwise infer one candidate from the requirement, issue, branch, or
-   explicitly supplied or referenced material.
-4. Ask before writing if multiple candidates are plausible.
+Before freezing scope, inspect read-only Git status and add only applicable
+untracked files selected from factual review context. Do not stage files or
+include unrelated untracked work.
 
-Never infer a workspace from the existence of workflow artifacts. Never select
-a workspace by modification time. Support `features`, `bugs`, `refactors`,
-and `maintenance`; default to `features` only when no evidence favors another
-category. Use a concise lowercase English kebab-case slug. Create missing
-parents only after resolution is unambiguous. Never mix different requirements
-without confirmation.
+Record baseline, target, current commit, exact Git query, included commits and
+uncommitted changes, included files, exclusions, and limitations. For a scope
+without a meaningful Git baseline, disclose limited attribution and metrics.
 
-Apply the scope precedence in
-[diff-scope-and-context.md](references/diff-scope-and-context.md). Prefer an
-explicit user scope. Otherwise review staged and unstaged changes when they
-exist; otherwise establish the current branch Diff against an evidenced target
-branch. Ask or clearly disclose a last-commit fallback when the target branch
-cannot be established. Never assume `main` or `master`.
+### 2. Prepare compact factual context
 
-Before formal review, record:
+Prepare a compact lane-specific scope packet from the fixed baseline, changed
+file manifests and classifications, applicable instructions, confirmed
+requirement/design evidence, repository facts, changed entry points, and useful
+deterministic facts. Keep it factual: do not pre-review the change, include
+suspected defects, implementation defenses, unverified explanations, the full
+development conversation, or prior conclusions.
 
-- review baseline, target branch or commit, and current commit;
-- the exact Diff command or equivalent query;
-- included uncommitted changes and commit list;
-- included files and explicitly excluded generated or unrelated changes;
-- scope limitations and whether the target is complete.
+### 3. Calculate deterministic Diff metrics
 
-For specified files without a meaningful Git baseline, record the equivalent
-scope and state that current-change attribution may be limited.
+Run [collect-diff-metrics.ts](scripts/collect-diff-metrics.ts) through the
+runner resolution in [tool-policy.md](references/tool-policy.md). Record
+changed files, additions, deletions, production/test LOC,
+configuration/migration LOC, density-eligible changed code LOC, and exclusions.
+Pass each applicable untracked file explicitly with `--include-untracked`.
+If the adapter or Git scope is unsupported, record exact fallback evidence and
+the limitation; never fabricate adapter execution or metrics.
 
-### 2. Collect evidence and pre-analyze the Diff
+### 4. Dispatch the three independent lanes
 
-Use direct code evidence first: the actual Diff, affected context, production
-and test code, repository rules, and actual command output. An implementer's
-process narrative is not proof that the implementation is correct. Actual test
-code may be reviewed because it is part of the repository or Diff. Actual
-directly available execution evidence may be considered when relevant, but the
-review does not depend on another capability's workflow report.
+Give each lane the same fixed Diff/baseline and its compact factual lane
+context. Each starts narrow and progressively inspects repository code as its
+evidence path requires; cross-file reasoning remains unrestricted when needed.
+Each returns lane-local candidates with ID, lane, category, location, evidence,
+expected versus actual behavior, trigger/path, impact, attribution,
+remediation, verification, and confidence/limitation. Do not create permanent
+additional lanes or share candidates across lanes before completion.
 
-When the user explicitly supplies or references them, or the current
-conversation already establishes them, use requirement context (`prd.md`) and
-design context (`technical-design.md`), plus an identified issue or MR
-description. Never scan `docs/wewo/` or the repository to discover these
-documents.
+### 5. Require Static lane tool attempts
 
-Read and apply
-[diff-scope-and-context.md](references/diff-scope-and-context.md). Inspect
-changed lines and only the affected callers, consumers, models, permissions,
-transactions, caches, messages, migrations, tests, and similar
-implementations needed to reason about them. Do not start with a whole-repository
-issue hunt.
+The Static lane must run safe relevant repository-native checks and attempt
+Semgrep for every formal review. Use [run-semgrep.ts](scripts/run-semgrep.ts)
+and [tool-policy.md](references/tool-policy.md). Record mode, version, config,
+target, invocation, outcome, raw warning/error counts, coverage completeness,
+limitations, and cleanup. Semgrep warnings are tool candidates, never
+automatic findings. If one specific user permission is the only remaining
+condition for a safe supported Semgrep attempt, Main asks once before recording
+`Blocked`; continue after approval and record an authorization refusal honestly.
 
-Pre-analyze changed files, added and deleted lines, production/test/configuration
-or migration LOC, languages, frameworks, dependencies, interfaces, database,
-permissions, files, external calls, global state, and high-risk modules.
-Exclude or separately classify generated, vendor, lock, build, minified,
-compressed, pure-formatting, and non-semantic rearrangement changes.
+### 6. Collect candidates
 
-### 3. Establish risk and independent review dimensions
+Keep lane provenance. Contextual Security must reason independently from
+Semgrep output. Preserve raw tool candidates separately from reviewer
+candidates and formal findings.
 
-Read and apply
-[independent-review.md](references/independent-review.md) and
-[review-dimensions.md](references/review-dimensions.md).
+### 7. Apply Finding Admission
 
-The orchestrator must establish scope, collect factual requirements and
-standards, prepare the Diff and necessary context, run shared safe commands,
-dispatch review dimensions, consolidate candidates, verify evidence,
-deduplicate root causes, calibrate severity, calculate supportable metrics, and
-write the reports.
+Main applies [finding-admission.md](references/finding-admission.md). Verify
+evidence, root cause/location, realistic trigger or explicit limitation,
+impact, current-Diff attribution, and uniqueness. Merge duplicates, classify
+candidate state, then assign each admitted canonical finding one `REV-*` ID and
+one metric scope. Finding category and impact, not detecting lane, determine
+whether it is a security finding.
 
-When fresh reviewer agents are available, use clean factual context for these
-independent dimensions:
+Only Confirmed current-change findings enter formal counts and gates. Only
+Confirmed findings attributable to density-eligible code enter density
+numerators. Raw warnings, Potential/Unverified, Rejected, Existing Issue, and
+duplicates do not.
 
-1. requirement and design compliance;
-2. repository standards and code structure;
-3. correctness and test quality;
-4. impact and compatibility;
-5. security and reliability.
+### 8. Calibrate severity and gates
 
-Do not send implementation defenses, unproven explanations, the complete
-development conversation, or another reviewer's initial conclusions.
+Use `Critical`, `High`, `Medium`, or `Low` based on concrete impact,
+reachability or exploitability where relevant, affected scope, and
+reversibility. Do not use mathematical severity weights or promote subjective
+style preferences to material findings.
 
-When independent agents are unavailable, perform separate semantic and
-tool-assisted passes yourself, label the result `Non-independent preliminary
-review`, and disclose the lack of context isolation. Never claim formal
-independence. For high-risk changes, use `Unable to Conclude` when the missing
-independent review prevents a trustworthy merge conclusion.
+### 9. Calculate KLOC metrics
 
-### 4. Perform code, security, and reliability review
+Apply [metrics-and-gates.md](references/metrics-and-gates.md) after admission.
+Use production plus test changed code LOC as the density denominator and align
+each numerator to that scope. Show raw numerator, denominator, ratio, and every
+exclusion. Keep total and out-of-density findings visible. Report Not
+Calculable when the denominator is zero or unsupported.
 
-Apply [review-dimensions.md](references/review-dimensions.md) to requirement,
-standards, correctness, test, and compatibility analysis.
+### 10. Produce and verify the report
 
-**Requirement Compliance** — when requirement context exists, evaluate missing
-requirements, partial implementation, wrong observable behavior, acceptance
-mismatch, and scope creep. When requirement context is absent, mark
-`Requirement Compliance: Not Evaluated` and explain why. Do not invent missing
-requirements.
+Apply [document-contract.md](references/document-contract.md) and
+[review-template.md](assets/review-template.md). Use one deduplicated `REV-*`
+registry and reference security findings from the security assessment without
+duplicating root causes.
 
-**Design Compliance** — when technical-design context exists, evaluate
-architecture deviation, module/interface/API deviation, data-model deviation,
-transaction/concurrency deviation, permission/security deviation, reliability
-constraint deviation, and other material design deviations. When design context
-is absent, mark `Design Compliance: Not Evaluated` and explain why. Do not
-invent missing design expectations.
-
-Apply
-[security-and-reliability.md](references/security-and-reliability.md).
-Identify only attack surfaces actually added or changed, then perform:
-
-- L1 dangerous-pattern checks;
-- L2 semantic Diff review;
-- L3 cross-file and business-flow analysis for applicable high-risk areas.
-
-Trace affected authentication, authorization, validation, injection, files,
-sensitive data, business-state transitions, transactions, concurrency,
-idempotency, retries, caches, messages, migrations, dependencies, and
-configuration. Dynamically select applicable checks instead of printing an
-irrelevant full checklist.
-
-Keep existing issues separate. Do not attribute an existing issue to the
-current change unless the Diff introduced it, expanded its impact, or made it
-newly reachable.
-
-### 5. Use tools as evidence, not authority
-
-Read and apply [tool-policy.md](references/tool-policy.md).
-
-Always perform baseline semantic review. Prefer repository-native commands and
-versions found in repository instructions, CI, manifests, Makefiles, or
-scripts. Run only safe and relevant tests, lint, type-check, build, coverage,
-migration, or security checks. Do not invent commands or claim an unexecuted
-command passed.
-
-Use specialty tools only when they add material evidence. A missing tool never
-blocks semantic review. Install dynamically only under the controlled policy:
-fixed trusted version, isolated temporary environment, no project dependency
-or lockfile change, no administrator rights, no source upload, no persistent
-service, and recorded installation and cleanup. Obtain confirmation for every
-high-impact case.
-
-Treat every tool warning as a candidate. Locate the code, establish
-reachability and controllability, inspect defenses, attribute it to the
-current change, and deduplicate its root cause before classification.
-
-### 6. Verify and admit findings
-
-Read and apply
-[finding-admission.md](references/finding-admission.md).
-
-Classify every candidate as `Confirmed`, `Potential`, `Unverified`,
-`Rejected`, or `Existing Issue`. Admit a formal current-change finding only
-when it has:
-
-- actual evidence and current-change attribution;
-- a file and precise location or code range;
-- a trigger condition and concrete impact;
-- actionable remediation and suggested verification;
-- one unique root cause;
-- a calibrated `Critical`, `High`, `Medium`, or `Low` severity;
-- an evidence level supported by the actual review.
-
-Only Confirmed current-change findings enter formal issue totals, density
-metrics, and merge gates. Report Potential and Unverified items separately.
-Exclude generic advice, unsupported speculation, style preference, raw
-unverified warnings, duplicate symptoms, and unrelated historical issues.
-
-### 7. Calculate supported metrics and conclusions
-
-Read and apply
-[metrics-and-gates.md](references/metrics-and-gates.md).
-
-Calculate only metrics with evidenced numerators and denominators. Separate
-production, test, configuration, and migration LOC. Record eligible and
-reviewed LOC, review coverage, candidate-state counts, confirmation rate,
-confirmed and serious issue density, weighted density, requirement
-implementation and test mapping, high-risk attack-surface coverage, tool
-verification, and unresolved blockers when applicable.
-
-Mark a metric `Not calculable` with its missing evidence instead of inventing
-it. For small Diffs, emphasize absolute counts, severity, and blockers rather
-than unstable KLOC ratios. Metrics support transparency and trends; they never
-replace gate rules.
-
-Issue separate conclusions:
-
-- Code review: `Pass`, `Conditional Pass`, `Fail`, or `Unable to Conclude`.
-- Security gate: `Pass`, `Fail`, or `Incomplete / Unable to Confirm`.
-
-Use exactly these conclusion values; do not substitute `Blocked`, `Pending`,
-or informal labels. Represent blockers inside the report while keeping the
-canonical conclusion.
-
-Unresolved Critical or High findings block merge. An unresolved security gate
-prevents a merge-ready conclusion even if ordinary code quality passes.
-Critical high-risk verification gaps keep the security gate unresolved.
-Use `Unable to Conclude` for code review and `Incomplete / Unable to Confirm`
-for security when absent independent review or critical environment evidence
-prevents a high-risk conclusion. Do not invent an exception or risk-acceptance
-process to turn missing critical evidence into a pass. Risk acceptance applies
-only to remaining Medium or Low findings under `Conditional Pass` and must
-identify the actual authorized owner.
-
-### 8. Write and verify both reports
-
-Read [document-contract.md](references/document-contract.md). Generate
-`code-review.md` from
-[code-review-template.md](assets/code-review-template.md) and
-`security-review.md` from
-[security-review-template.md](assets/security-review-template.md).
-
-Include the real scope, baseline, evidence sources, independent-review status,
-commands and outcomes, tool installations, all candidate classifications,
-deduplicated findings, supported metrics, limitations, blockers, and separate
-gate conclusions. Include the Requirement Compliance and Design Compliance
-disposition, including `Not Evaluated` with the reason when context is absent.
-Never present implementation self-check as independent review.
-
-Before finishing, verify that both reports agree on scope, evidence, shared
-findings, severity, blockers, and whether merge is allowed. Base conclusions
-on the latest Diff and latest actual command evidence.
-
-Report to the user:
-
-- scope, baseline, included uncommitted changes, and materials used;
-- independent reviewer dimensions completed;
-- executed and dynamically installed tools;
-- incomplete verification;
-- Confirmed counts and severity distribution;
-- supported density and coverage metrics;
-- security issues and blockers;
-- code-review and security-gate conclusions;
-- both report paths.
-
-Stop without pretending success when the Diff is unavailable, the review
-target is materially ambiguous, critical context is missing, or safe
-verification cannot be completed. Still preserve verified partial findings and
-clearly label the resulting limitation. Do not automatically continue into
-implementation, test execution, merge, release, or deployment.
+Verify scope, lane coverage, evidence, findings, severity totals, metric scopes,
+gates, Semgrep coverage, blockers, limitations, and latest command outcomes.
+Report the path and both conclusions. Stop; do not continue into implementation,
+test execution, merge, release, or deployment.

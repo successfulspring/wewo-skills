@@ -19,13 +19,10 @@ excluded scope, and limitations.
 
 ## Input priority
 
-Use current user requirements and actual project behavior first. Reuse
-`test-plan.md` and `test-cases.md` only when the user explicitly supplies or
-references them, or the current conversation already establishes them:
-
-- an explicitly established `test-cases.md` as the primary scenario inventory;
-- an explicitly established `test-plan.md` as optional scope and strategy
-  context.
+Use current user requirements and actual project behavior first. Reuse an
+explicitly established `test-cases.md` as the primary scenario inventory only
+when the user supplies or references it, or the current conversation already
+establishes it.
 
 Never scan `docs/wewo/` or the repository to discover these documents. Never
 treat a prior report or label as current execution evidence. Keep execution
