@@ -602,13 +602,19 @@ def validate_marketplace_packaging(
             )
             continue
         if relative_path == Path(".claude-plugin/marketplace.json"):
-            if (
-                source.get("source") != "github"
-                or source.get("repo") != PLUGIN_SOURCE_REPO
-            ):
+            github_form = (
+                source.get("source") == "github"
+                and source.get("repo") == PLUGIN_SOURCE_REPO
+            )
+            url_form = (
+                source.get("source") == "url"
+                and source.get("url")
+                == f"https://github.com/{PLUGIN_SOURCE_REPO}.git"
+            )
+            if not (github_form or url_form):
                 validation.error(
                     f"{manifest_path}: plugin source must reference "
-                    f"{PLUGIN_SOURCE_REPO!r}"
+                    f"{PLUGIN_SOURCE_REPO!r} as a github repo or HTTPS url"
                 )
         elif (
             source.get("source") != "local"

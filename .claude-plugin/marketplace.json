@@ -10,8 +10,8 @@
     {
       "name": "wewo-skills",
       "source": {
-        "source": "github",
-        "repo": "successfulspring/wewo-skills"
+        "source": "url",
+        "url": "https://github.com/successfulspring/wewo-skills.git"
       },
       "description": "Six independent, composable Agent Skills for requirement, design, test-case, TDD build, automated test, and review workflows.",
       "homepage": "https://github.com/successfulspring/wewo-skills"
