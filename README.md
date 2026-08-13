@@ -75,7 +75,17 @@ codex plugin add wewo-skills@wewo-skills
 ```
 
 Requires Codex CLI v0.122 or later. Start a new Codex session after
-installation so the Skills are discovered. Local clones work too:
+installation so the Skills are discovered.
+
+Some Codex CLI versions do not ship a `codex plugin add` subcommand. In that
+case, enable the installed plugin in `~/.codex/config.toml`:
+
+```toml
+[plugins."wewo-skills@wewo-skills"]
+enabled = true
+```
+
+Local clones work too:
 
 ```text
 codex plugin marketplace add /path/to/your/clone
