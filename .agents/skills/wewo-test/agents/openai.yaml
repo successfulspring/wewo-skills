@@ -1,4 +1,4 @@
 interface:
-  display_name: "Wewo Test"
-  short_description: "Execute tests and produce an evidence gate"
-  default_prompt: "Use $wewo-test to route and execute verification, triage results, manage manual tests, and produce an evidence-based test gate."
+  display_name: "Wewo Automated Test Execution"
+  short_description: "Run automated native tests through available agent tools"
+  default_prompt: "Use $wewo-test to execute in-scope automatable cases with repository-native routes and runners, select available agent tool interfaces, preserve evidence, exclude Manual cases from execution, and produce an evidence-based automated gate."

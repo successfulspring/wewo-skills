@@ -79,7 +79,6 @@ STABLE_FILENAMES = (
     "implementation-plan.md",
     "implementation-record.md",
     "test-execution.md",
-    "manual-test-checklist.md",
     "review.md",
 )
 LEGACY_FILENAMES = (
@@ -124,7 +123,7 @@ OWNED_ARTIFACTS = {
     "wewo-erd": ("technical-design.md",),
     "wewo-testplan": ("test-cases.md",),
     "wewo-build": ("implementation-plan.md", "implementation-record.md"),
-    "wewo-test": ("test-execution.md", "manual-test-checklist.md"),
+    "wewo-test": ("test-execution.md",),
     "wewo-review": ("review.md",),
 }
 BUILD_FORBIDDEN_MARKERS = (

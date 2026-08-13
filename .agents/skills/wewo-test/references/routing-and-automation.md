@@ -1,69 +1,93 @@
-# Test Routing and Automation Feasibility
+# Evidence-Preserving Routing
 
-Choose the lowest-cost, fastest, most stable level that gives direct evidence.
+Resolve how the actual repository can prove each obligation without changing
+what must be proven.
 
-## Routing guide
+## Core rule
 
-- Unit: pure functions, business rules, state decisions, transformations,
-  boundaries, isolated errors, and algorithms.
-- Component: conditional rendering, validation, controls, dialogs, messages,
-  and local UI state.
-- Integration: service/repository behavior, real persistence, transactions,
-  caches, messages, filesystems, and adapters.
-- API: HTTP behavior, parameters, schema, errors, authentication,
-  resource-level authorization, idempotency, server validation, compatibility.
-- Contract: OpenAPI, frontend/backend fields, service protocols, messages,
-  serialization, and third-party adapter contracts.
-- Web E2E: critical user journeys, browser behavior, cross-page flows, and
-  observable end-to-end outcomes.
-- Database/migration: schema changes, historical compatibility, defaults,
-  backfills, constraints, indexes, upgrade, rollback, and transformations.
-- Security behavior: unauthenticated and unauthorized access, invalid input,
-  file restrictions, expired tokens, replay, cross-user access, server-side
-  enforcement, and state-machine bypass.
-- Performance/reliability: response targets, bounded concurrency, retries,
-  duplicate submission, timeout, data volume, long tasks, and leaks when a
-  requirement or material risk justifies them.
-- Manual: visual quality, usability, wording, real devices or hardware, real
-  communications or payments, captcha, uncontrollable pages, subjective
-  judgment, unsafe automation, or poor long-term value.
+Execution routing must preserve the evidence required by the already-defined
+case. A cheaper lower-level seam must never replace browser, API, integration,
+component, contract, persistence, or other evidence explicitly required by the
+case. Never rewrite Steps or Expected Results to fit a runner.
 
-Formal load or stress testing requires an isolated environment, explicit
-targets and data capacity, and user authorization.
+Treat Test Level as semantic guidance. Treat Automation as the primary routing
+input.
 
-## Automation statuses
+Keep these concepts separate:
 
-- `Direct Automation`: stable seam and existing support.
-- `Automation with Setup`: small fixture, account, or data preparation needed.
-- `Change Test Level`: another level gives better evidence.
-- `Infrastructure Required`: persistent framework or service required.
-- `Blocked`: environment or dependency prevents execution.
-- `Manual Preferred`: manual evidence is safer or more valuable.
-- `Not Applicable`: confirmed scenario no longer applies.
-- `Needs Clarification`: expected behavior is unresolved.
+```text
+Required Evidence -> Test Route -> Repository-native Runner
+                                      |
+                                      +-> Agent Tool Interface
+```
 
-Evaluate interface stability, existing frameworks, repeatable data, isolation,
-cleanup, accounts, captcha, payments, messages, external systems, destructive
-effects, execution frequency, business risk, stability, and maintenance cost.
+Required Evidence defines what must be shown. Route defines the semantic
+surface. Runner is the project framework that executes the durable asset. Agent
+Tool Interface is optional access the agent can use to interact, generate,
+execute, or debug. Interface availability never redefines evidence, Route, or
+Runner.
 
-## Required evidence handling
+## Explicit Automation values
 
-For every P0/P1 scenario, honor the documented Required Evidence Level when
-present. A required E2E level must be executed (`Passed` or `Failed`) or
-explicitly classified `Blocked` with a concrete blocker or `Not Run` with a
-justified reason; it cannot be silently replaced with unit, component,
-integration, or API evidence. When E2E is only recommended, another level is
-allowed when it provides equivalent direct evidence; record the routing
-reason.
+- `Unit`: preserve isolated behavior evidence and use the repository's unit
+  runner.
+- `Component`: preserve bounded component/rendering evidence and use the
+  established component harness.
+- `Integration`: preserve collaboration, persistence, transaction, messaging,
+  filesystem, cache, or adapter evidence.
+- `API`: preserve public request/response, authentication, authorization,
+  validation, idempotency, or API compatibility evidence.
+- `Contract`: preserve authoritative producer/consumer, schema, protocol, or
+  serialization evidence.
+- `Playwright`: preserve durable browser-automation evidence; resolve the
+  concrete browser runner under the browser policy.
+- `Manual`: exclude from automated execution scope. Preserve the case ID and
+  exclusion reason when useful, but do not execute it, generate a manual
+  checklist, or convert it to `Not Run`.
+- `Conditional · <route>`: preserve both the enabling condition and route. If
+  the named route is Manual, exclude it as manual-only scope.
 
-## Implementation order
+Do not impose a global mapping from route to framework. Unit may use pytest,
+unittest, Vitest, Jest, JUnit, `go test`, or another established runner; API,
+integration, component, and contract routes likewise use the repository's
+actual stack.
 
-1. Execute and inspect relevant existing tests.
-2. Add missing scenarios to an existing framework.
-3. If the test type has no framework, decide whether persistent adoption is
-   justified.
-4. Prefer isolated temporary execution for one-time validation.
-5. Obtain confirmation before large infrastructure changes.
+## Auto
 
-Do not replace pytest, Jest, Vitest, Cypress, Playwright, REST Assured, Newman,
-or another established stack merely for consistency.
+`Auto` is repository-aware deferred routing. Inspect the repository and choose
+the lowest-cost, stable, maintainable seam that directly proves the original
+behavior and Oracle.
+
+Possible resolved routes include Unit, Component, Integration, API, Contract,
+Browser, or a repository-supported specialized test seam. Base the decision on
+existing tests, test paths, configuration, scripts, fixtures, helpers,
+architecture, public interfaces, and the implementation seam. Record the
+resolved Route and Runner.
+
+Do not choose from language stereotypes. Do not label `Auto` as a runner,
+status, or test level. For `Conditional · Auto`, preserve the condition and
+perform deferred routing only when the condition can be met.
+
+Keep `Auto` unchanged: resolve its Route and Runner from repository facts
+first. Only afterward select a useful available Agent Tool Interface. The
+presence of Playwright, MCP, or another agent tool must not bias an otherwise
+non-browser `Auto` obligation toward Browser.
+
+## Route examples
+
+A deterministic price-tier rule with a pure domain seam and an existing unit
+suite may resolve to Unit. An idempotency rule with stable HTTP fixtures may
+resolve to API. A case that opens a product page, selects a filter, and verifies
+the rendered list remains Browser even when an internal filtering function is
+easy to unit test.
+
+## Decision factors
+
+Use observability, controllability, isolation, determinism, fidelity,
+diagnostic value, maintenance cost, existing infrastructure, data lifecycle,
+accounts, external effects, and material risk. Formal load or stress execution
+also requires an isolated environment, explicit targets and capacity, and
+authorization.
+
+Do not invent quotas by route, add redundant levels for completeness, or
+replace an established framework merely for consistency.

@@ -1,70 +1,89 @@
-# Automation Branches
+# Repository-Native Automation Branches
 
-Apply one evidence-preserving process across the project's actual frameworks.
+Apply one evidence-preserving execution sequence across the project's actual
+frameworks.
 
-## Common process
+## Common execution sequence
 
-For every automatable scenario:
+For each automated scenario:
 
-1. confirm observable behavior and expected result;
-2. choose the level and test seam;
-3. find related existing tests, fixtures, and helpers;
-4. add the smallest maintainable missing asset;
-5. prepare controlled environment and isolated data;
-6. run the focused test;
-7. preserve first-failure evidence;
-8. repair test-code defects without changing expectations;
-9. run the target set and relevant regression;
-10. capture command, exit status, output, artifacts, and cleanup result;
-11. update the matrix.
+1. verify expected behavior and Oracle;
+2. resolve Route and Runner from the Automation annotation and repository;
+3. discover useful available Agent Tool Interfaces without changing the Runner;
+4. locate related existing tests, fixtures, and helpers;
+5. create or modify the smallest durable missing asset;
+6. prepare a controlled environment and isolated data;
+7. execute the focused test through the repository-native Runner;
+8. preserve first-failure evidence;
+9. diagnose runner discovery, loading, startup, or execution failure before
+   fallback;
+10. triage Product, Test, Data, Environment, Existing, Flaky, Requirement, or
+   Unverified causes;
+11. repair only permitted test, configuration, fixture, locator, or data
+    defects without weakening the Oracle;
+12. rerun the focused test;
+13. execute the relevant target set;
+14. execute necessary affected regression;
+15. collect native evidence and sanitize it;
+16. clean up data and temporary resources;
+17. assign the final status and update the execution record.
+
+Do not run the full repository suite automatically when focused and affected
+regression scopes provide sufficient evidence. Do not skip a necessary
+regression merely to save time.
 
 ## Unit and component
 
-Use the repository's runner. Prefer public behavior, focused assertions,
-deterministic inputs, isolated state, and existing rendering or component
-harnesses. Avoid tests coupled to private implementation and mocks that bypass
-the behavior under test.
+Use the repository's runner and harness. Prefer public behavior, deterministic
+inputs, isolated state, focused assertions, and existing rendering conventions.
+Avoid unnecessary coupling to private implementation and mocks that bypass the
+behavior under test.
 
-## Integration
+## Integration, persistence, and services
 
-Use real persistence, transactions, caches, messages, filesystems, or adapters
-when those boundaries carry the risk. Verify rollback, partial failure,
-idempotency, cleanup, and isolation. Do not replace material collaboration
-evidence with mocks.
+Use real persistence, transactions, caches, messages, filesystems, adapters,
+or test services when those boundaries carry the risk. Verify rollback,
+partial failure, idempotency, cleanup, and isolation where required. Do not
+replace material collaboration evidence with lower-fidelity mocks.
 
 ## API and contract
 
-Use the project's API framework. Verify authentication, authorization,
-parameters, status and error codes, schema, idempotency, server-side
-validation, and compatibility. For contracts, validate only authoritative
-schemas and protocols; do not infer undocumented business behavior.
+Use the project's established API or contract stack. Preserve public
+authentication, authorization, parameters, status/error semantics, schemas,
+idempotency, server-side validation, compatibility, and authoritative protocol
+evidence. Do not infer undocumented business behavior.
+
+## Browser
+
+Use the durable browser branch in `playwright-e2e.md`. Browser exploration may
+assist construction and debugging but cannot replace a repository test asset
+executed by the project runner.
 
 ## Database and migration
 
 Use a disposable or explicitly approved database. Verify forward migration,
 historical data, defaults, backfills, constraints, indexes, compatibility, and
-rollback where supported. Never run migration tests against production by
-default.
+rollback where supported. Never test migrations against production by default.
 
 ## Security behavior
 
-Execute only feature-related, controlled, non-destructive checks. Verify
-unauthenticated and cross-user behavior, resource permissions, invalid input,
-file restrictions, expired tokens, replay, duplicate requests, state
-transitions, and server-side enforcement where applicable.
+Run only controlled, non-destructive checks within the verification scope.
+Cover relevant unauthenticated and cross-user behavior, resource permissions,
+invalid input, file restrictions, expired tokens, replay, duplicate requests,
+state transitions, and server-side enforcement.
 
 ## Performance and reliability
 
-Run only when required or risk-justified. Define the target, environment,
-dataset, load shape, duration, and stop conditions. Keep exploratory
-concurrency bounded. Formal pressure testing requires explicit authorization
-and an isolated environment.
+Run only when explicitly required or materially risk-justified. Define target,
+environment, dataset, load shape, duration, thresholds from authoritative
+requirements, and stop conditions. Formal pressure testing requires explicit
+authorization and an isolated environment.
 
-## Test assets
+## Durable assets and production boundary
 
-Permitted assets include unit, component, integration, API, contract, E2E,
-fixtures, mocks, page objects, helpers, data builders, and reporter
-configuration. Keep them in normal project test paths.
+Keep unit, component, integration, API, contract, browser, performance,
+fixtures, mocks, page objects, helpers, data builders, and approved test-only
+configuration in normal project paths.
 
-Do not change production code. When a production seam is needed, document a
-Testability Change Request rather than implementing it.
+Do not change production code. When a production seam is required, document a
+Testability Change Request instead of implementing it.

@@ -1,121 +1,100 @@
-# Test Execution Document Contract
+# Lean Automated Test Execution Document Contract
 
-Create both documents for the same resolved workspace, code version, matrix,
-and evidence set. Localize headings and prose while keeping filenames in
-English.
+Localize generated headings and prose while keeping stable filenames in
+English. Use one resolved workspace, tested code version, automated execution
+record, and evidence set.
 
-## Contents
+## `test-execution.md`
 
-- [Test execution report](#test-execution-report)
-- [Manual checklist](#manual-checklist)
-- [Evidence tables](#evidence-tables)
-- [Final consistency checks](#final-consistency-checks)
+Always create this document when automated execution is requested or completed.
+Keep it execution-first and concise. Use this adaptive structure:
 
-## Test execution report
+1. localized title;
+2. Automated Test Conclusion;
+3. Execution Scope and Environment;
+4. Test Results;
+5. Failures, Blockers, and Flaky Results, only when applicable;
+6. Test Asset Changes, only when applicable;
+7. Metrics and Residual Risks.
 
-Use these sections in order:
+The conclusion includes the automated execution Gate and actual counts for
+Passed, Failed, Blocked, Not Run, and Flaky when applicable.
 
-1. Test Conclusion
-2. Test Objective, Scope, and Code Version
-3. Test Basis
-4. Existing Project Test Foundation
-5. Environment and Data-Safety Confirmation
-6. Test Scenario Execution Matrix
-7. Automation Feasibility
-8. Tool Discovery, Installation, and Execution
-9. Unit Test Results
-10. Component Test Results
-11. Integration Test Results
-12. API and Contract Test Results
-13. E2E Test Results
-14. Security-Behavior Test Results
-15. Database and Migration Test Results
-16. Performance and Reliability Test Results
-17. Manual Test Status
-18. Failure Attribution and Defect List
-19. Flaky Tests
-20. Automated Test-Asset Changes
-21. Testability Change Requests
-22. Quantitative Metrics
-23. Test Gate
-24. Environment Limitations and Residual Risks
+Scope and environment record Code Version, automated Scope, Environment, Test
+Basis, Key Limitations, and excluded Manual case IDs/count when useful. Refer to
+an explicitly supplied test-case artifact without copying or rewriting it.
 
-Use the filename `test-execution.md`. Mark inapplicable test-type sections
-`Not Applicable` without fabricated detail.
-
-## Manual checklist
-
-Use these sections in order:
-
-1. Manual Test Instructions
-2. Test Environment and Account
-3. Manual Test Summary
-4. P0 Manual Tests
-5. P1 Manual Tests
-6. P2/P3 Manual Tests
-7. Manual Failures and Defects
-8. Manual Blockers
-9. Missing Evidence
-10. Manual Test Conclusion
-
-Use the filename `manual-test-checklist.md`.
-
-## Evidence tables
-
-Execution commands:
+Center the result table on automated execution evidence:
 
 ```markdown
-| Check | Command | Code version | Environment | Status | Exit status | Evidence/artifacts |
-|---|---|---|---|---|---|---|
-```
-
-Test assets:
-
-```markdown
-| File | Change | Scenarios | Executed status |
-|---|---|---|---|
-```
-
-Failure ledger:
-
-```markdown
-| Scenario | Status | Attribution | Evidence | Defect/blocker | Rerun result |
-|---|---|---|---|---|---|
-```
-
-Metrics:
-
-```markdown
-| Metric | Value | Numerator | Denominator | Limitation |
+| Case | Route | Runner | Status | Evidence / Failure |
 |---|---|---|---|---|
 ```
 
-Testability request:
+Keep Agent Tool Interface in the internal execution record when useful; do not
+add it as a mandatory published column. The report prioritizes required
+evidence and repository-runner results over agent implementation details.
+
+Manual-only cases are outside this capability's execution scope. Do not create
+`manual-test-checklist.md`, manual statuses, manual execution tasks, or duplicate
+manual-test documents. Manual cases may be listed briefly as excluded scope so
+the automated denominator is transparent. They are not `Not Run` and do not
+change the automated execution gate.
+
+Add details only when they help explain an actual failure, blocker, Flaky
+result, asset change, Testability Change Request, native artifact, scope
+exclusion, or residual risk. Omit empty test-type and inapplicable sections; do
+not fill them with `Not Applicable` boilerplate.
+
+Metrics remain lightweight and calculable. Record automated execution rate,
+status counts, relevant automated counts, automated P0/P1 completion when its
+denominator is known, unresolved blockers, residual risks, and native
+report/artifact locations. Do not invent coverage or normalize every native
+result into HTML.
+
+## Native evidence
+
+Reference runner-native evidence rather than converting it solely for report
+uniformity. Useful examples include terminal output and exit status, existing
+HTML/XML/JSON/JUnit reports, coverage produced by a configured coverage tool,
+Playwright Trace or screenshots, Cypress screenshots/video, Gradle reports, Go
+JSON events, and performance summaries.
+
+Store retained sanitized evidence under `test-artifacts/` when it is not
+already in a stable repository-native location. Never expose secrets,
+credentials, cookies, tokens, personal data, or unnecessary production data.
+
+Optional supporting tables:
 
 ```markdown
-### TCR-001 {Title}
+| Check | Command | Code Version | Environment | Status | Exit Status | Native Evidence |
+|---|---|---|---|---|---|---|
+```
 
-- **Obstacle:**
-- **Proposed production change:**
-- **Production impact:**
-- **Alternative:**
-- **Risk:**
-- **Recommended production-code change:**
+```markdown
+| File | Change | Cases | Executed Status |
+|---|---|---|---|
+```
+
+```markdown
+| Case | Status | Attribution | First Evidence | Rerun / Stability Evidence | Defect / Blocker |
+|---|---|---|---|---|---|
 ```
 
 ## Final consistency checks
 
 Verify:
 
-- report, checklist, matrix, and artifacts use the same code version;
-- every Passed result has actual current-run evidence;
-- generated-only assets remain Not Run;
-- manual Passed entries identify human execution evidence;
-- first-failure and Flaky evidence are preserved;
-- formal Product Defects have confirmed attribution;
-- command and status counts reconcile with metrics;
-- required P0/P1 and manual gaps affect the gate;
-- secrets and production data are absent from reports and artifacts;
-- executable tests remain in project test paths;
-- no production file or planning document was silently modified;
-- no document owned by another capability was created.
+- report, execution record, and artifacts use the same code version and
+  automated scope;
+- excluded Manual cases are not counted as automated, `Not Run`, or blockers;
+- every `Passed` result has current-run evidence;
+- generated but unexecuted automated assets remain `Not Run`;
+- first-failure and Flaky evidence remain visible;
+- only confirmed Product Defects enter the product defect list;
+- counts and calculable automated metrics reconcile;
+- required high-risk automated blockers affect the automated execution gate;
+- environment coverage is not overstated;
+- evidence is sanitized and cleanup risk is recorded;
+- executable tests remain in normal project test paths;
+- no production file or source test-case artifact was silently modified.

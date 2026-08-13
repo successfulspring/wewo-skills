@@ -1,64 +1,76 @@
-# Project Analysis and Execution Matrix
+# Repository Analysis and Execution Record
 
-Establish the actual code version, project capabilities, and unified scenario
-inventory before generating or executing tests.
+Establish the tested code version, actual repository capabilities, and minimum
+verification inventory before changing or executing tests.
 
 ## Scope resolution
 
 Use the first applicable source:
 
 1. explicit user scope;
-2. identified feature, issue, bug, or acceptance requirement plus necessary
+2. identified feature, issue, bug, or verification obligation plus necessary
    regression;
 3. explicit Diff and affected call paths;
 4. current branch changes with confirmation of material boundaries.
 
-Record current branch or commit, tested code version, target Diff when
-applicable, environment, objective, included scope, regression scope,
-excluded scope, and limitations.
+Record branch or commit, tested code version, target Diff when applicable,
+environment, objective, included scope, regression scope, excluded scope, and
+limitations.
 
-## Input priority
+## Input rules
 
-Use current user requirements and actual project behavior first. Reuse an
-explicitly established `test-cases.md` as the primary scenario inventory only
-when the user supplies or references it, or the current conversation already
-establishes it.
+Use an explicitly supplied or conversation-established test-case artifact as
+the primary inventory. Never scan `docs/wewo/` or the repository to discover a
+workflow artifact. Never treat an earlier report or label as current execution
+evidence, and never write execution results back into a source test-case
+artifact.
 
-Never scan `docs/wewo/` or the repository to discover these documents. Never
-treat a prior report or label as current execution evidence. Keep execution
-status, logs, screenshots, and actual responses out of test-planning documents.
+Without usable cases, derive only the minimum execution inventory from the
+current goal, explicit requirement evidence, actual Diff, public interfaces,
+affected pages, existing executable tests, repository behavior, and material
+risk. Do not fabricate an Oracle. Ask only when unresolved behavior changes
+pass/fail.
 
-Without usable testing artifacts, derive the minimum matrix from the user
-goal, actual Diff, public interfaces, pages, existing tests, repository
-behavior, and risk. Ask when an unresolved expectation affects pass/fail.
+## Mandatory repository inspection
 
-## Project analysis
+Inspect as relevant:
 
-Inspect:
+- repository instructions and startup guidance;
+- language, architecture, public interfaces, and affected modules;
+- manifests, lockfiles, installed runtimes, and package-manager state;
+- test directories, existing tests, fixtures, mocks, helpers, and page objects;
+- runner, browser, coverage, reporter, and environment configuration;
+- package scripts, Makefiles, CI commands, and documented test commands;
+- databases, services, accounts, test data, and cleanup requirements;
+- native result and artifact formats.
 
-- repository instructions and project startup guidance;
-- language, framework, architecture, and affected modules;
-- dependency manifests and lockfiles;
-- existing test directories, frameworks, fixtures, mocks, and helpers;
-- runner, coverage, reporter, E2E, browser, and environment configuration;
-- package scripts, Makefiles, CI, and documented commands;
-- installed runtimes, executables, and browsers;
-- database, service, account, and test-data requirements.
+Do not run a detection command that may download software when files can show
+whether it is declared. Use repository facts, not language stereotypes, to
+resolve the execution seam and runner.
 
-Do not run a detection command that may trigger a download when project files
-can establish whether a tool is declared.
+## Compact execution record
 
-## Matrix contract
-
-Use one row per independently reportable scenario:
+Track one row per independently reportable scenario. Keep this record internal
+unless publishing it adds execution value.
 
 ```markdown
-| Scenario ID | Source | Objective | Priority | Risk | Recommended level | Required evidence | Actual level | Automation status | Framework/seam | Environment/data | Execution status | Evidence | Defect/blocker | Manual task |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Scenario ID | Source | Priority | Behavior / Oracle | Planned Automation | Resolved Route | Runner | Agent Tool Interface | Test Asset | Environment / Data | Status | Evidence | Failure / Blocker | Scope Exclusion |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 ```
 
-Keep expected behavior separate from execution method. A level or tool may
-change without changing the expected outcome.
+Route, Status, and Failure/Blocker are orthogonal. For example:
 
-Update the matrix after every generated asset, execution, triage decision,
-manual result, or blocker. Do not reconstruct it from memory at the end.
+```text
+Route: Browser
+Runner: Playwright Test
+Agent Tool Interface: Playwright CLI
+Status: Blocked
+Blocker: browser runtime unavailable
+```
+
+Required Evidence, Route, Runner, and Agent Tool Interface are separate. An
+interface may help inspect or execute without redefining the project Runner.
+Do not add a second feasibility classification. Manual-only cases may be retained
+only as scope exclusions and must not receive an execution status. Update the
+record after asset changes, execution, triage, or blocker discovery. Preserve the
+source behavior and Oracle throughout.

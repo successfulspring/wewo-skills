@@ -20,6 +20,10 @@ environment problems.
 
 Only confirmed Product Defect items enter the formal product defect list.
 
+A runner timeout, startup failure, discovery failure, or import failure is not
+automatically a Product Defect, Environment Blocker, unsupported Runner, or
+reason to replace the Runner. Diagnose it before attribution or fallback.
+
 ## Triage sequence
 
 1. Capture command, code version, environment, timestamp, exit status, logs,
@@ -27,12 +31,24 @@ Only confirmed Product Defect items enter the formal product defect list.
 2. Check whether the test reached and exercised the target behavior.
 3. Validate setup, account, data, fixture, locator, mock, and assertion.
 4. Compare with baseline evidence when classifying Existing Failure.
-5. Fix only permitted test assets for a Test Defect.
-6. Rerun the focused test, then relevant regression.
-7. Record attribution, evidence, defect or blocker, and residual risk.
+5. For runner failure, apply the bounded sequence in `runner-diagnostics.md`.
+6. Fix only permitted test assets or test infrastructure for a Test Defect.
+7. Rerun the focused test, then relevant regression.
+8. Record attribution, evidence, defect or blocker, and residual risk.
 
 Do not weaken assertions, skip a required scenario, modify business
 expectations, or change production logic to obtain Green.
+
+## Healer boundary
+
+Repair test code, configuration, fixtures, locators, timing/synchronization,
+and test data when evidence establishes a Test Defect and the repair does not
+weaken the Oracle. Preserve the first failure.
+
+For a Product Defect, do not heal production behavior, weaken assertions, or
+add skip/fixme solely to obtain Green; record `Failed`. For a Requirement
+Conflict, do not silently redefine the Oracle. Production code remains
+read-only unless separately authorized outside this capability.
 
 ## Mandatory stability-evidence protocol
 

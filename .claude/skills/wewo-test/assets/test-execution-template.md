@@ -1,49 +1,49 @@
-# {Localized Test Execution Report Title}
+# {Localized Requirement Name} {Localized Automated Test Execution Result}
 
-## 1. Test Conclusion
+## {Localized Automated Test Conclusion}
 
-## 2. Test Objective, Scope, and Code Version
+- **Automated Test Gate:**
+- **Passed:**
+- **Failed:**
+- **Blocked:**
+- **Not Run:**
+- **Flaky:**
 
-## 3. Test Basis
+## {Localized Execution Scope and Environment}
 
-## 4. Existing Project Test Foundation
+- **Code Version:**
+- **Automated Scope:**
+- **Excluded Manual Cases:** {Omit when none.}
+- **Environment:**
+- **Test Basis:**
+- **Key Limitations:**
 
-## 5. Environment and Data-Safety Confirmation
+## {Localized Test Results}
 
-## 6. Test Scenario Execution Matrix
+| Case | Route | Runner | Status | Evidence / Failure |
+|---|---|---|---|---|
 
-## 7. Automation Feasibility
+## {Localized Failures, Blockers, and Flaky Results}
 
-## 8. Tool Discovery, Installation, and Execution
+{Include only when applicable. Preserve first-failure and stability evidence.}
 
-## 9. Unit Test Results
+## {Localized Test Asset Changes}
 
-## 10. Component Test Results
+{Include only when applicable.}
 
-## 11. Integration Test Results
+## {Localized Metrics and Residual Risks}
 
-## 12. API and Contract Test Results
+- **Automated Execution Rate:**
+- **Automated Execution Count:**
+- **Automated Pass Rate:**
+- **Automated P0/P1 Completion:**
+- **Unresolved Blockers:**
+- **Residual Risks:**
+- **Native Reports / Artifacts:**
 
-## 13. E2E Test Results
-
-## 14. Security-Behavior Test Results
-
-## 15. Database and Migration Test Results
-
-## 16. Performance and Reliability Test Results
-
-## 17. Manual Test Status
-
-## 18. Failure Attribution and Defect List
-
-## 19. Flaky Tests
-
-## 20. Automated Test-Asset Changes
-
-## 21. Testability Change Requests
-
-## 22. Quantitative Metrics
-
-## 23. Test Gate
-
-## 24. Environment Limitations and Residual Risks
+Omit inapplicable headings, fields, and metrics rather than filling them with
+`Not Applicable`. Include a metric only when its denominator is known. Manual
+cases may be named only as excluded scope; do not assign them an execution
+status or generate a manual checklist. If no automatable cases remain, state
+that there is no automated execution scope and omit the automated gate and
+rates rather than fabricating values.
