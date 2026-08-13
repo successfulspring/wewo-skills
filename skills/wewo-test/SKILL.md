@@ -28,6 +28,17 @@ Prefer established repository test infrastructure. Do not prescribe one
 framework, create a universal runner wrapper, or require a universal HTML
 report. Browser automation is one execution branch, not the whole capability.
 
+Playwright Test has one runner-specific completion invariant. When the resolved
+final Runner is Playwright Test, the final evidence execution must enable its
+native HTML reporter while preserving every established repository reporter;
+add HTML alongside existing reporters rather than replacing them. A diagnostic
+run that overrides reporters with `--reporter=list` does not satisfy final
+execution. Before declaring Playwright execution complete, verify that the
+configured HTML output folder contains its actual `index.html`. Passing tests
+without that file leave Playwright final evidence incomplete. Repair the
+permitted reporter configuration and rerun the final Playwright target before
+completion; do not classify the missing report as a Product Defect.
+
 Keep four decisions distinct:
 
 1. `Required Evidence`: what the unchanged case and Oracle demand;
@@ -322,6 +333,11 @@ locators, generate the repository asset, and then execute it with the Runner.
 Do not guess speculative DOM details when reconnaissance is available. Skip
 reconnaissance when clear, stable repository abstractions already suffice.
 
+If Playwright Test is the final Runner, completion additionally requires the
+native HTML reporter and verified HTML `index.html` described in the Core
+invariants. A successful diagnostic run or passing final test status alone is
+not sufficient.
+
 ### 9. Exclude manual-only obligations
 
 Manual-only cases are outside this capability's execution scope. Preserve their
@@ -364,6 +380,11 @@ Read [document-contract.md](references/document-contract.md). Generate a lean
 [test-execution-template.md](assets/test-execution-template.md), referencing
 native evidence rather than converting it unnecessarily. Do not generate a
 manual checklist or any other manual-execution artifact.
+
+When Playwright Test was used, record its native HTML report path under native
+reports/evidence only after verifying that the referenced `index.html` exists.
+If generation remains blocked, report Playwright final evidence as incomplete
+instead of fabricating a path or declaring execution complete.
 
 Verify that code version, automated scope, excluded Manual cases, execution
 record, native evidence, counts, failure attribution, residual risks, and gate

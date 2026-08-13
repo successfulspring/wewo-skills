@@ -41,6 +41,9 @@
 - **Residual Risks:**
 - **Native Reports / Artifacts:**
 
+{When Playwright Test is used, include its native HTML report path only after
+verifying that the configured output folder contains `index.html`.}
+
 Omit inapplicable headings, fields, and metrics rather than filling them with
 `Not Applicable`. Include a metric only when its denominator is known. Manual
 cases may be named only as excluded scope; do not assign them an execution

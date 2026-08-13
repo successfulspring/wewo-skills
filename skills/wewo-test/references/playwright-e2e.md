@@ -9,6 +9,7 @@ evidence surface even when a lower-level implementation seam exists.
 - [Resolve the Runner](#resolve-the-runner)
 - [Resolve Agent Tool Interfaces](#resolve-agent-tool-interfaces)
 - [Playwright Test operational recipes](#playwright-test-operational-recipes)
+- [Configuration-time reporter guard](#configuration-time-reporter-guard)
 - [Reconnaissance versus durable execution](#reconnaissance-versus-durable-execution)
 - [Generator-style workflow](#generator-style-workflow)
 - [Construct durable tests](#construct-durable-tests)
@@ -92,6 +93,36 @@ Prefer the repository's script, configuration, package manager, and local
 Runner. Use these minimal npm-style recipes only when the repository does not
 define a more specific command.
 
+### Configuration-time reporter guard
+
+Whenever execution creates `playwright.config.*`, materially updates an
+existing Playwright configuration, or creates a new scoped Playwright
+configuration, inspect the final effective reporter configuration before the
+final evidence suite. Confirm that Playwright's native HTML reporter is present
+with `open: "never"`. Preserve all established reporters and add HTML alongside
+them; never blindly overwrite the existing configuration.
+
+For example, a new configuration may retain terminal output and add HTML:
+
+```ts
+reporter: [
+  ["list"],
+  ["html", { open: "never", outputFolder: "playwright-report" }],
+],
+```
+
+An existing reporter remains in place:
+
+```ts
+reporter: [
+  ["junit", { outputFile: "test-results/results.xml" }],
+  ["html", { open: "never" }],
+],
+```
+
+The folder is repository-configurable; the invariant is the additive native
+HTML reporter and subsequent verification of its actual `index.html`.
+
 ### Test discovery
 
 Use listing as the first Playwright diagnostic when collection or configuration
@@ -114,8 +145,8 @@ case. Do not guess them.
 
 ### Single-worker diagnostic execution
 
-Use this to isolate worker, concurrency, or reporter noise; it is not the
-default project command:
+Classify this as a **Diagnostic Run** used to isolate worker, concurrency, or
+reporter noise; it is not the default project command or a Final Evidence Run:
 
 ```bash
 npx playwright test <spec> --workers=1 --reporter=list
@@ -145,6 +176,16 @@ The single-worker `--reporter=list` recipe above remains valid for diagnosis,
 but it does not satisfy final Playwright Test execution. After diagnosis, run
 the final evidence command through the repository-native configuration with
 the additive HTML reporter enabled. Do not generate a custom Wewo HTML report.
+
+Use this lifecycle:
+
+```text
+Playwright diagnostics (optional --reporter=list)
+-> repair or stabilize permitted test infrastructure
+-> final Playwright evidence execution with configured HTML reporter
+-> verify the configured HTML index.html
+-> complete
+```
 
 ## Reconnaissance versus durable execution
 
@@ -269,6 +310,16 @@ and useful. Automatic retries are diagnostic; they do not erase the initial
 failure. Apply bounded stability evidence when unchanged runs produce mixed
 results. If the final run does not generate its configured HTML report, final
 Playwright evidence is incomplete even when a diagnostic run succeeded.
+
+Verify the entry file itself, not merely the output directory. Do not infer an
+HTML report from `.gitignore`, passing terminal output, `test-results/`, Trace,
+screenshots, or video. When tests pass but the required HTML `index.html` is
+missing, the test execution may have passed but the final evidence is
+incomplete. Classify this as a permitted test-infrastructure/evidence-generation
+defect, not a Product Defect, test-case failure, or application failure. Repair
+the reporter configuration and rerun the final Playwright target before
+completion. Record the verified HTML path in `test-execution.md`; if generation
+remains blocked, report the incomplete evidence and do not invent a path.
 
 If no safe durable browser path exists, use `Blocked` or justified `Not Run`
 with the concrete reason. Manual execution is outside this capability and
