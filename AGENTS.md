@@ -4,7 +4,7 @@
 
 This repository maintains `wewo-skills`, a portable collection of six
 independently runnable software-engineering skills for Codex and Claude Code:
-`wewo-prd`, `wewo-erd`, `wewo-testplan`, `wewo-build`, `wewo-review`, and
+`wewo-prd`, `wewo-erd`, `wewo-testcases`, `wewo-build`, `wewo-review`, and
 `wewo-test`.
 
 These instructions govern repository maintenance. They do not define business
@@ -13,25 +13,26 @@ workflow.
 
 ## Source-of-truth model
 
-- `AGENTS.md`, `CLAUDE.md`, and `shared/global-conventions.md` define
-  repository-wide maintenance and collection behavior.
+- `AGENTS.md` and `CLAUDE.md` define repository-maintenance behavior. They are
+  project context, not installed-plugin runtime instructions.
 - `skills/<skill-name>/` is the canonical runtime source for that capability,
   including `SKILL.md`, local references, assets when needed, and any justified
   scripts.
-- `.agents/skills/` is the generated Codex mirror.
-- `.claude/skills/` is the generated Claude Code mirror.
-- `scripts/validate_skills.py` checks repository structure and runtime
-  invariants. It does not define or require a separate specification layer.
+- The repository root is the plugin root. `.claude-plugin/plugin.json` and
+  `.codex-plugin/plugin.json` package the same canonical `skills/` tree for
+  their respective hosts.
+- `scripts/validate_skills.py` checks repository structure, plugin packaging,
+  and runtime invariants. It does not define or require a separate
+  specification layer.
 
-Never edit either mirror directly. Change canonical files under `skills/`,
-validate the canonical change, synchronize, and then verify equality.
+There is one runtime Skill source: `skills/`. Never create or maintain
+host-specific Skill copies.
 
 ## Conflict handling
 
 Before making a material change, compare:
 
 - the user's current explicit instruction;
-- `shared/global-conventions.md`;
 - the affected canonical implementation;
 - these repository-maintenance instructions.
 
@@ -44,8 +45,6 @@ impact, and a recommended resolution.
 
 - Modify only the requested skill or repository-level file.
 - Do not modify another skill merely to make implementations look consistent.
-- Do not change `shared/global-conventions.md` unless the user explicitly
-  requests that collection-wide change.
 - Preserve unrelated, uncommitted, or pre-existing user work.
 - While authoring a reusable skill, do not run its runtime workflow or create
   real workflow documents, reports, evidence, production code, or executable
@@ -59,22 +58,18 @@ impact, and a recommended resolution.
 
 Before changing a skill:
 
-1. Read `shared/global-conventions.md` completely.
-2. Inspect the complete canonical implementation under
+1. Inspect the complete canonical implementation under
    `skills/<skill-name>/`.
-3. Identify material conflicts, missing decisions, and unresolved ambiguity.
-4. Modify only the canonical skill.
-5. Validate the canonical skill with the available skill-authoring validator
-   before synchronization. Do not invent a validator command if none is
-   available in the current host.
-6. Synchronize only after canonical validation passes.
-7. Run repository validation and verify that canonical, Codex, and Claude Code
-   copies are equal.
-8. Report omissions, partial implementation, assumptions, and unresolved
+2. Identify material conflicts, missing decisions, and unresolved ambiguity.
+3. Modify only the canonical skill.
+4. Validate the canonical skill with the available skill-authoring validator.
+   Do not invent a validator command if none is available in the current host.
+5. Run repository validation from the plugin root.
+6. Report omissions, partial implementation, assumptions, and unresolved
    ambiguity.
 
-The repository validator compares complete mirror trees, so it is expected to
-be the final validation after synchronization.
+The repository validator checks the canonical tree and both plugin manifests;
+it is the final repository-level static validation.
 
 ## Skill structure
 
@@ -174,7 +169,7 @@ directories, never in the requirement workspace.
   managers.
 - Do not silently add or upgrade dependencies, switch package managers, or
   rewrite lockfiles.
-- Never edit mirrors directly or overwrite unrelated user work.
+- Never create host-specific Skill mirrors or overwrite unrelated user work.
 - Do not use unsafe installers, unknown binaries, disabled TLS verification,
   production secrets, or uncontrolled source uploads.
 - Obtain required confirmation before material dependency, lockfile, CI,
@@ -186,26 +181,21 @@ directories, never in the requirement workspace.
 
 Run commands from the repository root.
 
-Synchronize the complete canonical skill tree to both mirrors:
-
-```text
-python scripts/sync_skills.py
-```
-
-The synchronization script also accepts `--repo-root PATH`. It replaces both
-complete mirror trees from `skills/`; inspect canonical and unrelated user
-changes before running it.
-
-Validate required files, canonical skill structure and frontmatter, distinct
-skill descriptions, portability, local references, and both mirrors:
+Validate required files, plugin manifests, canonical Skill structure and
+frontmatter, distinct Skill descriptions, portability, local references, and
+the retained V2 runtime contracts:
 
 ```text
 python scripts/validate_skills.py
 ```
 
-There is no separate repository mirror-equality command. Successful execution
-of `scripts/validate_skills.py` includes exact canonical/Codex/Claude tree and
-file-digest equality checks.
+For Claude Code packaging, when the installed CLI supports it, also run:
+
+```text
+claude plugin validate . --strict
+```
+
+No synchronization step exists. Edit `skills/`, then validate.
 
 ## Scope restraint
 

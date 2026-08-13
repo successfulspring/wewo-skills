@@ -1,0 +1,4 @@
+interface:
+  display_name: "Wewo Test Cases"
+  short_description: "Design requirement-driven executable test cases"
+  default_prompt: "Use $wewo-testcases to derive comprehensive executable test cases from authoritative requirements and risks, then classify their test levels and automation routes."

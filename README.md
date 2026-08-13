@@ -1,132 +1,135 @@
-# wewo-skills
+# Wewo Skills
 
-`wewo-skills` is a portable library of six independently executable,
-artifact-composable software-engineering capabilities for Codex and Claude
-Code. The repository provides shared conventions, canonical runtime
-implementations, and portable synchronization and validation tooling.
+## What is Wewo Skills
 
-## Capabilities
+`wewo-skills` is one AI software-engineering plugin containing six independent,
+composable Agent Skills. The repository root is the plugin root for Claude Code
+and OpenAI/Codex hosts, while `skills/` remains the single runtime source of
+truth.
 
-Each capability is independently runnable. No capability requires another
-`wewo-*` capability to have run.
+Each Skill can run on its own. Users may combine artifacts when they explicitly
+provide or select them, but no Skill requires the other five to have run first.
 
-- `wewo-prd` — requirement clarification and PRD synthesis.
-- `wewo-erd` — engineering design grounded in the actual project.
-- `wewo-testplan` — QA / acceptance test design.
-- `wewo-build` — implementation with implementation-time TDD and verification.
-- `wewo-test` — independent real test execution and evidence collection.
-- `wewo-review` — independent Diff-centered code, security, and reliability
+## Included Skills
+
+- `wewo-prd` — requirement clarification and confirmed PRD synthesis.
+- `wewo-erd` — project-grounded engineering and technical design.
+- `wewo-testcases` — comprehensive test-case design: defines what should be
+  verified.
+- `wewo-build` — implementation planning, TDD implementation, and verification.
+- `wewo-test` — executes automatable verification obligations and collects
+  evidence.
+- `wewo-review` — independent diff-centered code, reliability, and security
   review.
 
-Artifacts are composable. A capability may use an artifact when it is
-explicitly supplied by the user or already established in the current
-conversation. Artifact existence alone does not authorize it as input.
-Recommended composition below is documentation for humans, not a runtime
-dependency.
-
-### Recommended composition
-
-Product / engineering:
-
-```text
-Requirement clarification
-→ engineering design
-→ implementation
-```
-
-QA design:
-
-```text
-Requirement / design
-→ test design
-```
-
-Verification:
-
-```text
-Implemented code
-→ test execution
-```
-
-Quality:
-
-```text
-Final Diff
-→ review
-```
-
-Repository-level recommendation: when test execution creates or modifies
-repository files such as executable tests, test assets, or test configuration,
-the final quality review should evaluate the final resulting Diff. This is a
-human workflow recommendation only. It does not mean that test execution
-automatically invokes review, that review requires test execution, or that test
-execution tracks review state.
-
-## Requirement workspaces
-
-Workflow documents, reports, execution evidence, and generated test artifacts
-belong in an isolated workspace:
+Workflow documents, reports, and execution evidence use isolated requirement
+workspaces under:
 
 ```text
 docs/wewo/<requirement-category>/<requirement-slug>/
 ```
 
-For example:
+Production code and executable tests remain in the target project's normal
+source and test directories. User interaction and generated documents follow
+an explicitly requested language, otherwise the interaction's dominant
+language, and otherwise Chinese. Source code and tests follow the target
+repository's own conventions.
+
+## Claude Code usage
+
+The repository includes `.claude-plugin/plugin.json`. For local development,
+load the repository root directly:
 
 ```text
-docs/wewo/features/homepage-english-localization/
+claude --plugin-dir .
 ```
 
-Supported categories include `features`, `bugs`, `refactors`, and
-`maintenance`. Slugs use concise lowercase English kebab-case. Production code
-and executable tests remain in the project's normal source and test
-directories; the requirement workspace is not a duplicate source tree.
+Claude Code namespaces installed plugin Skills with the plugin name. For
+example, the PRD Skill is available as `/wewo-skills:wewo-prd`. During local
+development, `/reload-plugins` reloads changes made after startup.
 
-See [shared/global-conventions.md](shared/global-conventions.md) for the complete
-workspace-resolution and output rules.
-
-## Language adaptation
-
-Skill implementation files are written in English so the collection remains
-portable and maintainable. User-facing conversation and generated workflow
-documents follow an explicitly requested language, otherwise the dominant
-language of the interaction, and finally Chinese when the language cannot be
-determined. Source code and tests continue to follow the target repository's
-own conventions.
-
-## Synchronize and validate
-
-The canonical source of every skill is under `skills/`. Generate the Codex and
-Claude Code mirrors with:
+Validate the package with the current Claude Code CLI when available:
 
 ```text
-python scripts/sync_skills.py
+claude plugin validate . --strict
 ```
 
-Validate the canonical skills, local references, portability rules, V2
-architecture contracts, and both mirrors with:
+Marketplace installation and publication are separate distribution steps; the
+repository itself remains the plugin root.
+
+## Codex / OpenAI usage
+
+The `.codex-plugin/plugin.json` manifest packages the same six canonical
+Skills from `./skills/` for ChatGPT and Codex plugin hosts.
+
+Current OpenAI plugin distribution and local installation use a marketplace
+that points to a plugin directory. This repository intentionally does not
+commit marketplace metadata: no publisher record, publication policy, or
+installation location is implied by the package itself. A distributor can
+reference this repository root from a valid personal, repository, or published
+marketplace without moving `skills/` or nesting the package under `plugins/`.
+
+For a non-default local marketplace, add the marketplace root with the Codex
+CLI, restart the ChatGPT desktop app, install `wewo-skills` from that source,
+and test it in a new task:
 
 ```text
-python scripts/validate_skills.py
+codex plugin marketplace add <marketplace-root>
 ```
 
-Both scripts use only the Python standard library and work on Windows, macOS,
-and Linux. Synchronization copies files rather than creating symbolic links.
-Run synchronization after every canonical skill change, then run validation.
+The placeholder above is the distributor's real marketplace root, not this
+plugin root. Do not create placeholder marketplace metadata in this repository.
 
-## Use with Codex
+## Direct Agent Skills usage
 
-Open the repository as the working project. Codex discovers the generated
-copies under `.agents/skills/`. Invoke a skill explicitly by name, such as
-`$wewo-prd`.
+Compatible Agent Skills hosts can consume the canonical layout directly:
 
-## Use with Claude Code
+```text
+skills/<skill-name>/SKILL.md
+```
 
-Open the repository as the working project. Claude Code discovers the generated
-copies under `.claude/skills/`. Invoke the corresponding skill by name according
-to the host's supported skill-invocation interface.
+Each Skill keeps its own references, assets, optional scripts, and OpenAI agent
+metadata beside its `SKILL.md`. Follow the target host's supported discovery or
+installation mechanism; no synchronized host-specific copy is required.
 
-## Current implementation status
+## Repository architecture
 
-The reviewed requirements and implementations for `wewo-prd`, `wewo-erd`,
-`wewo-testplan`, `wewo-build`, `wewo-review`, and `wewo-test` are complete.
+```text
+wewo-skills/
+├── .claude-plugin/
+│   └── plugin.json
+├── .codex-plugin/
+│   └── plugin.json
+├── skills/
+│   ├── wewo-prd/
+│   ├── wewo-erd/
+│   ├── wewo-testcases/
+│   ├── wewo-build/
+│   ├── wewo-test/
+│   └── wewo-review/
+├── scripts/
+│   └── validate_skills.py
+├── AGENTS.md
+├── CLAUDE.md
+├── README.md
+└── .gitignore
+```
+
+`AGENTS.md` and `CLAUDE.md` are repository-maintenance context. Installed
+runtime behavior is defined only by the canonical Skills.
+
+## Maintainer workflow
+
+1. Edit only the canonical content under `skills/`.
+2. Run repository validation:
+
+   ```text
+   python scripts/validate_skills.py
+   ```
+
+3. Run `git diff --check` and any available official host validator.
+
+There is no synchronization step and no generated Skill mirror. The validator
+checks both plugin manifests, the six canonical Skills, their local resources,
+portability, capability independence, artifact ownership, and retained V2
+contracts.

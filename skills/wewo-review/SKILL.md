@@ -1,6 +1,6 @@
 ---
 name: wewo-review
-description: Perform a formal, read-only, diff-centered software review through exactly three independent lanes: requirement consistency, static analysis and engineering rules, and contextual security. Use for unstaged or staged changes, commits, ranges, branches, PR/MR diffs, or explicitly scoped production and developer-test code where evidence-based findings, Semgrep evidence, KLOC metrics, and distinct overall/security gates are required in one unified review report. Do not use to implement fixes, design tests, execute a final test gate, merge, or deploy.
+description: "Perform a formal, read-only, diff-centered software review through exactly three independent lanes: requirement consistency, static analysis and engineering rules, and contextual security. Use for unstaged or staged changes, commits, ranges, branches, PR/MR diffs, or explicitly scoped production and developer-test code where evidence-based findings, Semgrep evidence, KLOC metrics, and distinct overall/security gates are required in one unified review report. Do not use to implement fixes, design tests, execute a final test gate, merge, or deploy."
 ---
 
 # Wewo Review
@@ -101,8 +101,9 @@ development conversation, or prior conclusions.
 
 ### 3. Calculate deterministic Diff metrics
 
-Run [collect-diff-metrics.ts](scripts/collect-diff-metrics.ts) through the
-runner resolution in [tool-policy.md](references/tool-policy.md). Record
+Run [collect-diff-metrics.mjs](scripts/collect-diff-metrics.mjs) directly with
+Node when available, following the helper policy and fallback in
+[tool-policy.md](references/tool-policy.md). Record
 changed files, additions, deletions, production/test LOC,
 configuration/migration LOC, density-eligible changed code LOC, and exclusions.
 Pass each applicable untracked file explicitly with `--include-untracked`.
@@ -122,8 +123,9 @@ additional lanes or share candidates across lanes before completion.
 ### 5. Require Static lane tool attempts
 
 The Static lane must run safe relevant repository-native checks and attempt
-Semgrep for every formal review. Use [run-semgrep.ts](scripts/run-semgrep.ts)
-and [tool-policy.md](references/tool-policy.md). Record mode, version, config,
+Semgrep for every formal review. Use [run-semgrep.mjs](scripts/run-semgrep.mjs)
+directly with Node when available, or the equivalent safe fallback in
+[tool-policy.md](references/tool-policy.md). Record mode, version, config,
 target, invocation, outcome, raw warning/error counts, coverage completeness,
 limitations, and cleanup. Semgrep warnings are tool candidates, never
 automatic findings. If one specific user permission is the only remaining

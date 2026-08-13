@@ -2,14 +2,17 @@
 
 Use tools as evidence, never authority.
 
-## TypeScript utility execution
+## Bundled helper execution
 
-Use a supported host TypeScript mechanism, confirmed Node native TypeScript
-support, then an already available trusted `tsx`, `bun`, or `deno`. Never alter
-the target package, lockfile, tsconfig, or dependencies to obtain a runner, or
-claim an adapter ran when it did not. Without a runner, disclose the adapter
-limitation and use equivalent read-only Git evidence. Still attempt Semgrep by
-an equivalent safe approved direct invocation when available/acquirable.
+When a bundled review helper is needed and Node is available, execute the
+bundled `.mjs` helper directly with Node. Do not alter the target package,
+lockfile, configuration, or dependencies to run it.
+
+Do not install Node solely to run a Wewo helper. When Node is unavailable,
+disclose the helper limitation and use equivalent read-only Git evidence for
+Diff metrics. Still attempt Semgrep through an equivalent safe approved direct
+invocation when available or acquirable. Never claim a bundled helper ran when
+it did not.
 
 ## Layer 1: semantic review
 
@@ -27,7 +30,8 @@ record command, time, scope, exit status, and limitations.
 ## Layer 3: required Semgrep attempt
 
 Every formal review must attempt Semgrep. Use
-[run-semgrep.ts](../scripts/run-semgrep.ts) with this acquisition order:
+[run-semgrep.mjs](../scripts/run-semgrep.mjs) directly with Node when available,
+with this acquisition order:
 
 1. pre-existing usable Semgrep;
 2. approved ephemeral isolation using an explicit repository, organization, or

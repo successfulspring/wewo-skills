@@ -1,4 +1,4 @@
-"""Validate the portable wewo-skills repository and synchronized mirrors (V2).
+"""Validate the packaged wewo-skills repository and canonical Skills (V3).
 
 Check groups:
 
@@ -11,14 +11,15 @@ A. Reliable static invariants
 - no legacy numbered workflow filenames in canonical runtime trees;
 - no cross-skill runtime routing to another named wewo-* capability;
 - runtime self-containment (no shared/ or specs/ dependency);
-- Build invariants (no Testplan artifacts / adjustment contracts);
-- Testplan invariants (no removed TDD / automation / execution-stage markers);
+- root plugin manifests and their canonical Skill path;
+- one canonical Skill tree and no generated host mirrors;
+- Build invariants (no Testcases artifacts / adjustment contracts);
+- Testcases invariants (no removed TDD / automation / execution-stage markers);
 - Test invariants (no Build/Review process artifacts as standard inputs);
-- artifact ownership output contracts;
-- canonical/mirror equality.
+- artifact ownership output contracts.
 
 B. Useful contract heuristics
-- Testplan execution-tool boundary marker present;
+- Testcases execution-tool boundary marker present;
 - Review input-exclusion heuristic (forbidden artifact names only inside the
   approved negative statement).
 
@@ -33,6 +34,7 @@ Those are runtime acceptance concerns and are not asserted here.
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 import re
 import sys
@@ -44,13 +46,35 @@ from urllib.parse import unquote, urlparse
 EXPECTED_SKILLS = (
     "wewo-prd",
     "wewo-erd",
-    "wewo-testplan",
+    "wewo-testcases",
     "wewo-build",
     "wewo-review",
     "wewo-test",
 )
-MIRROR_PATHS = (Path(".agents/skills"), Path(".claude/skills"))
+PLUGIN_NAME = "wewo-skills"
+PLUGIN_DISPLAY_NAME = "Wewo Skills"
+PLUGIN_MANIFEST_PATHS = (
+    Path(".claude-plugin/plugin.json"),
+    Path(".codex-plugin/plugin.json"),
+)
+PROHIBITED_PATHS = (
+    Path(".agents/skills"),
+    Path(".claude/skills"),
+    Path("scripts/sync_skills.py"),
+    Path("skills/wewo-testplan"),
+    Path("skills/wewo-review/scripts/collect-diff-metrics.ts"),
+    Path("skills/wewo-review/scripts/run-semgrep.ts"),
+)
+REVIEW_HELPER_PATHS = (
+    Path("skills/wewo-review/scripts/collect-diff-metrics.mjs"),
+    Path("skills/wewo-review/scripts/run-semgrep.mjs"),
+)
 NAME_PATTERN = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+SEMVER_PATTERN = re.compile(
+    r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)"
+    r"(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?"
+    r"(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$"
+)
 MARKDOWN_LINK_PATTERN = re.compile(r"!?\[[^\]]*]\(([^)]+)\)")
 METADATA_PATH_PATTERN = re.compile(
     r'(?m)^\s*(?:icon_small|icon_large):\s*["\']([^"\']+)["\']\s*$'
@@ -117,11 +141,13 @@ STOPWORDS = {
 
 # V2 architecture contracts.
 SKILL_NAMES = set(EXPECTED_SKILLS)
-OTHER_SKILL_NAME_PATTERN = re.compile(r"wewo-(?:prd|erd|testplan|build|test|review)")
+OTHER_SKILL_NAME_PATTERN = re.compile(
+    r"wewo-(?:prd|erd|testcases|build|test|review)"
+)
 OWNED_ARTIFACTS = {
     "wewo-prd": ("prd.md",),
     "wewo-erd": ("technical-design.md",),
-    "wewo-testplan": ("test-cases.md",),
+    "wewo-testcases": ("test-cases.md",),
     "wewo-build": ("implementation-plan.md", "implementation-record.md"),
     "wewo-test": ("test-execution.md",),
     "wewo-review": ("review.md",),
@@ -131,7 +157,7 @@ BUILD_FORBIDDEN_MARKERS = (
     "test-cases.md",
     "test-case-adjustments",
 )
-TESTPLAN_FORBIDDEN_MARKERS = (
+TESTCASES_FORBIDDEN_MARKERS = (
     "TDD Candidate",
     "TDD Collaboration",
     "TDD Case List",
@@ -140,7 +166,7 @@ TESTPLAN_FORBIDDEN_MARKERS = (
     "Suggested Automation Method",
     "Recommended Execution Stage",
 )
-TESTPLAN_TOOL_BOUNDARY_MARKER = (
+TESTCASES_TOOL_BOUNDARY_MARKER = (
     "does not inspect, select, configure, or reason about concrete test tools, "
     "test runners, browser installations, or execution infrastructure"
 )
@@ -159,6 +185,14 @@ REVIEW_FORBIDDEN_INPUTS = (
     "test-execution.md",
 )
 SELF_CONTAINMENT_FORBIDDEN = ("shared/", "specs/")
+ROOT_MACHINE_STATE_MARKERS = (
+    ".claude/settings.local.json",
+    ".agents/skills/",
+    ".claude/skills/",
+)
+MACHINE_ABSOLUTE_PATH_PATTERN = re.compile(
+    r"(?i)(?<![A-Za-z0-9])(?:[A-Z]:[\\/]|/(?:Users|home)/[^<\s/]+/)"
+)
 
 
 class Validation:
@@ -384,6 +418,7 @@ def validate_local_references(repo_root: Path, validation: Validation) -> None:
         skill_dir = repo_root / "skills" / skill_name
         metadata_file = skill_dir / "agents/openai.yaml"
         if not metadata_file.is_file():
+            validation.error(f"Missing OpenAI agent metadata: {metadata_file}")
             continue
         metadata = metadata_file.read_text(encoding="utf-8")
         for match in METADATA_PATH_PATTERN.finditer(metadata):
@@ -393,7 +428,7 @@ def validate_local_references(repo_root: Path, validation: Validation) -> None:
                     f"{metadata_file}: referenced local path does not exist: {target}"
                 )
 
-    validation.checked("Local file references")
+    validation.checked("Local file references and OpenAI agent metadata")
 
 
 def file_digest(path: Path) -> str:
@@ -407,7 +442,7 @@ def file_digest(path: Path) -> str:
 def tree_snapshot(root: Path, validation: Validation) -> dict[str, tuple[str, str]]:
     snapshot: dict[str, tuple[str, str]] = {}
     if not root.is_dir():
-        validation.error(f"Missing synchronized skills directory: {root}")
+        validation.error(f"Missing canonical Skills directory: {root}")
         return snapshot
 
     for current_root, directory_names, file_names in os.walk(
@@ -429,41 +464,171 @@ def tree_snapshot(root: Path, validation: Validation) -> dict[str, tuple[str, st
     return snapshot
 
 
-def validate_mirrors(repo_root: Path, validation: Validation) -> None:
-    canonical_snapshot = tree_snapshot(repo_root / "skills", validation)
-    for relative_mirror in MIRROR_PATHS:
-        mirror = repo_root / relative_mirror
-        mirror_snapshot = tree_snapshot(mirror, validation)
-        if mirror_snapshot != canonical_snapshot:
-            missing = sorted(canonical_snapshot.keys() - mirror_snapshot.keys())
-            extra = sorted(mirror_snapshot.keys() - canonical_snapshot.keys())
-            changed = sorted(
-                path
-                for path in canonical_snapshot.keys() & mirror_snapshot.keys()
-                if canonical_snapshot[path] != mirror_snapshot[path]
-            )
+def validate_canonical_tree_portability(
+    repo_root: Path, validation: Validation
+) -> None:
+    snapshot = tree_snapshot(repo_root / "skills", validation)
+    if not any(kind == "file" for kind, _digest in snapshot.values()):
+        validation.error("Canonical Skills tree contains no runtime files")
+    validation.checked("Canonical Skill resources are portable regular files")
+
+
+def load_plugin_manifest(
+    path: Path, validation: Validation
+) -> dict[str, object] | None:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        validation.error(f"Missing plugin manifest: {path}")
+        return None
+    except (OSError, UnicodeError, json.JSONDecodeError) as error:
+        validation.error(f"Invalid plugin manifest {path}: {error}")
+        return None
+
+    if not isinstance(value, dict):
+        validation.error(f"{path}: plugin manifest root must be a JSON object")
+        return None
+    return value
+
+
+def validate_plugin_packaging(repo_root: Path, validation: Validation) -> None:
+    canonical = (repo_root / "skills").resolve()
+    loaded: dict[Path, dict[str, object]] = {}
+
+    for relative_path in PLUGIN_MANIFEST_PATHS:
+        manifest_path = repo_root / relative_path
+        manifest = load_plugin_manifest(manifest_path, validation)
+        if manifest is None:
+            continue
+        loaded[relative_path] = manifest
+
+        if manifest.get("name") != PLUGIN_NAME:
             validation.error(
-                f"{mirror} does not match canonical skills "
-                f"(missing={missing}, extra={extra}, changed={changed})"
+                f"{manifest_path}: plugin name must be {PLUGIN_NAME!r}"
             )
 
-    validation.checked("Codex and Claude Code mirrors match canonical skills")
+        version = manifest.get("version")
+        if not isinstance(version, str) or not SEMVER_PATTERN.fullmatch(version):
+            validation.error(
+                f"{manifest_path}: version must be a semantic-version string"
+            )
+
+        description = manifest.get("description")
+        if not isinstance(description, str) or not description.strip():
+            validation.error(
+                f"{manifest_path}: description must be a non-empty string"
+            )
+
+        skill_value = manifest.get("skills")
+        if not isinstance(skill_value, str):
+            validation.error(
+                f"{manifest_path}: skills must point to the canonical directory"
+            )
+            continue
+        skill_path = Path(skill_value)
+        if skill_path.is_absolute() or ".." in skill_path.parts:
+            validation.error(
+                f"{manifest_path}: skills path must be plugin-root-relative"
+            )
+            continue
+        resolved = (manifest_path.parent.parent / skill_path).resolve()
+        if resolved != canonical:
+            validation.error(
+                f"{manifest_path}: skills path resolves to {resolved}, not {canonical}"
+            )
+
+    claude_path, codex_path = PLUGIN_MANIFEST_PATHS
+    claude = loaded.get(claude_path)
+    codex = loaded.get(codex_path)
+    if claude is not None and claude.get("displayName") != PLUGIN_DISPLAY_NAME:
+        validation.error(
+            f"{repo_root / claude_path}: displayName must be "
+            f"{PLUGIN_DISPLAY_NAME!r}"
+        )
+    if claude is not None and codex is not None:
+        if claude.get("version") != codex.get("version"):
+            validation.error("Claude and Codex plugin versions must match")
+
+    validation.checked("Claude and Codex plugin manifests target canonical skills/")
+
+
+def validate_single_skill_tree(repo_root: Path, validation: Validation) -> None:
+    canonical = (repo_root / "skills").resolve()
+    discovered = sorted(
+        path.resolve()
+        for path in repo_root.rglob("skills")
+        if path.is_dir() and ".git" not in path.parts
+    )
+    if discovered != [canonical]:
+        validation.error(
+            "Repository must contain exactly one Skill tree at skills/: "
+            f"{[str(path) for path in discovered]}"
+        )
+
+    for relative_path in PROHIBITED_PATHS:
+        path = repo_root / relative_path
+        if path.exists():
+            validation.error(f"Removed or superseded path must not exist: {path}")
+
+    validation.checked(
+        "One canonical Skill tree and no superseded mirror/sync paths"
+    )
+
+
+def validate_review_helpers(repo_root: Path, validation: Validation) -> None:
+    for relative_path in REVIEW_HELPER_PATHS:
+        path = repo_root / relative_path
+        if not path.is_file():
+            validation.error(f"Missing portable review helper: {path}")
+    validation.checked("Portable Node .mjs review helpers")
+
+
+def validate_no_machine_state_dependency(
+    repo_root: Path, validation: Validation
+) -> None:
+    paths = list(_iter_text_files(repo_root / "skills"))
+    paths.extend(repo_root / path for path in PLUGIN_MANIFEST_PATHS)
+    for path in paths:
+        if not path.is_file():
+            continue
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        if MACHINE_ABSOLUTE_PATH_PATTERN.search(text):
+            validation.error(f"{path}: machine-specific absolute path present")
+        for marker in ROOT_MACHINE_STATE_MARKERS:
+            if marker in text:
+                validation.error(f"{path}: depends on root-local state {marker}")
+    validation.checked("No runtime or manifest dependency on local machine state")
 
 
 def validate_required_repository_files(
     repo_root: Path, validation: Validation
 ) -> None:
     required = [
+        repo_root / ".claude-plugin/plugin.json",
+        repo_root / ".codex-plugin/plugin.json",
+        repo_root / ".gitignore",
+        repo_root / "AGENTS.md",
+        repo_root / "CLAUDE.md",
         repo_root / "README.md",
-        repo_root / "shared/global-conventions.md",
-        repo_root / "scripts/sync_skills.py",
         repo_root / "scripts/validate_skills.py",
     ]
     for path in required:
         if not path.is_file():
             validation.error(f"Missing required repository file: {path}")
 
-    validation.checked("Required repository files")
+    gitignore = repo_root / ".gitignore"
+    if gitignore.is_file():
+        ignored = {
+            line.strip()
+            for line in gitignore.read_text(encoding="utf-8").splitlines()
+            if line.strip() and not line.lstrip().startswith("#")
+        }
+        if ".claude/settings.local.json" not in ignored:
+            validation.error(
+                ".gitignore must exclude .claude/settings.local.json"
+            )
+
+    validation.checked("Required repository files and local-state ignore rule")
 
 
 def _iter_text_files(root: Path):
@@ -534,35 +699,35 @@ def validate_build_invariants(repo_root: Path, validation: Validation) -> None:
         for marker in BUILD_FORBIDDEN_MARKERS:
             if marker in text:
                 validation.error(
-                    f"{path}: build declares Testplan artifact or adjustment "
+                    f"{path}: build declares Testcases artifact or adjustment "
                     f"contract marker: {marker}"
                 )
-    validation.checked("Build invariants (no Testplan coupling)")
+    validation.checked("Build invariants (no Testcases coupling)")
 
 
-def validate_testplan_invariants(repo_root: Path, validation: Validation) -> None:
-    for path in _iter_text_files(repo_root / "skills" / "wewo-testplan"):
+def validate_testcases_invariants(repo_root: Path, validation: Validation) -> None:
+    for path in _iter_text_files(repo_root / "skills" / "wewo-testcases"):
         text = path.read_text(encoding="utf-8", errors="ignore")
-        for marker in TESTPLAN_FORBIDDEN_MARKERS:
+        for marker in TESTCASES_FORBIDDEN_MARKERS:
             if marker in text:
                 validation.error(
-                    f"{path}: testplan contains removed contract marker: {marker}"
+                    f"{path}: testcases contains removed contract marker: {marker}"
                 )
-    validation.checked("Testplan invariants (no TDD/automation/execution-stage)")
+    validation.checked("Testcases invariants (no TDD/automation/execution-stage)")
 
 
-def validate_testplan_tool_boundary(
+def validate_testcases_tool_boundary(
     repo_root: Path, validation: Validation
 ) -> None:
-    skill_file = repo_root / "skills" / "wewo-testplan" / "SKILL.md"
+    skill_file = repo_root / "skills" / "wewo-testcases" / "SKILL.md"
     if skill_file.is_file():
         body = skill_file.read_text(encoding="utf-8")
         normalized = re.sub(r"\s+", " ", body)
-        if TESTPLAN_TOOL_BOUNDARY_MARKER not in normalized:
+        if TESTCASES_TOOL_BOUNDARY_MARKER not in normalized:
             validation.error(
-                f"{skill_file}: missing testplan execution-tool boundary marker"
+                f"{skill_file}: missing testcases execution-tool boundary marker"
             )
-    validation.checked("Testplan execution-tool boundary contract (heuristic)")
+    validation.checked("Testcases execution-tool boundary contract (heuristic)")
 
 
 def validate_test_invariants(repo_root: Path, validation: Validation) -> None:
@@ -590,7 +755,7 @@ def validate_review_invariants(repo_root: Path, validation: Validation) -> None:
                         f"{path}: review declares {marker} as a standard input"
                     )
                     break
-    validation.checked("Review invariants (no Testplan/Build-process inputs)")
+    validation.checked("Review invariants (no Testcases/Build-process inputs)")
 
 
 def main() -> int:
@@ -598,21 +763,24 @@ def main() -> int:
     validation = Validation()
 
     validate_required_repository_files(repo_root, validation)
+    validate_plugin_packaging(repo_root, validation)
+    validate_single_skill_tree(repo_root, validation)
     descriptions = validate_skill_structure(repo_root, validation)
     validate_distinct_descriptions(descriptions, validation)
     validate_local_references(repo_root, validation)
+    validate_canonical_tree_portability(repo_root, validation)
+    validate_review_helpers(repo_root, validation)
+    validate_no_machine_state_dependency(repo_root, validation)
 
     validate_no_legacy_filenames(repo_root, validation)
     validate_no_cross_skill_routing(repo_root, validation)
     validate_self_containment(repo_root, validation)
     validate_artifact_ownership(repo_root, validation)
     validate_build_invariants(repo_root, validation)
-    validate_testplan_invariants(repo_root, validation)
-    validate_testplan_tool_boundary(repo_root, validation)
+    validate_testcases_invariants(repo_root, validation)
+    validate_testcases_tool_boundary(repo_root, validation)
     validate_test_invariants(repo_root, validation)
     validate_review_invariants(repo_root, validation)
-
-    validate_mirrors(repo_root, validation)
 
     if validation.errors:
         print(f"Validation failed with {len(validation.errors)} error(s):")
