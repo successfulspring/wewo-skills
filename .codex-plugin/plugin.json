@@ -2,5 +2,9 @@
   "name": "wewo-skills",
   "version": "0.1.0",
   "description": "AI software engineering workflows for requirement clarification, engineering design, test-case design, TDD implementation, automated test execution, and code/security review.",
+  "author": {
+    "name": "successfulspring",
+    "url": "https://github.com/successfulspring"
+  },
   "skills": "./skills/"
 }

@@ -1,0 +1,21 @@
+{
+  "name": "wewo-skills",
+  "interface": {
+    "displayName": "Wewo Skills"
+  },
+  "plugins": [
+    {
+      "name": "wewo-skills",
+      "description": "AI software engineering workflows for requirement clarification, engineering design, test-case design, TDD implementation, automated test execution, and code/security review.",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

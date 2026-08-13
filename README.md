@@ -37,48 +37,55 @@ repository's own conventions.
 
 ## Claude Code usage
 
-The repository includes `.claude-plugin/plugin.json`. For local development,
-load the repository root directly:
+Anyone can install `wewo-skills` directly from this GitHub repository as a
+marketplace:
+
+```text
+/plugin marketplace add successfulspring/wewo-skills
+/plugin install wewo-skills@wewo-skills
+```
+
+Equivalent CLI forms: `claude plugin marketplace add successfulspring/wewo-skills`
+and `claude plugin install wewo-skills@wewo-skills`.
+
+Claude Code namespaces installed plugin Skills with the plugin name. For
+example, the PRD Skill is available as `/wewo-skills:wewo-prd`.
+
+For local development, load the repository root directly:
 
 ```text
 claude --plugin-dir .
 ```
 
-Claude Code namespaces installed plugin Skills with the plugin name. For
-example, the PRD Skill is available as `/wewo-skills:wewo-prd`. During local
-development, `/reload-plugins` reloads changes made after startup.
-
+During local development, `/reload-plugins` reloads changes made after startup.
 Validate the package with the current Claude Code CLI when available:
 
 ```text
 claude plugin validate . --strict
 ```
 
-Marketplace installation and publication are separate distribution steps; the
-repository itself remains the plugin root.
-
 ## Codex / OpenAI usage
 
-The `.codex-plugin/plugin.json` manifest packages the same six canonical
-Skills from `./skills/` for ChatGPT and Codex plugin hosts.
-
-Current OpenAI plugin distribution and local installation use a marketplace
-that points to a plugin directory. This repository intentionally does not
-commit marketplace metadata: no publisher record, publication policy, or
-installation location is implied by the package itself. A distributor can
-reference this repository root from a valid personal, repository, or published
-marketplace without moving `skills/` or nesting the package under `plugins/`.
-
-For a non-default local marketplace, add the marketplace root with the Codex
-CLI, restart the ChatGPT desktop app, install `wewo-skills` from that source,
-and test it in a new task:
+The same GitHub repository serves as a Codex marketplace, so anyone can
+install `wewo-skills` in two commands:
 
 ```text
-codex plugin marketplace add <marketplace-root>
+codex plugin marketplace add successfulspring/wewo-skills
+codex plugin add wewo-skills@wewo-skills
 ```
 
-The placeholder above is the distributor's real marketplace root, not this
-plugin root. Do not create placeholder marketplace metadata in this repository.
+Requires Codex CLI v0.122 or later. Start a new Codex session after
+installation so the Skills are discovered. Local clones work too:
+
+```text
+codex plugin marketplace add /path/to/your/clone
+codex plugin add wewo-skills@wewo-skills
+```
+
+This repository is both a plugin and a self-referencing marketplace:
+`.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json` declare
+the repository root as the marketplace and list `wewo-skills` as its own plugin.
+No separate marketplace repository or synchronized Skill copies are required.
 
 ## Direct Agent Skills usage
 
@@ -96,8 +103,12 @@ installation mechanism; no synchronized host-specific copy is required.
 
 ```text
 wewo-skills/
+├── .agents/
+│   └── plugins/
+│       └── marketplace.json
 ├── .claude-plugin/
-│   └── plugin.json
+│   ├── plugin.json
+│   └── marketplace.json
 ├── .codex-plugin/
 │   └── plugin.json
 ├── skills/
@@ -130,6 +141,6 @@ runtime behavior is defined only by the canonical Skills.
 3. Run `git diff --check` and any available official host validator.
 
 There is no synchronization step and no generated Skill mirror. The validator
-checks both plugin manifests, the six canonical Skills, their local resources,
-portability, capability independence, artifact ownership, and retained V2
-contracts.
+checks both plugin manifests, both marketplace manifests, the six canonical
+Skills, their local resources, portability, capability independence, artifact
+ownership, and retained V2 contracts.

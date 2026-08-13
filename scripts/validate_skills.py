@@ -12,6 +12,7 @@ A. Reliable static invariants
 - no cross-skill runtime routing to another named wewo-* capability;
 - runtime self-containment (no shared/ or specs/ dependency);
 - root plugin manifests and their canonical Skill path;
+- Claude and Codex marketplace manifests and their self-referencing source;
 - one canonical Skill tree and no generated host mirrors;
 - Build invariants (no Testcases artifacts / adjustment contracts);
 - Testcases invariants (no removed TDD / automation / execution-stage markers);
@@ -57,6 +58,11 @@ PLUGIN_MANIFEST_PATHS = (
     Path(".claude-plugin/plugin.json"),
     Path(".codex-plugin/plugin.json"),
 )
+MARKETPLACE_MANIFEST_PATHS = (
+    Path(".claude-plugin/marketplace.json"),
+    Path(".agents/plugins/marketplace.json"),
+)
+PLUGIN_SOURCE_REPO = "successfulspring/wewo-skills"
 PROHIBITED_PATHS = (
     Path(".agents/skills"),
     Path(".claude/skills"),
@@ -552,6 +558,69 @@ def validate_plugin_packaging(repo_root: Path, validation: Validation) -> None:
     validation.checked("Claude and Codex plugin manifests target canonical skills/")
 
 
+def validate_marketplace_packaging(
+    repo_root: Path, validation: Validation
+) -> None:
+    for relative_path in MARKETPLACE_MANIFEST_PATHS:
+        manifest_path = repo_root / relative_path
+        if not manifest_path.is_file():
+            validation.error(f"Missing marketplace manifest: {manifest_path}")
+            continue
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as error:
+            validation.error(
+                f"Invalid marketplace manifest {manifest_path}: {error}"
+            )
+            continue
+        if not isinstance(manifest, dict):
+            validation.error(
+                f"{manifest_path}: marketplace manifest root must be a JSON object"
+            )
+            continue
+        if manifest.get("name") != PLUGIN_NAME:
+            validation.error(
+                f"{manifest_path}: marketplace name must be {PLUGIN_NAME!r}"
+            )
+
+        plugins = manifest.get("plugins")
+        if not isinstance(plugins, list) or not plugins:
+            validation.error(
+                f"{manifest_path}: plugins must be a non-empty list"
+            )
+            continue
+        entry = plugins[0]
+        if not isinstance(entry, dict) or entry.get("name") != PLUGIN_NAME:
+            validation.error(
+                f"{manifest_path}: first plugin entry must be {PLUGIN_NAME!r}"
+            )
+
+        source = entry.get("source")
+        if not isinstance(source, dict):
+            validation.error(
+                f"{manifest_path}: plugin source must be an object"
+            )
+            continue
+        if relative_path == Path(".claude-plugin/marketplace.json"):
+            if (
+                source.get("source") != "github"
+                or source.get("repo") != PLUGIN_SOURCE_REPO
+            ):
+                validation.error(
+                    f"{manifest_path}: plugin source must reference "
+                    f"{PLUGIN_SOURCE_REPO!r}"
+                )
+        elif (
+            source.get("source") != "local"
+            or source.get("path") != "./"
+        ):
+            validation.error(
+                f"{manifest_path}: plugin source must be local at ./"
+            )
+
+    validation.checked("Claude and Codex marketplace manifests")
+
+
 def validate_single_skill_tree(repo_root: Path, validation: Validation) -> None:
     canonical = (repo_root / "skills").resolve()
     discovered = sorted(
@@ -764,6 +833,7 @@ def main() -> int:
 
     validate_required_repository_files(repo_root, validation)
     validate_plugin_packaging(repo_root, validation)
+    validate_marketplace_packaging(repo_root, validation)
     validate_single_skill_tree(repo_root, validation)
     descriptions = validate_skill_structure(repo_root, validation)
     validate_distinct_descriptions(descriptions, validation)
