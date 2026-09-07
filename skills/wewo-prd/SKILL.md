@@ -1,6 +1,6 @@
 ---
 name: wewo-prd
-description: Clarify incomplete software product requirements through progressive, user-confirmed questioning and create prd.md only after confirmation. Use for product goals, users, flows, business rules, scope, exceptions, and acceptance criteria from user-provided or explicitly selected sources. Do not use for technical design, ERDs, implementation planning, coding, test creation or execution, or code review.
+description: Clarify incomplete software product requirements through progressive, user-confirmed questioning and create or incrementally update prd.md only after confirmation, reusing the current branch and requirement workspace when present. Use for product goals, users, flows, business rules, scope, exceptions, and acceptance criteria from user-provided or authorized sources. Do not use for technical design, ERDs, implementation planning, coding, test creation or execution, or code review.
 ---
 
 # Wewo PRD
@@ -18,17 +18,20 @@ task, or an existing requirement workspace.
 Create only:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/prd.md
+docs/wewo/<branch-name>/<requirement-slug>/prd.md
 ```
 
-Keep the filename and path segments in English. Write the document and conduct
-the conversation in the explicitly requested language, otherwise the dominant
+Keep the filename and requirement slug in English; branch path components
+follow the actual Git branch name. Write the document and conduct the
+conversation in the explicitly requested language, otherwise the dominant
 interaction language, and otherwise Chinese.
 
 ## Mandatory workflow
 
 ```text
-Requirement Intake
+Branch and Requirement Workspace Resolution
+-> Existing Current-Workspace PRD Baseline
+-> Requirement Intake
 -> Explicit Source / Repository Fact Analysis
 -> Dynamic Decision Map
 -> Decision Topic Clarification
@@ -53,22 +56,35 @@ artifact remains `prd.md`.
 
 Start from the user's current request and confirmed conversation context.
 Establish the minimum requirement context here when no usable artifact exists.
-Use only material explicitly supplied or referenced in this interaction.
+Use only material explicitly supplied or referenced in this interaction plus
+the existing `prd.md` in the exact resolved current workspace.
 
-Resolve the requirement workspace before creating any document:
+Resolve the workspace before reading workflow artifacts or creating a
+document:
 
-1. Use a workspace path explicitly supplied by the user.
-2. Otherwise reuse the workspace established for the current requirement.
-3. Otherwise infer a candidate from the requirement, an explicitly identified
-   issue or task, or the branch when appropriate.
-4. Ask before writing if more than one workspace is plausible.
+1. Determine the target repository's full current Git branch name directly.
+2. Preserve its slash-separated components below `docs/wewo/`.
+3. Use an explicitly supplied or already established requirement slug;
+   otherwise infer one concise lowercase English kebab-case candidate from the
+   current requirement, issue, or task.
+4. Ask before writing when the branch is unavailable or detached without an
+   explicit branch/workspace, the requirement slug is ambiguous, or more than
+   one requirement is in scope.
 
-Never infer a workspace from the existence of workflow artifacts; artifact
-existence is not an input-selection signal. Never choose a workspace because it
-was modified most recently. Use `features`, `bugs`, `refactors`, or
-`maintenance` as the category. Default to `features` only when no category was
-supplied and no evidence favors another category. Use a concise lowercase
-English kebab-case slug.
+For example, branch `feature/order-cancel` and requirement `refund-rule`
+resolve to `docs/wewo/feature/order-cancel/refund-rule/`.
+
+After resolution, read an existing `prd.md` in that exact workspace before
+asking questions. It is an authorized prior requirement baseline, not proof
+that every statement remains current. Reuse unchanged, non-conflicting
+confirmed content; identify the requirement delta and clarify only material
+new, changed, missing, or conflicting product decisions. Do not scan sibling
+requirements, another branch workspace, or select documents by existence or
+modification time outside the exact workspace.
+
+Before updating an existing PRD, inspect its current Git/worktree state and
+preserve uncommitted or unrelated user edits. Stop and surface the overlap when
+the confirmed update cannot be applied without risking those edits.
 
 Do not create parent directories until resolution is unambiguous. Do not reuse
 one workspace for different requirements unless the user explicitly confirms
@@ -77,12 +93,12 @@ they are the same requirement.
 ### 2. Select and analyze authorized sources
 
 Apply the opt-in rules in
-[source-handling.md](references/source-handling.md). Never scan `docs/wewo/`
-or the repository for historical requirement documents; a document's existence
-in a workspace does not by itself authorize it as input. For a new PRD request,
-do not automatically read an existing `prd.md`. Never recursively read Markdown
-files or treat repository documentation as business requirements. External
-source documents outside `docs/wewo/...` are read-only.
+[source-handling.md](references/source-handling.md). The exact current-workspace
+`prd.md` is the only workflow artifact discovered automatically. Never scan
+sibling requirements, another branch workspace, or the repository for other
+historical requirement documents. Never recursively read Markdown files or
+treat repository documentation as business requirements. External source
+documents outside `docs/wewo/...` are read-only.
 
 Read the authorized material before asking questions. Separate:
 
@@ -251,9 +267,11 @@ choice is not, write only the product-semantic outcome. Record the actual
 requirement sources used.
 
 Write only to the resolved
-`docs/wewo/<requirement-category>/<requirement-slug>/prd.md` path. If that
-file already exists, treat an explicit request to update it as authorization;
-otherwise ask before replacing it. Never modify an external source document.
+`docs/wewo/<branch-name>/<requirement-slug>/prd.md` path. When the existing
+current-workspace PRD was used as the baseline, the user's final confirmation
+authorizes updating it in place. Preserve unchanged confirmed content and
+unrelated user edits; never replace it before confirmation or modify an
+external source document.
 
 After a successful write, report:
 

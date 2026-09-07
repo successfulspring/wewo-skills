@@ -15,8 +15,11 @@ Inspect enough to establish:
   risk.
 
 Read applicable repository instructions and current configuration. Do not
-broadly scan unrelated files, auto-discover workflow documents, or invent
-repository facts and commands.
+broadly scan unrelated files or invent repository facts and commands. Read only
+the capability-appropriate `prd.md` and `technical-design.md` automatically
+from the exact resolved current Git branch and current requirement workspace;
+do not discover workflow documents from sibling requirements or another branch
+workspace.
 
 ## Before each unit
 

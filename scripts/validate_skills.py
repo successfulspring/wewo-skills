@@ -754,7 +754,7 @@ def validate_self_containment(repo_root: Path, validation: Validation) -> None:
 
 
 def validate_artifact_ownership(repo_root: Path, validation: Validation) -> None:
-    output_prefix = "docs/wewo/<requirement-category>/<requirement-slug>/"
+    output_prefix = "docs/wewo/<branch-name>/<requirement-slug>/"
     for skill_name, artifacts in OWNED_ARTIFACTS.items():
         skill_file = repo_root / "skills" / skill_name / "SKILL.md"
         if not skill_file.is_file():

@@ -8,7 +8,9 @@ and OpenAI/Codex hosts, while `skills/` remains the single runtime source of
 truth.
 
 Each Skill can run on its own. Users may combine artifacts when they explicitly
-provide or select them, but no Skill requires the other five to have run first.
+provide or select them, and a Skill may read only its capability-appropriate
+inputs from the exact current branch and requirement workspace. No Skill
+requires the other five to have run first.
 
 ## Included Skills
 
@@ -26,8 +28,20 @@ Workflow documents, reports, and execution evidence use isolated requirement
 workspaces under:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/
+docs/wewo/<branch-name>/<requirement-slug>/
 ```
+
+The full current Git branch name supplies the branch path. For example,
+`feature/order-cancel` plus requirement `refund-rule` resolves to
+`docs/wewo/feature/order-cancel/refund-rule/`. Skills may read only the
+capability-appropriate documents in that exact workspace. PRD and engineering
+design reuse and update their existing current-workspace documents
+incrementally; other capabilities retain their existing input and evidence
+boundaries.
+
+These workspace documents are intended to be version-controlled with the
+project. Skills do not commit them unless the user explicitly requests that
+separate Git action.
 
 Production code and executable tests remain in the target project's normal
 source and test directories. User interaction and generated documents follow

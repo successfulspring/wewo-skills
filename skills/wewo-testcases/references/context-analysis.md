@@ -7,9 +7,12 @@ implementation inspection.
 
 Operate from a sufficiently clear current user requirement, an explicitly
 supplied or established `prd.md`, a PRD plus optional `technical-design.md`, or
-an explicit business/API/compatibility contract. This evidence is sufficient
-for normal requirement-driven test design before product code exists. Do not
-discover historical QA or workflow artifacts merely because they exist.
+an explicit business/API/compatibility contract. The exact resolved current
+Git branch and current requirement workspace may supply its `prd.md` and
+`technical-design.md` automatically. This evidence is sufficient for normal
+requirement-driven test design before product code exists. Do not discover
+historical QA or workflow artifacts from sibling requirements or another
+branch workspace merely because they exist.
 
 Use this order for Expected Results:
 

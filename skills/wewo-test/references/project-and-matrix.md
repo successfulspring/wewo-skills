@@ -19,11 +19,12 @@ limitations.
 
 ## Input rules
 
-Use an explicitly supplied or conversation-established test-case artifact as
-the primary inventory. Never scan `docs/wewo/` or the repository to discover a
-workflow artifact. Never treat an earlier report or label as current execution
-evidence, and never write execution results back into a source test-case
-artifact.
+Use an explicitly supplied or conversation-established test-case artifact, or
+the exact resolved current Git branch and current requirement workspace's
+`test-cases.md`, as the primary inventory. Never scan sibling requirements or
+another branch workspace to discover a workflow artifact. Never treat an
+earlier report or label as current execution evidence, and never write
+execution results back into a source test-case artifact.
 
 Without usable cases, derive only the minimum execution inventory from the
 current goal, explicit requirement evidence, actual Diff, public interfaces,

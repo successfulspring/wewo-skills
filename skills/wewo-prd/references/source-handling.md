@@ -16,11 +16,13 @@ condition holds:
 4. The user uploads or pastes it in the current interaction.
 5. The user explicitly identifies an issue, task, merge request, or document
    as a source for this requirement.
+6. It is the existing `prd.md` inside the exact resolved current Git branch and
+   current requirement workspace.
 
 Never scan `docs/wewo/` or the repository for historical requirement
-documents. A document's presence in a workspace does not by itself authorize
-it as input. For a new PRD request, do not automatically read an existing
-`prd.md`.
+documents. The current-workspace exception authorizes only its exact `prd.md`;
+it does not authorize sibling requirements, another branch workspace, or other
+workflow artifacts. Never choose a source by modification time.
 
 Treat an external source outside `docs/wewo/...` as read-only. Never overwrite,
 edit, annotate, or relocate it.
@@ -56,6 +58,13 @@ Maintain a working source inventory with:
 - ambiguities and omissions;
 - conflicts with other sources;
 - decisions that still require confirmation.
+
+Treat an existing current-workspace PRD as a prior requirement baseline.
+Identify its unchanged, changed, missing, and conflicting content against the
+current request and other authorized sources. Reuse unchanged non-conflicting
+confirmed requirements rather than asking the user to reconfirm them one by
+one. Its exact workspace presence authorizes reading, not automatic correctness or
+priority over a current explicit user instruction.
 
 Do not ask the user to repeat information already available in an authorized
 source. When sources conflict, describe the conflicting claims and ask which

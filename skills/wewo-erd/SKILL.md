@@ -1,6 +1,6 @@
 ---
 name: wewo-erd
-description: Produce a user-confirmed, implementation-guiding technical design for a feature, bug, refactor, or maintenance requirement by analyzing the existing project, resolving material engineering decisions, and designing relevant security and reliability controls. Use for architecture, module responsibilities, interfaces, data flow, data models, transactions, compatibility, and implementation constraints. Do not use for full product discovery, code implementation, implementation task breakdown, complete test planning or execution, or post-implementation code review.
+description: Produce or incrementally update a user-confirmed, implementation-guiding technical design for a feature, bug, refactor, or maintenance requirement by reusing its current branch workspace, analyzing the existing project, resolving material engineering decisions, and designing relevant security and reliability controls. Use for architecture, module responsibilities, interfaces, data flow, data models, transactions, compatibility, and implementation constraints. Do not use for full product discovery, code implementation, implementation task breakdown, complete test planning or execution, or post-implementation code review.
 ---
 
 # Wewo ERD
@@ -20,24 +20,27 @@ and engineering invariants implementation must preserve.
 
 Accept requirement context from the current conversation, text, Markdown, TXT,
 office documents, PDFs, images, issues, tasks, change or bug descriptions,
-current project code, and an optionally explicitly supplied or already
-established `prd.md`. A `prd.md` is simply a requirement artifact; the skill
-does not care which capability produced it.
+current project code, and an explicitly supplied, already established, or exact
+current-workspace `prd.md`. A `prd.md` is simply a requirement artifact; the
+skill does not care which capability produced it.
 
 Create only:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/technical-design.md
+docs/wewo/<branch-name>/<requirement-slug>/technical-design.md
 ```
 
-Keep the filename and path segments in English. Conduct user interaction and
-write the document in an explicitly requested language, otherwise the dominant
+Keep the filename and requirement slug in English; branch path components
+follow the actual Git branch name. Conduct user interaction and write the
+document in an explicitly requested language, otherwise the dominant
 interaction language, and otherwise Chinese.
 
 ## Mandatory workflow
 
 ```text
-Requirement / Explicit Requirement Artifact
+Branch and Requirement Workspace Resolution
+-> Existing PRD / Technical Design Baseline
+-> Requirement / Explicit Requirement Artifact
 -> Requirement Understanding
 -> Progressive Repository Discovery
 -> Engineering Impact Map
@@ -59,36 +62,54 @@ owned business artifact is `technical-design.md`.
 
 ### 1. Establish context and resolve the workspace
 
-Run independently. Use `prd.md` or another requirement artifact only when the
-user explicitly supplies or references it, or the current conversation already
-establishes it. Never require such an artifact, ask the user to create one
-first, or scan the repository to find one. Establish the minimum requirement
-context within this skill when no usable artifact exists.
+Run independently. The exact resolved current workspace may supply its existing
+`prd.md` and `technical-design.md` automatically. Other requirement artifacts
+remain opt-in. Never require a prior artifact or ask the user to create one
+first; establish the minimum requirement context within this skill when no
+usable artifact exists.
 
-Resolve the requirement workspace before creating a document:
+Resolve the workspace before reading workflow artifacts or creating a
+document:
 
-1. Use an explicit workspace supplied by the user.
-2. Otherwise reuse the workspace already established for this requirement.
-3. Otherwise infer a candidate from the requirement, issue, branch, or
-   explicitly supplied or referenced material.
-4. Ask before writing when more than one workspace is plausible.
+1. Determine the target repository's full current Git branch name directly.
+2. Preserve its slash-separated components below `docs/wewo/`.
+3. Use an explicitly supplied or already established requirement slug;
+   otherwise infer one concise lowercase English kebab-case candidate from the
+   current requirement or issue.
+4. Ask before writing when the branch is unavailable or detached without an
+   explicit branch/workspace, the requirement slug is ambiguous, or more than
+   one requirement is in scope.
 
-Never infer a workspace from workflow-artifact existence or recency. Use
-`features`, `bugs`, `refactors`, or `maintenance`; default to `features` only
-when no evidence favors another category. Use a concise lowercase English
-kebab-case slug. Create missing parents only after resolution is unambiguous,
-never mix unrelated requirements, and never create another capability's
-artifact.
+For example, branch `feature/order-cancel` and requirement `refund-rule`
+resolve to `docs/wewo/feature/order-cancel/refund-rule/`.
+
+Read the exact workspace's existing `prd.md` and `technical-design.md` before
+design dialogue. Treat the PRD as prior requirement context and the design as a
+proposed engineering baseline. Reuse unchanged, verified, non-conflicting
+content; identify the requirement and design delta; and reopen only material
+new, changed, stale, missing, or conflicting branches. Exact-workspace presence
+authorizes reading, not assuming the documents are current or correct.
+
+Before updating an existing design, inspect its current Git/worktree state and
+preserve uncommitted or unrelated user edits. Stop and surface the overlap when
+the confirmed update cannot be applied without risking those edits.
+
+Do not scan sibling requirements, another branch workspace, or select documents
+by existence or modification time outside the exact workspace. Create missing
+parents only after resolution is unambiguous, never mix unrelated requirements,
+and never create another capability's artifact.
 
 ### 2. Understand the requirement and discover the project progressively
 
 Read and apply
 [requirements-and-project-analysis.md](references/requirements-and-project-analysis.md).
 
-Use only requirement material explicitly supplied, referenced, or established
-in the current conversation. Do not scan `docs/wewo/` or the repository for
-historical workflow documents. Surface material source conflicts for user
-resolution.
+Use only requirement material explicitly supplied, referenced, established in
+the current conversation, or found in the exact current-workspace `prd.md`.
+Use the exact current-workspace `technical-design.md` only as the prior design
+baseline. Do not scan sibling requirements, another branch workspace, or the
+repository for historical workflow documents. Surface material source
+conflicts for user resolution.
 
 For an existing project, use decision-driven progressive technical discovery:
 identify affected entry points, trace relevant control and data flow, form the
@@ -259,9 +280,10 @@ use [technical-design-template.md](assets/technical-design-template.md) as an
 adaptive composition scaffold.
 
 Write only to
-`docs/wewo/<requirement-category>/<requirement-slug>/technical-design.md`.
-If it exists, treat an explicit update request as authorization; otherwise ask
-before replacing it.
+`docs/wewo/<branch-name>/<requirement-slug>/technical-design.md`. When the
+existing current-workspace design was used as the baseline, the user's final
+confirmation authorizes updating it in place. Preserve unchanged confirmed
+design and unrelated user edits; never replace it before confirmation.
 
 Keep the document's Stable Core semantically present and add only relevant
 detailed-design sections. Combine, rename, reorder, or omit sections when that

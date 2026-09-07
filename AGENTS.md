@@ -51,7 +51,7 @@ impact, and a recommended resolution.
   project tests.
 - Do not create empty documents owned by other capabilities.
 - Do not combine separate requirements in one
-  `docs/wewo/<requirement-category>/<requirement-slug>/` workspace without
+  `docs/wewo/<branch-name>/<requirement-slug>/` workspace without
   explicit confirmation.
 
 ## Skill-authoring workflow
@@ -144,12 +144,25 @@ Store workflow documents, reports, execution evidence, and generated test
 artifacts only under:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/
+docs/wewo/<branch-name>/<requirement-slug>/
 ```
 
-Resolve one unambiguous workspace before writing. Production code and
-executable tests belong in the business project's normal source and test
-directories, never in the requirement workspace.
+Resolve the current full Git branch name and one concise lowercase English
+kebab-case requirement slug before writing. Preserve slash-separated branch
+components below `docs/wewo/`; for example, branch `feature/order-cancel` and
+requirement `refund-rule` resolve to
+`docs/wewo/feature/order-cancel/refund-rule/`. If no branch can be resolved,
+ask for an explicit branch name or workspace. Never infer a requirement from
+the existence or recency of another workspace, scan another branch workspace,
+or combine separate requirements without confirmation.
+
+Documents in the exact resolved current-branch/current-requirement workspace
+may be read as capability-appropriate context. Their presence authorizes
+reading, not treating every statement as current or authoritative. Preserve
+source ownership, surface conflicts with the current request or repository,
+and keep each capability's input boundaries. Production code and executable
+tests belong in the business project's normal source and test directories,
+never in the requirement workspace.
 
 ## Evidence and honesty
 

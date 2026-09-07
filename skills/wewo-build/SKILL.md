@@ -13,14 +13,16 @@ close the actual production change.
 Accept a clear implementation goal, current conversation context, explicitly
 supplied or referenced source material, and the actual repository. Use an
 explicitly supplied or current-context `prd.md` or `technical-design.md` when
-available; never require one or discover workflow documents implicitly. Never
-consume QA planning or case artifacts as implementation inputs.
+available. The exact resolved current workspace's `prd.md` and
+`technical-design.md` are authorized current-context inputs; never require
+either one or discover workflow documents outside that workspace. Never consume
+QA planning or case artifacts as implementation inputs.
 
 Create only:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/implementation-plan.md
-docs/wewo/<requirement-category>/<requirement-slug>/implementation-record.md
+docs/wewo/<branch-name>/<requirement-slug>/implementation-plan.md
+docs/wewo/<branch-name>/<requirement-slug>/implementation-record.md
 ```
 
 Keep production code, implementation configuration, migrations, and developer
@@ -29,13 +31,16 @@ when they drive or directly verify the production implementation in scope.
 Browser-level acceptance work, independent review, deployment, and unrelated
 test-only work are outside the runtime workflow.
 
-Resolve one requirement workspace before writing: use an explicit path, else
-the workspace already established for this requirement, else one unambiguous
-candidate inferred from the requirement or explicitly supplied context. Ask if
-multiple candidates remain. Never select by artifact existence or modification
-time. Use `features`, `bugs`, `refactors`, or `maintenance`, with a concise
-lowercase English kebab-case slug. Keep workflow filenames in English; use the
-requested or dominant language for documents and conversation.
+Resolve one requirement workspace before reading workflow artifacts or writing:
+determine the target repository's full current Git branch name, preserve its
+slash-separated components below `docs/wewo/`, and combine it with an explicit,
+established, or uniquely inferred concise lowercase English kebab-case
+requirement slug. Ask when the branch is unavailable or detached without an
+explicit branch/workspace, the slug is ambiguous, or multiple requirements
+remain. Never scan sibling requirements, another branch workspace, or select
+documents by existence or modification time outside the exact workspace. Keep
+workflow filenames in English; use the requested or dominant language for
+documents and conversation.
 
 ## Binding Implementation Obligations
 
@@ -76,7 +81,7 @@ migration when needed. Define coherent units with:
 - done conditions.
 
 Write
-`docs/wewo/<requirement-category>/<requirement-slug>/implementation-plan.md`
+`docs/wewo/<branch-name>/<requirement-slug>/implementation-plan.md`
 from [implementation-plan-template.md](assets/implementation-plan-template.md),
 summarize material scope and gaps, and explicitly ask the user to confirm.
 
@@ -160,7 +165,7 @@ material gap is resolved or confirmed. A passing focused test alone is not
 enough.
 
 After all required units close, run fresh relevant verification and finalize
-`docs/wewo/<requirement-category>/<requirement-slug>/implementation-record.md`
+`docs/wewo/<branch-name>/<requirement-slug>/implementation-record.md`
 from [implementation-record-template.md](assets/implementation-record-template.md).
 Record actual changes, obligation traceability, unit evidence, TDD Red versus
 debug/regression/environment failures, Passed/Failed/Blocked/Not Run checks,

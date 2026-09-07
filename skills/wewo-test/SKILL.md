@@ -67,23 +67,24 @@ weaken assertions, skip failures, add backdoors, or use unlimited retries.
 Write execution outputs only under one resolved requirement workspace:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/test-execution.md
-docs/wewo/<requirement-category>/<requirement-slug>/test-artifacts/
+docs/wewo/<branch-name>/<requirement-slug>/test-execution.md
+docs/wewo/<branch-name>/<requirement-slug>/test-artifacts/
 ```
 
 Always create
-`docs/wewo/<requirement-category>/<requirement-slug>/test-execution.md` when
+`docs/wewo/<branch-name>/<requirement-slug>/test-execution.md` when
 automated execution is requested or completed. Create
-`docs/wewo/<requirement-category>/<requirement-slug>/test-artifacts/` only when
+`docs/wewo/<branch-name>/<requirement-slug>/test-artifacts/` only when
 native evidence needs to be retained there. Do not create a manual test checklist
 or any duplicate manual-test artifact. Keep executable tests, fixtures,
 mocks, helpers, page objects, data builders, and persistent test configuration
 in normal project test paths, never under `docs/wewo/`.
 
-Write reusable skill files in English. Keep stable filenames and workspace
-segments in English. Write user-facing conversation and generated documents in
-an explicitly requested language, otherwise the dominant interaction language,
-and otherwise Chinese. Follow repository conventions for test code.
+Write reusable skill files in English. Keep stable filenames and the
+requirement slug in English; branch path components follow the actual Git branch
+name. Write user-facing conversation and generated documents in an explicitly
+requested language, otherwise the dominant interaction language, and otherwise
+Chinese. Follow repository conventions for test code.
 
 Use these execution statuses only for in-scope automated obligations:
 
@@ -104,23 +105,20 @@ must not enter automated denominators or change this gate.
 
 ### 1. Resolve scope and obligations
 
-Run independently. Use a test-case artifact only when the user explicitly
-supplies or references it or the current conversation already establishes it.
-Never scan `docs/wewo/` or the repository to discover workflow artifacts, and
-never require an earlier capability to have run.
+Run independently. Use a test-case artifact when the user explicitly supplies
+or references it, the current conversation establishes it, or it is the exact
+resolved current workspace's `test-cases.md`. Never require an earlier
+capability to have run, scan sibling requirements or another branch workspace,
+or treat an earlier execution report as current evidence.
 
-Resolve exactly one workspace before writing:
-
-1. use an explicit workspace;
-2. otherwise reuse the workspace established for the current requirement;
-3. otherwise infer one candidate from the requirement, issue, branch, or
-   explicitly supplied material;
-4. ask before writing when multiple candidates are plausible.
-
-Never choose by artifact existence or modification time. Support `features`,
-`bugs`, `refactors`, and `maintenance`; default to `features` only when no
-evidence favors another category. Use a concise lowercase English kebab-case
-slug. Never combine separate requirements without confirmation.
+Resolve exactly one workspace before reading workflow artifacts or writing:
+determine the target repository's full current Git branch name, preserve its
+slash-separated components below `docs/wewo/`, and combine it with an explicit,
+established, or uniquely inferred concise lowercase English kebab-case
+requirement slug. Ask when the branch is unavailable or detached without an
+explicit branch/workspace, the slug is ambiguous, or multiple requirements are
+in scope. Never select documents by existence or modification time outside the
+exact workspace or combine separate requirements without confirmation.
 
 Read [project-and-matrix.md](references/project-and-matrix.md). Establish the
 current code version, target Diff when applicable, user goal, required and

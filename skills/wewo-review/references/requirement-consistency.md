@@ -5,11 +5,13 @@ and explicitly available material design constraints.
 
 Use the Diff, necessary affected code, confirmed current requirement,
 explicitly supplied/referenced requirement or technical-design material, and
-relevant repository facts. Never discover historical workflow documents.
-Begin with the obligation, design evidence, scope manifest, and relevant
-changed entry points. Map each obligation to its implementation seam, then
-inspect changed code and expand to affected callers or data paths only when
-needed; do not eagerly load every changed file.
+relevant repository facts. The exact resolved current Git branch and current
+requirement workspace may supply its `prd.md` and `technical-design.md`; never
+discover historical workflow documents from sibling requirements or another
+branch workspace. Begin with the obligation, design evidence, scope manifest,
+and relevant changed entry points. Map each obligation to its implementation
+seam, then inspect changed code and expand to affected callers or data paths
+only when needed; do not eagerly load every changed file.
 
 Review for missing or partial behavior, wrong observable outcomes, scope creep,
 explicit non-goal violations, requirement contradictions, incompatible API or

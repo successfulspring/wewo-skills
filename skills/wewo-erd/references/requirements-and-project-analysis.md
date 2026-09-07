@@ -21,9 +21,20 @@ capability a prerequisite.
 
 ## Combine only authorized requirement material
 
-Use sources explicitly supplied or referenced in this interaction, or already
-established in the current conversation. Do not scan `docs/wewo/` or the
-repository for historical workflow documents.
+Use sources explicitly supplied or referenced in this interaction, already
+established in the current conversation, or found as `prd.md` and
+`technical-design.md` in the exact resolved current Git branch and current
+requirement workspace. The workspace files are authorized inputs only for
+their respective roles: PRD as prior requirement context and technical design
+as a proposed engineering baseline. Do not scan sibling requirements, another
+branch workspace, or the repository for historical workflow documents.
+
+When a current-workspace design exists, compare it with the current request,
+authorized requirement sources, and verified current-branch code. Classify its
+material content as unchanged and reusable, changed, stale, missing, or
+conflicting. Reuse only verified, non-conflicting content and reopen the design
+work only for material deltas. Do not present an old design statement as a
+verified current repository fact merely because it is Git-tracked.
 
 A `prd.md` is an optional, producer-agnostic requirement artifact. Accept the
 current conversation, requirement descriptions, Markdown, TXT, office

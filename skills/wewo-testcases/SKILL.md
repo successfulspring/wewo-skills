@@ -15,6 +15,9 @@ project artifact is `test-cases.md`.
 Work from a sufficiently clear current user requirement, an explicitly
 supplied or established `prd.md`, or both. An optional `technical-design.md` or
 explicit external contract may define authoritative technical behavior.
+The exact resolved current workspace's `prd.md` and `technical-design.md` are
+authorized inputs in those same roles; do not discover workflow documents
+outside that workspace.
 Requirement and design evidence are sufficient; implementation code and other
 capabilities are not prerequisites.
 
@@ -22,25 +25,28 @@ Do not discover historical QA documents, workflow artifacts, or old case
 libraries unless explicitly supplied or authorized. Write only:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/test-cases.md
+docs/wewo/<branch-name>/<requirement-slug>/test-cases.md
 ```
 
 Do not create a test plan or intermediate risk, coverage, automation, or audit
-artifact. Keep the filename and workspace path in English. Use the requested
-language, otherwise the interaction's dominant language, and otherwise Chinese
-for the document.
+artifact. Keep the filename and requirement slug in English; branch path
+components follow the actual Git branch name. Use the requested language,
+otherwise the interaction's dominant language, and otherwise Chinese for the
+document.
 
 ## Runtime workflow
 
 ### 1. Resolve the requirement workspace
 
-Use an explicit workspace, then one established in the current requirement
-context, then one unambiguous candidate inferred from the requirement, issue,
-branch, or explicitly referenced material. Ask before writing when multiple
-candidates are plausible. Never select by discovered artifact or modification
-time. Use `features`, `bugs`, `refactors`, or `maintenance`; default to
-`features` only when no evidence favors another category. Never mix different
-requirements without confirmation.
+Determine the target repository's full current Git branch name, preserve its
+slash-separated components below `docs/wewo/`, and combine it with an explicit,
+established, or uniquely inferred concise lowercase English kebab-case
+requirement slug. Ask before writing when the branch is unavailable or detached
+without an explicit branch/workspace, the slug is ambiguous, or multiple
+requirements are in scope. The exact workspace may supply its `prd.md` and
+`technical-design.md`; never scan sibling requirements, another branch
+workspace, or select documents by existence or modification time outside it.
+Never mix different requirements without confirmation.
 
 ### 2. Establish authoritative requirements and repository mode
 

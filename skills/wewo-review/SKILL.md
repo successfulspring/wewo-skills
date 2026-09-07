@@ -15,24 +15,29 @@ a commit or range, a branch comparison, a PR/MR Diff, or explicitly scoped
 files. All changed executable production and developer-test code inside the
 resolved Diff is reviewable, including executable fixtures and helpers.
 
-Use requirement or technical-design context only when explicitly supplied,
-referenced, or already established in the current conversation. Never scan for
-historical workflow documents. Normal review input does not include
+Use requirement or technical-design context when explicitly supplied,
+referenced, already established in the current conversation, or present as
+`prd.md` or `technical-design.md` in the exact resolved current workspace.
+Never scan sibling requirements, another branch workspace, or historical
+workflow documents. Normal review input does not include
 `test-plan.md`, `test-cases.md`, `implementation-plan.md`,
 `implementation-record.md`, or `test-execution.md`.
 
 Create only:
 
 ```text
-docs/wewo/<requirement-category>/<requirement-slug>/review.md
+docs/wewo/<branch-name>/<requirement-slug>/review.md
 ```
 
-Resolve one unambiguous requirement workspace before writing. Use an explicit
-path, else the current requirement workspace, else one candidate inferred from
-the requirement, issue, branch, or explicitly supplied material. Ask when
-multiple candidates remain. Never select by artifact existence or modification
-time. Use `features`, `bugs`, `refactors`, or `maintenance` and a concise
-lowercase English kebab-case slug.
+Resolve one unambiguous requirement workspace before reading workflow artifacts
+or writing: determine the target repository's full current Git branch name,
+preserve its slash-separated components below `docs/wewo/`, and combine it with
+an explicit, established, or uniquely inferred concise lowercase English
+kebab-case requirement slug. Ask when the branch is unavailable or detached
+without an explicit branch/workspace, the slug is ambiguous, or multiple
+requirements remain. Never scan sibling requirements, another branch
+workspace, or select documents by existence or modification time outside the
+exact workspace.
 
 Operate read-only toward production and test source. Inspect code and Git, run
 safe checks, use controlled temporary tools, and write only the resolved
