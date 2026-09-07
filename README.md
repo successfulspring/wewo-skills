@@ -108,7 +108,7 @@ codex plugin add wewo-skills@wewo-skills
 
 This repository is both a plugin and a self-referencing marketplace:
 `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json` declare
-the repository root as the marketplace and list `wewo-skills` as its own plugin.
+the repository as the marketplace and use its GitHub URL as the plugin source.
 No separate marketplace repository or synchronized Skill copies are required.
 
 ## Direct Agent Skills usage

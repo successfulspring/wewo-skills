@@ -601,27 +601,23 @@ def validate_marketplace_packaging(
                 f"{manifest_path}: plugin source must be an object"
             )
             continue
+        url_form = (
+            source.get("source") == "url"
+            and source.get("url")
+            == f"https://github.com/{PLUGIN_SOURCE_REPO}.git"
+        )
         if relative_path == Path(".claude-plugin/marketplace.json"):
             github_form = (
                 source.get("source") == "github"
                 and source.get("repo") == PLUGIN_SOURCE_REPO
             )
-            url_form = (
-                source.get("source") == "url"
-                and source.get("url")
-                == f"https://github.com/{PLUGIN_SOURCE_REPO}.git"
-            )
-            if not (github_form or url_form):
-                validation.error(
-                    f"{manifest_path}: plugin source must reference "
-                    f"{PLUGIN_SOURCE_REPO!r} as a github repo or HTTPS url"
-                )
-        elif (
-            source.get("source") != "local"
-            or source.get("path") != "./"
-        ):
+            source_is_valid = github_form or url_form
+        else:
+            source_is_valid = url_form and source.get("ref") == "main"
+        if not source_is_valid:
             validation.error(
-                f"{manifest_path}: plugin source must be local at ./"
+                f"{manifest_path}: plugin source must reference "
+                f"{PLUGIN_SOURCE_REPO!r} through its supported Git source"
             )
 
     validation.checked("Claude and Codex marketplace manifests")

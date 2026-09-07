@@ -1,10 +1,24 @@
 {
   "name": "wewo-skills",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "AI software engineering workflows for requirement clarification, engineering design, test-case design, TDD implementation, automated test execution, and code/security review.",
   "author": {
     "name": "successfulspring",
     "url": "https://github.com/successfulspring"
   },
-  "skills": "./skills/"
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Wewo Skills",
+    "shortDescription": "Reusable software engineering workflows",
+    "longDescription": "Six composable workflows for requirements, engineering design, test cases, TDD implementation, automated verification, and code review.",
+    "developerName": "successfulspring",
+    "category": "Developer Tools",
+    "capabilities": ["Interactive", "Write"],
+    "websiteURL": "https://github.com/successfulspring/wewo-skills",
+    "defaultPrompt": [
+      "Create or update a PRD for this requirement.",
+      "Design an implementation-guiding technical solution.",
+      "Review the current code changes."
+    ]
+  }
 }
