@@ -259,12 +259,15 @@ class PackageContractsTest(unittest.TestCase):
         self.assertEqual([], self.check(validator.validate_marketplace_packaging))
 
     def test_mixed_distribution_sources_are_rejected(self):
-        path = self.root / ".claude-plugin/marketplace.json"
-        manifest = json.loads(path.read_text(encoding="utf-8"))
-        manifest["plugins"][0]["source"]["url"] = (
-            validator.GITLAB_PLUGIN_SOURCE_URL
-        )
-        path.write_text(json.dumps(manifest), encoding="utf-8")
+        sources = {
+            ".agents/plugins/marketplace.json": validator.GITHUB_PLUGIN_SOURCE_URL,
+            ".claude-plugin/marketplace.json": validator.GITLAB_PLUGIN_SOURCE_URL,
+        }
+        for relative, source_url in sources.items():
+            path = self.root / relative
+            manifest = json.loads(path.read_text(encoding="utf-8"))
+            manifest["plugins"][0]["source"]["url"] = source_url
+            path.write_text(json.dumps(manifest), encoding="utf-8")
         errors = self.check(validator.validate_marketplace_packaging)
         self.assertEqual(1, len(errors))
         self.assertIn("same distribution repository", errors[0])
