@@ -9,18 +9,25 @@ Reviewer candidates keep lane-local `REQ-*`, `STATIC-*`, or `SEC-*` IDs. After
 admission and root-cause deduplication, Main assigns one sequential canonical
 `REV-*` ID and records every detecting lane as non-additive provenance.
 
-- `Confirmed`: evidence establishes a current-change defect.
+- `Confirmed`: evidence establishes a current-change defect for a Diff review,
+  or a present defect in an explicitly scoped snapshot.
 - `Potential / Unverified`: a plausible issue lacks decisive evidence.
 - `Rejected`: evidence disproves, duplicates, or makes it irrelevant.
 - `Existing Issue`: it predates the Diff and is not materially expanded or
   newly reachable because of it.
 
-Only Confirmed current-change findings enter formal totals and gates.
+For a Diff review, only Confirmed current-change findings enter formal totals
+and gates. In snapshot mode, label admitted findings and absolute totals
+`Confirmed snapshot findings`; introduction is unknown. They affect only the
+snapshot's scoped gates, never current-change counts, density, or merge
+readiness. Missing attribution alone does not make an observed snapshot defect
+Potential or Existing; missing decisive defect evidence still does.
 
 ## Admission gate
 
 Verify actual evidence, exact location/root cause, realistic trigger or stated
-limitation, concrete impact, current-Diff attribution, deduplication, and
+limitation, concrete impact, current-Diff attribution (or explicit snapshot
+presence and unknown introduction), deduplication, and
 severity based on impact, reachability/exploitability, scope, and reversibility.
 Reject generic advice, unsupported possibility, style preference, raw warning,
 duplicate symptom, and unrelated history.
@@ -40,13 +47,16 @@ authorization failure are security findings.
 
 Every Semgrep warning starts as a tool candidate. Confirm only after checking
 code, reachability, controllable input where applicable, defenses, semantics,
-Diff attribution, unique root cause, and impact. Raw warnings never become the
+Diff attribution or snapshot-presence limits, unique root cause, and impact.
+Raw warnings never become the
 formal count without admission.
 
 ## Severity and record
 
 Use `Critical`, `High`, `Medium`, or `Low`; confirmed current-change Critical
-and High findings block merge. Tool labels do not set severity.
+and High findings block merge. Confirmed snapshot Critical/High defects fail
+the scoped snapshot gate without inventing change attribution. Tool labels do
+not set severity.
 
 Record canonical ID, state, detecting lanes, severity, category, metric scope,
 location, evidence, expected/actual behavior, trigger/path, impact,

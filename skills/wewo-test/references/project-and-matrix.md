@@ -15,14 +15,19 @@ Use the first applicable source:
 
 Record branch or commit, tested code version, target Diff when applicable,
 environment, objective, included scope, regression scope, excluded scope, and
-limitations.
+limitations. For non-Git projects record the inspected file snapshot, execution
+time, and unavailable revision honestly; Git is not an execution prerequisite.
+Do not cite a commit as evidence of uncommitted files.
 
 ## Input rules
 
 Use an explicitly supplied or conversation-established test-case artifact, or
-the exact resolved current Git branch and current requirement workspace's
-`test-cases.md`, as the primary inventory. Never scan sibling requirements or
-another branch workspace to discover a workflow artifact. Never treat an
+the exact resolved requirement workspace's `test-cases.md`, as the primary
+inventory. Relevant optional project/branch context supplies background and
+constraints under existing authority; it cannot change case oracles, required
+evidence, or routes. Apply the entrypoint's bounded historical lookup rules
+without adding implementation-process or review artifacts as execution inputs.
+Do not bulk-scan sibling requirements or another workspace. Never treat an
 earlier report or label as current execution evidence, and never write
 execution results back into a source test-case artifact.
 

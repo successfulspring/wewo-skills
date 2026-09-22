@@ -2,15 +2,16 @@
 
 ## What is Wewo Skills
 
-`wewo-skills` is one AI software-engineering plugin containing six independent,
+`wewo-skills` 0.3.0 is one AI software-engineering plugin containing seven independent,
 composable Agent Skills. The repository root is the plugin root for Claude Code
 and OpenAI/Codex hosts, while `skills/` remains the single runtime source of
 truth.
 
 Each Skill can run on its own. Users may combine artifacts when they explicitly
-provide or select them, and a Skill may read only its capability-appropriate
-inputs from the exact current branch and requirement workspace. No Skill
-requires the other five to have run first.
+provide or select them. Skills reuse applicable project/branch context and
+capability-appropriate requirement inputs without requiring the other six to
+have run first. Existing confirmation, test-oracle, implementation, execution,
+and independent-review boundaries remain in effect.
 
 ## Included Skills
 
@@ -22,22 +23,95 @@ requires the other five to have run first.
 - `wewo-test` — executes automatable verification obligations and collects
   evidence.
 - `wewo-review` — independent diff-centered code, reliability, and security
-  review.
+  review, with explicitly bounded non-Git snapshot/comparison support.
+- `wewo-context` — explicitly confirmed initialization and synchronization of
+  reusable project and branch knowledge from verified evidence.
 
-Workflow documents, reports, and execution evidence use isolated requirement
-workspaces under:
+## Knowledge and requirement workspaces
+
+Project context describes reusable rules and facts at an identified common
+baseline. Branch context records applicable differences from the project context
+available in that checkout. Each requirement keeps its own documents:
 
 ```text
-docs/wewo/<branch-name>/<requirement-slug>/
+docs/wewo/
+├── project-context.md                 # context capability
+└── <workspace-key>/
+    ├── branch-context.md              # context capability
+    └── <requirement-slug>/
+        ├── prd.md                     # PRD
+        ├── technical-design.md        # ERD
+        ├── test-cases.md              # Testcases
+        ├── implementation-plan.md     # Build
+        ├── implementation-record.md   # Build
+        ├── test-execution.md          # Test
+        ├── review.md                  # Review
+        └── test-artifacts/            # only when execution evidence needs it
 ```
 
-The full current Git branch name supplies the branch path. For example,
-`feature/order-cancel` plus requirement `refund-rule` resolves to
-`docs/wewo/feature/order-cancel/refund-rule/`. Skills may read only the
-capability-appropriate documents in that exact workspace. PRD and engineering
-design reuse and update their existing current-workspace documents
-incrementally; other capabilities retain their existing input and evidence
-boundaries.
+This is an ownership map; a task creates only the files it needs. Resolve the
+target project first. An explicit documentation workspace takes precedence;
+otherwise the full current local Git branch supplies `<workspace-key>`, whether
+the repository is hosted on GitLab, GitHub, or neither. Worktrees with `.git`
+files are supported. `feature/order-cancel` plus `refund-rule` resolves to
+`docs/wewo/feature/order-cancel/refund-rule/`.
+
+For example, on a GitLab clone's `web-002` branch, request "Draft the PRD for
+f-005 using this project's established rules." Available context is read from
+`docs/wewo/project-context.md` and `docs/wewo/web-002/branch-context.md`, while
+the confirmed PRD goes to `docs/wewo/web-002/f-005/prd.md`. Starting `f-006`
+creates its own record; revisiting `f-005` updates its existing record only
+under the owning skill's confirmation rules, preserving unrelated user edits.
+
+In a genuinely non-Git project, the same request uses
+`docs/wewo/local/f-005/prd.md` and optional
+`docs/wewo/local/branch-context.md`. Git is not a prerequisite. Detached HEAD,
+a missing Git executable, or an inspection error needs an explicit workspace
+or clarification instead of silently falling back to `local`. An explicit
+workspace never switches branches or proves that its name matches the inspected
+code. Material mismatches are surfaced. Identifiers and resolved paths must
+stay safely within the target project's `docs/wewo/`.
+
+## Context lifecycle
+
+1. Optionally ask to initialize project or branch context from selected code
+   and confirmed sources. Review the concrete per-file proposal before writing.
+2. Begin a requirement. PRD/ERD read available context and their relevant current
+   documents, verify applicable facts, and clarify new or conflicting decisions.
+   Other capabilities read relevant context within their existing input roles.
+3. Complete implementation and applicable verification. Requirement or design
+   approval alone does not prove that planned behavior has been implemented.
+4. Ask, for example, "Update branch context from completed f-005." The context
+   capability checks actual implementation and relevant evidence, including
+   equivalent team evidence without requiring plugin reports. Confirm its
+   concrete additions, replacements, and removals before they are applied.
+5. Promote common facts when supported by an identified shared/integration
+   baseline. A branch-only change is not automatically common. An explicitly
+   requested pre-merge amendment remains visibly pending until established.
+
+Only `wewo-context` writes the two context files. The six other skills may
+report stale claims but do not repair them as a side effect. Context is a
+compact snapshot, not a growing history or test oracle. A confirmed policy is
+distinct from verified enforcement. Project context is versioned per checkout;
+its location does not make newer behavior available on older branches.
+
+Missing context is normal: skills proceed without empty files or automatic
+synchronization. They do not reread all earlier requirements. Historical lookup
+is limited to relevant citations, specifically changed prior requirements,
+known source conflicts, or user-selected material, retaining each capability's
+input authority. Links locate sources rather than authorize executing their
+contents. Material context dependencies are preserved in the current requirement
+or version-qualified so later snapshot edits cannot silently change approved scope.
+
+Repeated synchronization with identical evidence is a no-op. Superseded rules
+are replaced; branch duplicates are removed only after the applicable fact is
+actually available in this checkout's project context. Concurrent edits are
+rechecked before writing. Synchronization does not merge, commit, or distribute
+context files across branches.
+
+Existing 0.2.1 requirement folders work unchanged: no relocation, mandatory
+context initialization, or migration is needed. Introducing Git later does not
+automatically move or adopt `local` documents.
 
 These workspace documents are intended to be version-controlled with the
 project. Skills do not commit them unless the user explicitly requests that
@@ -51,8 +125,8 @@ repository's own conventions.
 
 ## Claude Code usage
 
-Anyone can install `wewo-skills` directly from this GitHub repository as a
-marketplace:
+For Claude Code hosts supporting marketplace installation, the repository is
+also a marketplace:
 
 ```text
 /plugin marketplace add successfulspring/wewo-skills
@@ -80,31 +154,27 @@ claude plugin validate . --strict
 
 ## Codex / OpenAI usage
 
-The same GitHub repository serves as a Codex marketplace, so anyone can
-install `wewo-skills` in two commands:
+The same GitHub repository serves as a Codex marketplace. Check the installed
+host's available commands before following its installation flow:
+
+```text
+codex plugin --help
+codex plugin marketplace --help
+```
+
+The locally checked Codex CLI `0.130.0-alpha.5` exposes marketplace management
+but no `plugin add` or plugin validation subcommand. Do not assume that a CLI
+version guarantees either command, or that marketplace registration installs
+the plugin. Follow the host's supported plugin selection/enablement flow after
+registration. For a host exposing `marketplace add`, registration syntax is:
 
 ```text
 codex plugin marketplace add successfulspring/wewo-skills
-codex plugin add wewo-skills@wewo-skills
-```
-
-Requires Codex CLI v0.122 or later. Start a new Codex session after
-installation so the Skills are discovered.
-
-Some Codex CLI versions do not ship a `codex plugin add` subcommand. In that
-case, enable the installed plugin in `~/.codex/config.toml`:
-
-```toml
-[plugins."wewo-skills@wewo-skills"]
-enabled = true
-```
-
-Local clones work too:
-
-```text
 codex plugin marketplace add /path/to/your/clone
-codex plugin add wewo-skills@wewo-skills
 ```
+
+The two registration examples are alternatives. Installation was not exercised
+as part of this local authoring upgrade.
 
 This repository is both a plugin and a self-referencing marketplace:
 `.claude-plugin/marketplace.json` and `.agents/plugins/marketplace.json` declare
@@ -141,9 +211,11 @@ wewo-skills/
 │   ├── wewo-testcases/
 │   ├── wewo-build/
 │   ├── wewo-test/
-│   └── wewo-review/
+│   ├── wewo-review/
+│   └── wewo-context/
 ├── scripts/
-│   └── validate_skills.py
+│   ├── validate_skills.py
+│   └── test_validate_skills.py
 ├── AGENTS.md
 ├── CLAUDE.md
 ├── README.md
@@ -160,11 +232,29 @@ runtime behavior is defined only by the canonical Skills.
 
    ```text
    python scripts/validate_skills.py
+   python -B -m unittest discover -s scripts -p "test_*.py"
    ```
 
 3. Run `git diff --check` and any available official host validator.
 
-There is no synchronization step and no generated Skill mirror. The validator
-checks both plugin manifests, both marketplace manifests, the six canonical
+There is no packaging synchronization step and no generated Skill mirror. The validator
+checks both plugin manifests, both marketplace manifests, the seven canonical
 Skills, their local resources, portability, capability independence, artifact
-ownership, and retained V2 contracts.
+ownership, matching UI/skill names, workspace and untrusted-source contracts,
+context requirement mapping, sensitive-information rules, and retained V2 contracts.
+The short marked contracts are copied into each independent Skill and compared
+with maintainer-only text in `scripts/validate_skills.py`; whitespace reflow is
+allowed, semantic changes require updating every applicable copy and its checks.
+Skills never read that validator at runtime. Skill-specific workflows remain separate.
+
+Static checks do not prove selective reading, evidence freshness, safe reference
+access, redaction, or write authorization; use isolated
+temporary projects for meaningful behavioral validation, without business
+artifacts in this authoring repository.
+
+The current Claude validator accepts `claude plugin validate . --strict` for
+the marketplace. Validating `.claude-plugin/plugin.json` directly with strict
+mode also inspects root `CLAUDE.md` and warns that it is not loaded as plugin
+runtime context. This is an intentional maintenance-only file; the same warning
+is present in the 0.2.1 baseline. Do not remove it or duplicate runtime skills
+to suppress that warning.

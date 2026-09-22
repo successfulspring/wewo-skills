@@ -29,6 +29,26 @@ rollback, and observability.
 Keep the filename `technical-design.md` in English while localizing headings
 and prose.
 
+## Incremental design and context dependencies
+
+Give a new requirement its own design; update the same requirement's existing
+design only under the final confirmation gate and preserve unrelated edits.
+Never rewrite the historical requirement documents used as evidence.
+
+Explain the complete current change and engineering consequences, including
+affected behavior, interfaces, boundaries, exceptions, and constraints. Reuse
+stable shared facts by reference instead of copying the full context snapshot.
+For a material dependency, preserve its relevant meaning locally or identify
+the precise baseline/version and claim so future context edits cannot silently
+alter approved design. If Git evidence is unavailable or dirty, state the
+limitation and keep the necessary meaning locally rather than inventing a
+revision.
+
+Keep confirmed policy separate from verified implementation and proposed
+design. When useful, note a material reusable context-update candidate in the
+relevant section or completion summary as a proposal. Do not mandate a
+candidate section, create a candidate file, or update context as part of design.
+
 ## Stable Core semantic coverage
 
 ### Design Goal and Constraints
@@ -151,6 +171,8 @@ Before writing, verify that:
 - requirement behavior maps to the proposed engineering design;
 - existing-project claims are verified and proposed design is labeled;
 - material decisions have valid evidence, ownership, and confirmation;
+- material context dependencies are applicable and stable against later
+  snapshot edits;
 - the complete design contains no unresolved material cross-section
   contradiction;
 - affected and unaffected scope are clear;

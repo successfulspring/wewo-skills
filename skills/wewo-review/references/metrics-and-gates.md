@@ -1,7 +1,26 @@
 # KLOC Metrics and Review Gates
 
 Calculate metrics only after Finding Admission from canonical deduplicated
-findings and a recorded Diff classification.
+findings and a recorded Diff classification. Preserve the Git calculations
+below for supported attributable Diffs.
+
+## Snapshot and comparison limits
+
+Without a supported change baseline, additions, deletions, changed LOC, and
+all current-change densities are `Not Calculable`; do not substitute snapshot
+size, invented commits, or zero. Report supported inspected-file counts and
+deduplicated `Confirmed snapshot findings` separately from current-change
+totals. A user-supplied comparison supports only the measurements and causal
+claims established by its verified before/after evidence; explicitly disclose
+unsupported attribution and metrics.
+
+Apply the same severity, evidence-completeness, three-lane, and security rules
+to the named snapshot/comparison. A confirmed Critical/High defect fails its
+scoped gate. A supported `Pass` describes that inspected scope only; it is not
+a complete change-based review or merge approval. If requested change
+attribution or high-risk evidence remains unavailable, use the corresponding
+unable/incomplete conclusion. Metric unavailability alone does not turn a
+complete explicitly requested snapshot review into a failed review.
 
 ## Density scope
 

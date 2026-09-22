@@ -15,11 +15,13 @@ Inspect enough to establish:
   risk.
 
 Read applicable repository instructions and current configuration. Do not
-broadly scan unrelated files or invent repository facts and commands. Read only
-the capability-appropriate `prd.md` and `technical-design.md` automatically
-from the exact resolved current Git branch and current requirement workspace;
-do not discover workflow documents from sibling requirements or another branch
-workspace.
+broadly scan unrelated files or invent repository facts and commands. The exact
+resolved requirement workspace may supply `prd.md` and `technical-design.md`.
+Read applicable project and branch context as optional background/constraints
+under the entrypoint's authority and bounded historical lookup rules. Do not
+consume QA planning or case artifacts as implementation inputs, directly or
+through context citations. A context observation cannot redefine a confirmed
+requirement or bypass plan confirmation or TDD. Preserve context files as-is.
 
 ## Before each unit
 

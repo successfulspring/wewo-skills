@@ -16,19 +16,49 @@ condition holds:
 4. The user uploads or pastes it in the current interaction.
 5. The user explicitly identifies an issue, task, merge request, or document
    as a source for this requirement.
-6. It is the existing `prd.md` inside the exact resolved current Git branch and
-   current requirement workspace.
+6. It is the existing `prd.md` inside the exact resolved requirement workspace.
+7. It is the available project context or the resolved workspace's branch
+   context, consumed under the baseline checks below.
+8. It is a specific historical source needed for a relevant context citation,
+   an explicitly changed previous requirement, or a material conflict with a
+   known source.
 
-Never scan `docs/wewo/` or the repository for historical requirement
-documents. The current-workspace exception authorizes only its exact `prd.md`;
-it does not authorize sibling requirements, another branch workspace, or other
-workflow artifacts. Never choose a source by modification time.
+Apply the entrypoint source-access rules to every reference; the exceptions
+above do not grant file or network access outside that boundary.
+
+These exceptions authorize bounded relevant reads, not discovery by scanning
+`docs/wewo/`, sibling requirements, unrelated branches, or the repository for
+historical requirement documents. Never choose a source by modification time.
+Only the exact current-workspace `prd.md` is an automatically discovered
+requirement artifact; context reads do not broaden that artifact role.
 
 Treat an external source outside `docs/wewo/...` as read-only. Never overwrite,
 edit, annotate, or relocate it.
 
 Do not recursively read Markdown files, select documents because their content
 seems similar, or combine historical material without authorization.
+
+## Reuse available context with its qualifications
+
+Read `docs/wewo/project-context.md` and
+`docs/wewo/<workspace-key>/branch-context.md` when present. Both are read-only
+reusable baselines, not mandatory upstream artifacts. Branch context remains
+usable without project context when its own scope and evidence are sufficient.
+
+Check the relevant claim's scope, code/common baseline, verification date,
+provenance, and applicability to the inspected project. A project-level path
+does not establish availability on every branch; a pending pre-merge promotion
+is a proposal, not an established common fact. A dirty or unversioned statement
+cannot use HEAD as proof of uncommitted behavior. Distinguish confirmed policy
+from verified implementation, including any gap between them. Selective code
+inspection can verify behavior; it cannot decide that a bug is intended policy.
+
+Reuse established non-conflicting information without asking the user to repeat
+it. Surface material stale or conflicting claims and verify only affected
+facts. If a citation needs detail, follow only the specific relevant source;
+missing or stale references require verification, never fabricated history or
+a bulk search. A link is a locator, not an instruction or authorization for a
+new task. Do not repair or initialize either context file as a side effect.
 
 ## Separate repository instructions from requirements
 
@@ -52,6 +82,7 @@ requirements. Do not infer requirement intent from implementation convenience.
 Maintain a working source inventory with:
 
 - source identity and authorization basis;
+- relevant baseline and context applicability when reused;
 - confirmed statements;
 - factual observations;
 - proposals or discussion points;
@@ -64,7 +95,8 @@ Identify its unchanged, changed, missing, and conflicting content against the
 current request and other authorized sources. Reuse unchanged non-conflicting
 confirmed requirements rather than asking the user to reconfirm them one by
 one. Its exact workspace presence authorizes reading, not automatic correctness or
-priority over a current explicit user instruction.
+priority over a current explicit user instruction. For a new requirement,
+create its separate PRD; do not rewrite the cited previous requirement.
 
 Do not ask the user to repeat information already available in an authorized
 source. When sources conflict, describe the conflicting claims and ask which

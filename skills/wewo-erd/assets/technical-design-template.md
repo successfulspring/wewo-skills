@@ -12,7 +12,8 @@ or empty placeholders into `technical-design.md`.
 ## {Design Goal and Constraints}
 
 {Requirement outcome, actual sources, explicit constraints, non-goals, and
-design-shaping forces}
+design-shaping forces. When shared context materially shapes the design,
+retain the relevant meaning or version-qualified claim and its applicability.}
 
 ## {Existing System and Impact Scope}
 

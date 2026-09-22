@@ -39,13 +39,18 @@ Valid provenance is:
 - `User Confirmed`;
 - `Explicit User Requirement`;
 - `Explicit User-Supplied Source`;
+- `Applicable Context Baseline`, retaining the underlying confirmed policy or
+  verified fact and its scope/provenance;
 - `Repository Fact`;
 - `Explicitly Out of Scope`;
 - `Explicitly Deferred by User`;
 - `Intentionally Unresolved with Accepted Risk`.
 
 `Repository Fact` establishes current state only. It cannot decide desired
-future behavior. `AI Recommendation`, `AI Assumption`, `Implementation
+future behavior. A context implementation fact has the same limit; pending
+project promotions and unimplemented proposals are not established facts.
+Context may carry an already confirmed policy without proving enforcement.
+`AI Recommendation`, `AI Assumption`, `Implementation
 Convenience`, and `Unsupported Best-Practice Claim` are not valid provenance
 for a confirmed product requirement.
 

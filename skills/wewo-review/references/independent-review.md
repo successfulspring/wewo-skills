@@ -8,7 +8,7 @@ of review correctness, not a performance optimization.
 Main owns scope and baseline resolution, factual context collection, Diff and
 metrics preparation, compact factual packet preparation, reviewer dispatch,
 candidate admission, evidence
-verification, current-change attribution, root-cause deduplication, severity,
+verification, scope attribution, root-cause deduplication, severity,
 metrics, gates, and the unified `review.md`.
 
 Main is not a fourth reviewer. Do not repeat all three lane reviews before or
@@ -33,6 +33,11 @@ classifications, requirement/design availability, applicable instruction
 locations, language/framework facts, obvious changed entry points, and useful
 deterministic scope or metric facts.
 
+For non-Git review, supply the fixed snapshot/comparison manifest and source
+identity instead of invented revisions. Tell every lane whether a supported
+before/after baseline exists; keep unavailable change attribution explicit.
+The same exactly three isolated contexts are required.
+
 Tailor the packet to the lane. Add confirmed requirement/design evidence only
 where applicable. The Static lane may receive deterministic tool context it
 owns. Contextual Security must not receive Static or Semgrep candidates before
@@ -42,8 +47,8 @@ explanations, prior conclusions, or the full development conversation.
 
 ## Progressive repository discovery
 
-Each lane starts from its packet and reads changed or supporting code only as
-needed to prove or reject candidates. Start narrow and expand through callers,
+Each lane starts from its packet and reads changed, scoped snapshot, or
+supporting code only as needed to prove or reject candidates. Start narrow and expand through callers,
 data paths, shared components, or other files when evidence requires it. Do not
 impose numeric file or token limits, and do not prevent broad inspection when a
 real cross-file issue requires it. Main may identify factual entry points but
@@ -56,7 +61,8 @@ Ask each lane to return compact candidate data:
 - code or requirement evidence;
 - expected/secure and actual behavior;
 - realistic trigger or reachable path;
-- concrete impact and current-change attribution;
+- concrete impact and current-change attribution, or verified snapshot presence
+  with introduction unknown;
 - remediation and suggested verification;
 - confidence or limitation.
 

@@ -54,6 +54,8 @@ Inspect every planned material product rule before the final summary and PRD:
 - Is it only a repository current-state fact?
 - Is it an AI recommendation or assumption?
 - Is it actually an implementation decision?
+- If reused from context, is its scope, baseline, and underlying provenance
+  applicable, and is it established rather than a pending promotion?
 
 Valid provenance is defined in [decision-map.md](decision-map.md). When a
 material rule lacks valid provenance:

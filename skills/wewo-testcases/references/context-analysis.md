@@ -7,12 +7,17 @@ implementation inspection.
 
 Operate from a sufficiently clear current user requirement, an explicitly
 supplied or established `prd.md`, a PRD plus optional `technical-design.md`, or
-an explicit business/API/compatibility contract. The exact resolved current
-Git branch and current requirement workspace may supply its `prd.md` and
+an explicit business/API/compatibility contract. The exact resolved requirement
+workspace may supply its `prd.md` and
 `technical-design.md` automatically. This evidence is sufficient for normal
 requirement-driven test design before product code exists. Do not discover
 historical QA or workflow artifacts from sibling requirements or another
-branch workspace merely because they exist.
+workspace merely because they exist. Relevant project/branch context is optional
+background and constraint evidence under the entrypoint's bounded lookup rules;
+it does not add an oracle-authority tier, authorize implementation inspection
+in default mode, or broaden the normal artifact inputs. Read only the specific
+historical source necessary for an authorized citation, changed requirement,
+known material conflict, or user selection. Keep both context files read-only.
 
 Use this order for Expected Results:
 
@@ -26,6 +31,12 @@ Repository implementation is not a fallback requirement oracle. Keep distinct:
 - **Requirement authority**: what the system must do.
 - **Repository fact**: what the current implementation appears to do.
 - **Test-design decision**: what evidence verifies the required behavior.
+
+A context claim retains its source's authority and applicability: distinguish
+confirmed policy from verified implementation, and verify missing/stale support
+for affected claims. Neither code-derived context nor a pending project-context
+promotion can silently override a confirmed requirement or supply its oracle.
+Resolve material conflict through the same clarification rules below.
 
 An authoritative technical design may define a testable API, transaction,
 idempotency, state, data-integrity, or producer/consumer contract even before

@@ -56,6 +56,24 @@ structured format only when it improves clarity; do not force one syntax on
 every requirement. Acceptance outcomes should normally remain explicit even
 when other semantic dimensions are combined.
 
+## Current change and stable dependencies
+
+A new requirement gets its own PRD. An update to the same requirement retains
+unchanged confirmed meaning and unrelated user edits under the final
+confirmation gate. Do not rewrite historical requirement documents.
+
+Make the current change actionable: describe affected behavior, boundaries,
+exceptions, and acceptance outcomes, rather than an unexplained list of diffs.
+Reference stable shared facts instead of copying the context snapshot. For a
+material dependency, preserve its local semantic meaning or cite an identifiable
+version/baseline and relevant claim so future context edits cannot silently
+alter approved scope. When Git evidence is unavailable or dirty, state that
+limitation and retain the necessary meaning locally; do not invent revisions.
+
+Keep confirmed policy distinct from implementation evidence. Material reusable
+context-update candidates may be noted where relevant, but remain proposals;
+do not add a mandatory candidate section or a separate candidate file.
+
 ## Synthesis provenance
 
 Apply the Synthesis Provenance Audit before and during composition. Every
@@ -79,6 +97,8 @@ Before writing, verify that:
 - source conflicts affecting behavior are resolved or explicitly retained as
   unresolved;
 - every material product rule has valid provenance;
+- material context dependencies are applicable and preserved independently of
+  later snapshot edits;
 - no AI recommendation, temporary assumption, repository fact, or
   implementation convenience appears as an unconfirmed future rule;
 - technical implementation has not replaced product behavior;

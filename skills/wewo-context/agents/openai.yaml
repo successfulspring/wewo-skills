@@ -1,0 +1,4 @@
+interface:
+  display_name: "wewo-context"
+  short_description: "Maintain verified project and branch knowledge"
+  default_prompt: "Use $wewo-context to synchronize reusable branch context from this completed requirement."

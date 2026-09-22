@@ -1,6 +1,7 @@
 # Contextual Security Lane
 
-Start from changed attack surfaces rather than a generic checklist. Analyze the
+Start from changed or explicitly scoped snapshot attack surfaces rather than
+a generic checklist. Analyze the
 applicable chain:
 
 ```text
@@ -14,6 +15,9 @@ sensitive state transitions. Trace across files and functions only when an
 applicable attack or control path requires it; do not eagerly read the entire
 changed scope. Establish concrete plausible paths or state an explicit
 unverified gap.
+
+In snapshot mode, start from the selected entry points and preserve its fixed
+manifest; do not imply those surfaces were introduced by a current change.
 
 Consider only applicable authentication, authorization/ownership/tenant
 isolation, injection, command execution, SSRF, traversal, files,

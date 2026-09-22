@@ -169,6 +169,9 @@ The audit passes only when:
 
 - requirement behavior maps to a concrete engineering response;
 - existing-system and impact claims have sufficient verified evidence;
+- reused context has applicable scope, baseline, and provenance; pending
+  promotions are not treated as established common state, and material
+  dependencies retain enough meaning or version qualification to stay stable;
 - responsibility, interface, data, state, and lifecycle boundaries are clear
   where relevant;
 - Material Engineering Decisions and Blocking Requirement Ambiguities are

@@ -23,6 +23,13 @@ Diff/baseline, tracked scope, applicable untracked files, material excluded or
 unrelated untracked scope, exclusions, all three lane statuses, and Requirement
 or Design Compliance as `Not Evaluated` when explicit evidence is absent.
 
+For a non-Git snapshot/comparison, identify that mode, the fixed file manifest,
+source/content identity and inspection time, any supplied before/after sources,
+and unavailable Git revisions or change attribution. Label snapshot findings
+and counts separately; mark unsupported Diff metrics and current-change
+density `Not Calculable`. Apply gates to the explicit scope only and do not
+present the report as complete change review or merge readiness.
+
 ## Unified findings and evidence
 
 Keep candidate IDs lane-local. After admission and deduplication, assign

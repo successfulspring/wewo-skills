@@ -1,6 +1,35 @@
 # Diff Scope and Context
 
-Establish an attributable review target before evaluating findings.
+Establish one fixed review target and its available attribution before
+evaluating findings. Use the Git path below when Git evidence exists; use the
+explicit snapshot/comparison path otherwise.
+
+## Non-Git snapshots and supplied comparisons
+
+Require an explicitly scoped file/directory snapshot or user-supplied comparison.
+Do not infer a whole-project scope merely because Git is absent. Freeze the
+included file manifest, exclusions, source identity, inspection time, and
+content identity (for example relevant file hashes) so the three lanes review
+the same contents. Record before/after source identities when supplied, their
+completeness, and any missing files or baseline evidence. If material contents
+change during review, reconcile the scope and affected lane evidence before
+concluding.
+
+No evidenced change baseline means no supported claim about introduction by
+the current change. Do not initialize Git, invent commits, treat the snapshot
+as new files from `/dev/null`, or turn its physical size into additions/deletions or
+current-change defect density. Report unavailable Diff metrics as `Not
+Calculable`, not zero. A supplied comparison can support only changes actually
+established by its verified before/after sources; disclose its attribution
+limits and any metrics that remain unavailable.
+
+Run the same three independent lanes, admission, Semgrep attempt, and separate
+gates against that scope. Snapshot findings identify defects present in the
+inspected snapshot with introduction unknown; they are not attributed
+current-change or Existing Issue findings. Scope every conclusion to the
+snapshot/comparison and never claim full change review or merge readiness.
+If the request requires change attribution that cannot be supplied, use
+`Unable to Conclude` for that missing change-based conclusion.
 
 ## Scope precedence
 
@@ -19,8 +48,8 @@ Never infer that the target is `main` or `master` without repository evidence.
 ## Applicable untracked files
 
 Before freezing scope, inspect read-only status such as `git status
---porcelain`. Formal scope is the tracked Git Diff plus untracked files Main
-explicitly selects as applicable from the user's target, requirement/change
+--porcelain`. For a Git review, formal scope is the tracked Git Diff plus
+untracked files Main explicitly selects as applicable from the user's target, requirement/change
 scope, affected paths, and branch context. Never assume all untracked files
 belong to one change.
 
@@ -37,8 +66,7 @@ from local refs and disclose the limitation.
 
 For specified files or directories, determine whether the user wants current
 contents, uncommitted changes, or a historical range. If no baseline exists,
-review the supplied contents but mark change attribution and change metrics as
-limited.
+review the supplied contents under the snapshot/comparison rules above.
 
 ## Baseline record
 
@@ -88,7 +116,8 @@ improve a metric.
 
 ## Context expansion
 
-Start from changed lines. Expand only as needed to:
+Start from changed lines, or explicitly scoped snapshot entry points. Expand
+only as needed to:
 
 - callers and consumers;
 - interfaces and data models;

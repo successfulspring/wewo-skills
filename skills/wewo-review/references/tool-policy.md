@@ -14,11 +14,18 @@ Diff metrics. Still attempt Semgrep through an equivalent safe approved direct
 invocation when available or acquirable. Never claim a bundled helper ran when
 it did not.
 
+The metrics helper accepts Git scopes only. For an explicit non-Git snapshot,
+skip that helper and record unsupported change metrics as `Not Calculable`;
+do not initialize Git or manufacture a Diff to satisfy it. A supplied
+comparison may support directly verified measurements, with the exact method
+and limitations recorded. Keep Semgrep and safe native checks applicable to
+the frozen snapshot/comparison; absence of Git does not waive the attempt.
+
 ## Layer 1: semantic review
 
-Each lane performs its assigned semantic reasoning from the Diff and affected
-context. Tool absence never turns warnings into findings or replaces reviewer
-reasoning.
+Each lane performs its assigned semantic reasoning from the fixed Diff or
+snapshot/comparison and affected context. Tool absence never turns warnings
+into findings or replaces reviewer reasoning.
 
 ## Layer 2: repository-native deterministic tools
 

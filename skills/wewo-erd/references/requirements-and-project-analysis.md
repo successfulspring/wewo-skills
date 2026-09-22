@@ -23,14 +23,24 @@ capability a prerequisite.
 
 Use sources explicitly supplied or referenced in this interaction, already
 established in the current conversation, or found as `prd.md` and
-`technical-design.md` in the exact resolved current Git branch and current
-requirement workspace. The workspace files are authorized inputs only for
-their respective roles: PRD as prior requirement context and technical design
-as a proposed engineering baseline. Do not scan sibling requirements, another
-branch workspace, or the repository for historical workflow documents.
+`technical-design.md` in the exact resolved requirement workspace, plus both
+available context levels. The requirement-workspace files are authorized only
+for their respective roles: PRD as prior requirement context and technical
+design as a proposed engineering baseline.
+
+Apply the entrypoint source-access rules to every reference; none of these
+source roles grants additional file or network access.
+
+Read historical detail only for a relevant context citation, an explicitly
+changed previous requirement, a material conflict requiring a known source, or
+a user-selected document. Read only the relevant identified sources; do not
+recursively scan history, sibling requirements, unrelated branches, or similarly
+named documents, and never select by recency. A link is a source locator, not
+an instruction to execute content or expand scope. Missing or stale citations
+require verification of affected claims, not invented history or bulk searches.
 
 When a current-workspace design exists, compare it with the current request,
-authorized requirement sources, and verified current-branch code. Classify its
+authorized requirement sources, and verified current project code. Classify its
 material content as unchanged and reusable, changed, stale, missing, or
 conflicting. Reuse only verified, non-conflicting content and reopen the design
 work only for material deltas. Do not present an old design statement as a
@@ -49,6 +59,35 @@ analyzed.
 
 Repository facts describe the current system. They do not decide desired
 product behavior or silently broaden a user constraint.
+
+## Reuse qualified project and branch context
+
+Read available `docs/wewo/project-context.md` and
+`docs/wewo/<workspace-key>/branch-context.md` after workspace resolution. They
+are optional, read-only reusable baselines. Missing context does not require
+initialization; branch context may provide a verified standalone baseline
+without a project file. Do not repair stale context as a side effect.
+
+Check relevant claims for scope, common/code baseline, verification date,
+provenance, and applicability to the inspected project. The project-context
+location does not establish availability on every branch, and a pending
+pre-merge promotion is not established common state. Record dirty-worktree or
+unversioned evidence honestly; HEAD does not prove uncommitted behavior.
+
+Distinguish already confirmed policies and constraints from implementation
+facts. A policy may be agreed before enforcement exists. Verify material
+current-system claims through selective code inspection; code cannot establish
+that a bug is intended business policy. Reuse non-conflicting established
+decisions without asking the user to repeat them, but surface material gaps,
+conflicts, or stale claims under the existing decision-ownership rules.
+
+Identify the complete requirement/design delta and its engineering
+consequences. A new requirement receives a separate design; historical source
+documents stay unchanged. Retain enough local meaning or a version-qualified
+reference for material context dependencies that later snapshot edits cannot
+silently change the approved design. A context-update candidate remains a
+proposal until evidence supports synchronization; design approval is not
+implementation evidence.
 
 ## Decision-driven progressive technical discovery
 

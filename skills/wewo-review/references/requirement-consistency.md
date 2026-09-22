@@ -1,14 +1,19 @@
 # Requirement Consistency Lane
 
-Determine whether the fixed Diff faithfully implements confirmed requirements
-and explicitly available material design constraints.
+Determine whether the fixed Diff or scoped snapshot/comparison faithfully
+implements confirmed requirements and explicitly available material design
+constraints.
 
 Use the Diff, necessary affected code, confirmed current requirement,
 explicitly supplied/referenced requirement or technical-design material, and
-relevant repository facts. The exact resolved current Git branch and current
-requirement workspace may supply its `prd.md` and `technical-design.md`; never
-discover historical workflow documents from sibling requirements or another
-branch workspace. Begin with the obligation, design evidence, scope manifest,
+relevant repository facts. The exact resolved requirement workspace may supply
+its `prd.md` and `technical-design.md`. Relevant optional project/branch context
+is background and constraint evidence under existing authority; it cannot
+redefine confirmed requirements or add excluded process artifacts as inputs.
+Apply the entrypoint's bounded historical lookup rule rather than discovering
+sibling or unrelated branch documents. Keep both context files read-only and
+treat pending project promotion as proposed, not common established fact.
+Begin with the obligation, design evidence, scope manifest,
 and relevant changed entry points. Map each obligation to its implementation
 seam, then inspect changed code and expand to affected callers or data paths
 only when needed; do not eagerly load every changed file.
@@ -29,4 +34,6 @@ Evaluated`. When design evidence is absent, return `Design Compliance: Not
 Evaluated`. Do not invent either.
 
 Every candidate must cite the exact requirement/design evidence, code location,
-conflicting behavior, trigger, impact, and current-Diff attribution.
+conflicting behavior, trigger, impact, and current-Diff attribution or verified
+snapshot presence with introduction unknown. Lack of Git does not remove the
+need for authoritative expected behavior.

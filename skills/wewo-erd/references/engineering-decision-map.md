@@ -71,6 +71,12 @@ documented Engineering Default grounded in those inputs. An unsupported
 architecture fashion, invented fact, or implementation convenience is not
 valid provenance.
 
+An applicable context claim can carry those inputs with its original scope,
+baseline, and provenance. It is not a new decision owner: confirmed policy
+remains a constraint or confirmed decision, while an implementation claim
+requires current verification before it is a Repository Fact. Pending project
+promotions are proposals, and an agreed policy does not prove enforcement.
+
 ## Qualify material assumptions
 
 Engineering Defaults may use ordinary local reasoning, but an assumption is
