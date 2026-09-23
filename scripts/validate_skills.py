@@ -72,7 +72,7 @@ GITHUB_PLUGIN_SOURCE_URL = (
     f"https://github.com/{GITHUB_PLUGIN_SOURCE_REPO}.git"
 )
 GITLAB_PLUGIN_SOURCE_URL = (
-    "http://192.168.1.205/middleware/ai-project/wewo-skills.git"
+    "http://192.168.1.205/skills/wewo-skills.git"
 )
 APPROVED_PLUGIN_SOURCE_URLS = frozenset(
     (GITHUB_PLUGIN_SOURCE_URL, GITLAB_PLUGIN_SOURCE_URL)
