@@ -64,18 +64,31 @@ weaken assertions, skip failures, add backdoors, or use unlimited retries.
 
 ## Runtime contract
 
-Write execution outputs only under one resolved requirement workspace:
+With no task decomposition or TASK request, retain the requirement outputs:
 
 ```text
 docs/wewo/<workspace-key>/<requirement-slug>/test-execution.md
 docs/wewo/<workspace-key>/<requirement-slug>/test-artifacts/
 ```
 
-Always create
-`docs/wewo/<workspace-key>/<requirement-slug>/test-execution.md` when
-automated execution is requested or completed. Create
-`docs/wewo/<workspace-key>/<requirement-slug>/test-artifacts/` only when
-native evidence needs to be retained there. Do not create a manual test checklist
+For a selected task in a split requirement, write:
+
+```text
+docs/wewo/<workspace-key>/<requirement-slug>/tasks/<TASK-ID>/test-execution.md
+docs/wewo/<workspace-key>/<requirement-slug>/tasks/<TASK-ID>/test-artifacts/
+```
+
+Resolve task scope under [project-and-matrix.md](references/project-and-matrix.md)
+before writing. In split mode, use root-level outputs only for an explicit
+whole-requirement test request. Do not silently fall back to them when task
+selection or decomposition is unresolved. Entering task mode preserves existing
+root reports and evidence: do not migrate or overwrite them as task outputs.
+
+After safely resolving scope, always create the report at its `docs/wewo/` path
+when automated execution is requested or completed. Create its `test-artifacts/`
+only when native evidence needs to be retained there. Keep native Runner output
+configuration unchanged; store retained task evidence in the task directory and
+reference verified native reports. Do not create a manual test checklist
 or any duplicate manual-test artifact. Keep executable tests, fixtures,
 mocks, helpers, page objects, data builders, and persistent test configuration
 in normal project test paths, never under `docs/wewo/`.
@@ -185,11 +198,25 @@ Read [project-and-matrix.md](references/project-and-matrix.md). Establish the
 current code version, target Diff when applicable, user goal, required and
 regression scope, exclusions, environment, and limitations.
 
+If the exact current requirement has `task-breakdown.md` or `tasks/`, or the
+user requests a TASK, resolve the split materials. Unless the user explicitly
+requests whole-requirement testing, select only an explicit TASK-ID, its
+`task.md` path, or the current conversation's unique established task. Clarify
+otherwise; directory count or recency never selects a task. For task scope, read its derived
+scope plus root PRD/design and use the root `test-cases.md` scope annotations to
+select associated cases and necessary regression. Missing case mapping cannot
+establish a complete task inventory or be treated as absent cases.
+
 When no usable test-case artifact exists, derive only the minimum execution
 inventory required from the current goal, explicit requirement evidence,
 actual Diff, public interfaces, affected pages, repository behavior, existing
 tests, and material risk. Do not fabricate expected behavior. Ask only when an
 unresolved expectation changes pass/fail.
+This independent-obligation path remains available when no case document
+exists. With an existing document but unresolved task mapping, execute only
+explicitly established partial obligations if useful, disclose the gap, and do
+not claim that the task's required testing is complete. A task-level pass never
+establishes a whole-requirement pass.
 
 ### 2. Inspect the actual repository
 
@@ -224,6 +251,7 @@ Treat `Test Level` as a recommendation describing the semantic evidence level.
 Treat `Automation` as the primary execution-routing input. Support:
 
 ```text
+Browser
 Playwright
 API
 Unit
@@ -239,9 +267,11 @@ Conditional · Auto
 For `API`, `Unit`, `Integration`, `Component`, and `Contract`, preserve that
 evidence surface and use the repository's established framework and runner.
 
-For `Playwright`, preserve browser-automation evidence and resolve the durable
-browser runner under the browser rules below. The annotation does not authorize
-downgrading a browser-visible Oracle to a lower-level test.
+For `Browser` or a legacy `Playwright` annotation, preserve browser-automation
+evidence and resolve the durable browser runner under the browser rules below.
+The legacy annotation alone is not an explicit user requirement to use
+Playwright. Neither annotation authorizes downgrading a browser-visible Oracle
+to a lower-level test.
 
 For `Auto`, inspect the repository and choose the lowest-cost, stable,
 maintainable concrete seam that still proves the original behavior and Oracle.
@@ -375,10 +405,12 @@ actual project runner.
 
 Resolve the browser runner in this order:
 
-1. reuse existing Playwright Test and its project commands/configuration;
-2. if an established Cypress or other browser suite exists, reuse it only when
-   the user did not explicitly require Playwright itself, the case needs no
-   Playwright-specific behavior, and the same browser evidence is preserved;
+1. honor an explicit user requirement for a browser runner, subject to the
+   required evidence and framework confirmation policy;
+2. otherwise reuse the established browser suite for the relevant scope,
+   including Playwright Test, Cypress, or another suitable runner, with its
+   project commands/configuration, only when it preserves the required browser
+   evidence;
 3. when no suitable browser framework exists, propose Playwright Test as the
    default persistent addition and follow the confirmation policy.
 

@@ -39,8 +39,9 @@ Runner.
   validation, idempotency, or API compatibility evidence.
 - `Contract`: preserve authoritative producer/consumer, schema, protocol, or
   serialization evidence.
-- `Playwright`: preserve durable browser-automation evidence; resolve the
-  concrete browser runner under the browser policy.
+- `Browser` or legacy `Playwright`: preserve durable browser-automation
+  evidence; resolve the concrete browser runner under the browser policy.
+  The legacy label alone does not require Playwright Test.
 - `Manual`: exclude from automated execution scope. Preserve the case ID and
   exclusion reason when useful, but do not execute it, generate a manual
   checklist, or convert it to `Not Run`.

@@ -4,6 +4,14 @@ Create exactly one `review.md` for one fixed scope and workspace. Localize
 prose while keeping the filename and canonical `REV-*` IDs in English. Omit
 irrelevant adaptive subsections and empty checklists.
 
+Use the resolved task directory for a task review, and the requirement root
+only for unsplit work or explicitly requested whole-requirement review. In
+Scope & Baseline, identify the TASK-ID, task definition, root requirement/design
+sources, reliable change-attribution evidence, and affected shared contracts
+and callers. Disclose inseparable changes and incomplete task attribution;
+never present an arbitrary subset or full mixed Diff as a completed task
+review. A task Pass is scoped to that task, not the whole requirement.
+
 ## Stable core
 
 1. Review Conclusion & Gates

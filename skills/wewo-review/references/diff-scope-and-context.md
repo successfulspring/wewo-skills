@@ -33,6 +33,36 @@ If the request requires change attribution that cannot be supplied, use
 
 ## Scope precedence
 
+### Task-scoped changes
+
+When a split task is selected, validate its ID and document beneath the exact
+requirement's `tasks/` directory and reconcile its overview membership, root
+requirements, and design before choosing code scope. Reject unsafe paths under
+the entrypoint's workspace rules. Missing definitions or conflicting task
+boundaries are evidence gaps, not permission to review the whole requirement.
+
+Require an evidenced task-specific range, comparison, or reliably attributed
+file/hunk set. A TASK-ID, task document, or expected file list alone does not
+prove which changes implement it. Mixed changes in a shared file need supported
+hunk attribution; do not silently label a whole branch or working-tree Diff as
+one task. If reliable isolation is unavailable, explain the missing evidence
+and ask for a usable scope. A separately requested snapshot can receive only
+the existing snapshot conclusion, not a claim that the task's changes were
+fully reviewed.
+
+Freeze the selected task changes and identify affected shared interfaces and
+callers as supporting context. Follow those impacts as needed without claiming
+unrelated changes belong to the task or automatically accessing another
+repository. Give all three lanes the same scope and attribution limitations.
+
+The metrics helper has no path/hunk filter. Use its totals only when its Git
+scope matches the frozen task changes. Otherwise use equivalent read-only Git
+evidence for that exact scope, recording the method and limitations; do not
+substitute whole-repository totals or use them as a task density denominator.
+If trustworthy task measurements are unavailable, report `Not Calculable`.
+
+### Unsplit or explicitly whole-requirement scope
+
 Use the first applicable scope:
 
 1. the explicit Diff, commit, range, branch, PR, MR, file set, or directory set

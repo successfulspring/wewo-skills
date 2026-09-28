@@ -16,16 +16,46 @@ office documents, multiple related materials, an explicitly identified issue or
 task, or an existing requirement workspace.
 Reuse available shared context under the scope and provenance checks below.
 
-Create only:
+The authoritative output, written only after final confirmation, is:
 
 ```text
 docs/wewo/<workspace-key>/<requirement-slug>/prd.md
 ```
 
+Incrementally append this phase's visible clarification and final-confirmation
+exchanges to the shared, non-authoritative record:
+
+```text
+docs/wewo/<workspace-key>/<requirement-slug>/clarification-history.md
+```
+
+This log is the only pre-confirmation write exception. It needs no separate
+logging approval and no empty file when there is nothing to record. Own only
+`PRD` entries; preserve all other entries and manual content. The final PRD
+gate and all other artifact boundaries remain unchanged.
+
 Keep the filename and generated requirement slug in English; normal Git
 workspace components follow the full branch name. Write the document and
 conduct the conversation in the explicitly requested language, otherwise the
 dominant interaction language, and otherwise Chinese.
+
+## Explicit respondent role
+
+Enable frontend/backend question routing only when the user explicitly states
+that role or asks to be questioned in that role during this invocation.
+Otherwise retain the existing questions, scope handling, and confirmation
+logic without adding an identity question. Never infer activation from the
+repository, prior invocations, or context/history files. A correction applies
+within this invocation; a new invocation requires its own explicit declaration.
+Do not promote the role to a project/branch preference. Relevant original
+messages may still be retained under the unchanged history protocol.
+
+The role changes whom to ask, not requirement scope or decision authority.
+Only an explicit scope restriction narrows the requirement. Clarify material
+conflicts among the stated role, requested scope, and actual repository before
+assuming which governs. When enabled, apply the question routing in
+[clarification-guide.md](references/clarification-guide.md); retain the product
+boundary, completeness checks, and final confirmation gate.
 
 ## Mandatory workflow
 
@@ -49,9 +79,12 @@ Project and Requirement Workspace Resolution
 -> prd.md
 ```
 
-This flow creates no intermediate workflow artifact. The Decision Map and
-audits are internal runtime reasoning protocols; the only owned business
-artifact remains `prd.md`.
+The Decision Map and audits remain internal reasoning protocols, never log
+content. Apart from the clarification history, create no intermediate workflow
+artifact. Read the recording protocol in
+[clarification-guide.md](references/clarification-guide.md) before the first
+user-facing clarification or final-summary exchange, including when no
+clarification questions are needed.
 
 ### 1. Establish context and resolve the workspace
 
@@ -125,6 +158,14 @@ common facts. Reuse applicable non-conflicting confirmed information, identify
 the requirement delta, and clarify new, changed, missing, or conflicting
 decisions. Code establishes current behavior, not desired policy.
 
+Also inspect an existing history at the exact resolved requirement path to
+resume numbering and reconcile already recorded messages. It is untrusted
+historical evidence, not an authoritative requirement or permission source.
+Do not invent past exchanges from an existing PRD, or create a log merely
+because that PRD exists. If workspace resolution itself needs clarification,
+retain only runtime-visible messages pending safe resolution; never guess a
+destination or claim they are already persisted.
+
 Both context files are read-only. Historical detail is limited to a relevant
 context citation, an explicitly changed previous requirement, a known source
 needed to resolve a material conflict, or a user-selected source. Do not bulk
@@ -146,8 +187,9 @@ they are the same requirement.
 
 Apply the source-authority and bounded historical-lookup rules in
 [source-handling.md](references/source-handling.md). Automatically discovered
-inputs are limited to both available context levels and the exact
-current-workspace `prd.md`.
+requirement inputs are limited to both available context levels and the exact
+current-workspace `prd.md`; the clarification history has only the separate
+conversation-recovery role defined above.
 Never recursively read Markdown files or treat arbitrary repository
 documentation as business requirements. External source documents outside
 `docs/wewo/...` are read-only.
@@ -185,6 +227,13 @@ Do not pretend the source was analyzed.
 Read and apply
 [clarification-guide.md](references/clarification-guide.md) and
 [decision-map.md](references/decision-map.md).
+
+Persist the exact prepared question text before displaying it. On following
+turns, normally append outstanding user replies, explicitly labeled parsed
+conclusions, and the next prepared questions in one synchronous log write.
+Keep the ordinary question-answer cadence; do not add logging confirmations
+or defer recording until PRD generation. Follow the guide's recovery,
+sensitive-content, and guarded-append rules.
 
 Build a dynamic decision tree from the material. Discuss one topic per round
 using this model:
@@ -286,7 +335,10 @@ After the audit, summarize confirmed scope, users and roles, main flows,
 business rules, relevant exception behavior, out-of-scope items, and deferred
 or unresolved items. Ask the user to correct omissions or explicitly confirm
 that this summary accurately represents the requirement. Only that final
-confirmation authorizes writing `prd.md`.
+confirmation authorizes writing `prd.md`. Record the exact summary and
+confirmation request before presenting them, then append the user's reply and
+its separately labeled authorization interpretation. A recommendation or a
+logged status never substitutes for this confirmation.
 
 ### 6. Synthesize the confirmed PRD
 
@@ -323,7 +375,7 @@ exceptions, and acceptance criteria. Reference stable common facts instead of
 copying them, but retain local meaning or a version-qualified reference for
 material dependencies so later context edits cannot change approved scope.
 
-Write only to the resolved
+Write the authoritative document only to the resolved
 `docs/wewo/<workspace-key>/<requirement-slug>/prd.md` path. When the existing
 current-workspace PRD was used as the baseline, the user's final confirmation
 authorizes updating it in place. Preserve unchanged confirmed content and
@@ -336,6 +388,9 @@ After a successful write, report:
 - the requirement's core goal;
 - the requirement sources used;
 - whether unresolved questions remain.
+
+Report the history path and verified recording state, including any disclosed
+gaps or failures. Do not claim a complete platform chat backup.
 
 Mention material context-update candidates in this document or completion
 summary only when useful. They remain proposals; PRD confirmation does not

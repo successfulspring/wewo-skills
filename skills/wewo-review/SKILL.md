@@ -27,11 +27,38 @@ input does not include
 `test-plan.md`, `test-cases.md`, `implementation-plan.md`,
 `implementation-record.md`, or `test-execution.md`.
 
-Create only:
+Without a task split, create only:
 
 ```text
 docs/wewo/<workspace-key>/<requirement-slug>/review.md
 ```
+
+If the exact current requirement has `task-breakdown.md` or `tasks/`, or the
+user explicitly selects a TASK, resolve the split scope before freezing a
+review. Unless the user explicitly requests whole-requirement review, select
+only an explicit TASK-ID, its current-requirement
+`tasks/<TASK-ID>/task.md` path, or the unique task already made explicit in the
+current conversation; otherwise ask. A sole file or recent directory is not
+selection evidence. For a task review, read the overview for bounded membership/dependency
+navigation, the selected `task.md`, and the root `prd.md` and
+`technical-design.md`. Missing or contradictory split material requires
+clarification, never fallback to a root report. Task scope is derived from the
+confirmed requirement/design and cannot override them. An explicit overall
+review keeps the original requirement-wide input rules and needs no selected
+task; it must still disclose any material scope or evidence gap.
+
+For a selected task, create only:
+
+```text
+docs/wewo/<workspace-key>/<requirement-slug>/tasks/<TASK-ID>/review.md
+```
+
+In a split requirement, use the root report only for an explicitly requested
+whole-requirement review. Preserve earlier root artifacts; do not migrate them
+or overwrite them as a consequence of task splitting or a task review. A task
+review requires reliably isolated changes plus affected shared contracts and
+callers; its conclusion does not establish whole-requirement completion. Keep
+the existing input exclusions and exactly three independent lanes in both modes.
 
 <!-- wewo:workspace:start -->
 Resolve the intended project root from user scope and project evidence, not
@@ -146,9 +173,11 @@ use `Unable to Conclude` and `Incomplete / Unable to Confirm` as applicable.
 ### 1. Resolve and freeze the review scope
 
 Apply [diff-scope-and-context.md](references/diff-scope-and-context.md). Prefer
-the user's explicit scope, then staged plus unstaged changes, then a branch
-comparison against an evidenced target. Disclose a last-commit fallback when a
-target branch cannot be established. Never assume `main` or `master`.
+the user's explicit scope. In task mode, first establish reliable task change
+attribution under that reference; do not substitute all current changes. Outside
+task mode, use staged plus unstaged changes, then a branch comparison against an
+evidenced target. Disclose a last-commit fallback when a target branch cannot be
+established. Never assume `main` or `master`.
 
 For Git scopes, inspect read-only Git status before freezing and add only
 applicable untracked files selected from factual review context. Do not stage files or

@@ -43,10 +43,13 @@ class PackageContractsTest(unittest.TestCase):
         for function in (
             validator.validate_skill_structure,
             validator.validate_artifact_ownership,
+            validator.validate_task_contracts,
+            validator.validate_change_contracts,
             validator.validate_workspace_contracts,
             validator.validate_agent_names,
             validator.validate_shared_contracts,
             validator.validate_context_content_contracts,
+            validator.validate_clarification_history_contracts,
             validator.validate_plugin_packaging,
             validator.validate_marketplace_packaging,
             validator.validate_no_cross_skill_routing,
@@ -177,6 +180,103 @@ class PackageContractsTest(unittest.TestCase):
         shutil.rmtree(target)
         self.assertTrue(self.check(validator.validate_skill_structure))
 
+    def test_each_clarification_phase_requires_exact_requirement_log_path(self):
+        for skill in validator.CLARIFICATION_GUIDES:
+            with self.subTest(skill=skill):
+                relative = f"skills/{skill}/SKILL.md"
+                self.replace(relative, validator.CLARIFICATION_HISTORY_PATH,
+                             "docs/wewo/clarification-history.md")
+                errors = self.check(validator.validate_clarification_history_contracts)
+                self.assertEqual(1, len(errors))
+                self.assertIn("missing clarification contract", errors[0])
+                self.replace(relative, "docs/wewo/clarification-history.md",
+                             validator.CLARIFICATION_HISTORY_PATH)
+
+    def test_clarification_phase_cannot_claim_other_phase_entries(self):
+        for skill, (phase, _guide) in validator.CLARIFICATION_GUIDES.items():
+            with self.subTest(skill=skill):
+                relative = f"skills/{skill}/SKILL.md"
+                original = f"`{phase}` entries; preserve all other entries and manual content."
+                changed = "all entries; replace other entries and manual content."
+                self.replace(relative, original, changed)
+                self.assertTrue(self.check(validator.validate_clarification_history_contracts))
+                self.replace(relative, changed, original)
+
+    def test_clarification_protocol_requires_local_guide_and_link(self):
+        for skill, (_phase, guide) in validator.CLARIFICATION_GUIDES.items():
+            with self.subTest(skill=skill):
+                relative = f"skills/{skill}/SKILL.md"
+                self.replace(relative, f"]({guide})", "](missing.md)")
+                self.assertTrue(self.check(validator.validate_clarification_history_contracts))
+                self.replace(relative, "](missing.md)", f"]({guide})")
+                path = self.root / "skills" / skill / guide
+                original = path.read_bytes()
+                path.unlink()
+                self.assertTrue(self.check(validator.validate_clarification_history_contracts))
+                path.write_bytes(original)
+
+    def test_clarification_protocol_copies_cannot_diverge(self):
+        relative = "skills/wewo-erd/references/design-dialogue.md"
+        self.replace(relative, "Do not retroactively change what was recommended or said.",
+                     "Replace prior recommendations with the latest preference.")
+        errors = self.check(validator.validate_clarification_history_contracts)
+        self.assertEqual(1, len(errors))
+        self.assertIn("clarification-history contract differs", errors[0])
+
+    def test_clarification_original_and_interpretation_boundary_is_required(self):
+        for skill, (_phase, guide) in validator.CLARIFICATION_GUIDES.items():
+            self.replace(f"skills/{skill}/{guide}", "Interpretation (not verbatim):",
+                         "Original answer:")
+        errors = self.check(validator.validate_clarification_history_contracts)
+        self.assertEqual(2, len(errors))
+        self.assertTrue(all("Interpretation (not verbatim)" in error for error in errors))
+
+    def test_clarification_final_gate_and_sensitive_conflict_rules_are_required(self):
+        for anchor in (
+            "The final document still requires the original explicit final-confirmation\ngate.",
+            "Do not silently persist it, silently sanitize it, or call altered\ntext a complete original.",
+        ):
+            with self.subTest(anchor=anchor):
+                for skill, (_phase, guide) in validator.CLARIFICATION_GUIDES.items():
+                    self.replace(f"skills/{skill}/{guide}", anchor, "Missing boundary.")
+                errors = self.check(validator.validate_clarification_history_contracts)
+                self.assertEqual(2, len(errors))
+                for skill, (_phase, guide) in validator.CLARIFICATION_GUIDES.items():
+                    self.replace(f"skills/{skill}/{guide}", "Missing boundary.", anchor)
+
+    def test_clarification_protocol_markers_must_be_unique_and_ordered(self):
+        path = self.root / "skills/wewo-prd/references/clarification-guide.md"
+        original = path.read_text(encoding="utf-8")
+        start = "<!-- wewo:clarification-history:start -->"
+        end = "<!-- wewo:clarification-history:end -->"
+        for changed in (
+            original.replace(start, ""), original.replace(end, ""),
+            original.replace(start, start + start),
+            end + original.replace(end, ""),
+        ):
+            with self.subTest(marker=changed[:80]):
+                path.write_text(changed, encoding="utf-8")
+                self.assertTrue(self.check(validator.validate_clarification_history_contracts))
+        path.write_text(original, encoding="utf-8")
+
+    def test_clarification_legacy_no_write_rule_is_rejected(self):
+        path = self.root / "skills/wewo-erd/SKILL.md"
+        with path.open("a", encoding="utf-8") as stream:
+            stream.write("\nWrite nothing until explicit final confirmation.\n")
+        errors = self.check(validator.validate_clarification_history_contracts)
+        self.assertEqual(1, len(errors))
+        self.assertIn("obsolete exclusive-output or no-write rule", errors[0])
+
+    def test_clarification_allows_reflow_and_stage_specific_guidance(self):
+        path = self.root / "skills/wewo-erd/references/design-dialogue.md"
+        text = path.read_text(encoding="utf-8")
+        start = "<!-- wewo:clarification-history:start -->"
+        end = "<!-- wewo:clarification-history:end -->"
+        block = text.split(start, 1)[1].split(end, 1)[0]
+        text = text.replace(block, "\n" + " ".join(block.split()) + "\n")
+        path.write_text(text + "\nAdditional engineering dialogue guidance.\n", encoding="utf-8")
+        self.assertEqual([], self.check(validator.validate_clarification_history_contracts))
+
     def test_requirement_owner_still_needs_its_output(self):
         self.replace(
             "skills/wewo-build/SKILL.md",
@@ -184,6 +284,164 @@ class PackageContractsTest(unittest.TestCase):
             "implementation-record.md",
         )
         self.assertTrue(self.check(validator.validate_artifact_ownership))
+
+    def test_eighth_skill_is_required(self):
+        target = (self.root / "skills/wewo-task").resolve()
+        target.relative_to(self.root.resolve())
+        shutil.rmtree(target)
+        self.assertTrue(self.check(validator.validate_skill_structure))
+
+    def test_both_output_modes_are_required(self):
+        for skill, artifacts in validator.TASK_OWNED_ARTIFACTS.items():
+            for artifact in artifacts:
+                with self.subTest(skill=skill, artifact=artifact):
+                    relative = f"skills/{skill}/SKILL.md"
+                    original = validator.TASK_OUTPUT_PREFIX + artifact
+                    self.replace(relative, original, "missing-task-path")
+                    self.assertTrue(self.check(validator.validate_artifact_ownership))
+                    self.replace(relative, "missing-task-path", original)
+
+    def test_root_only_documents_cannot_move_under_tasks(self):
+        for artifact in ("test-cases.md", "prd.md", "technical-design.md",
+                         "clarification-history.md", "task-breakdown.md"):
+            with self.subTest(artifact=artifact):
+                self.append_runtime("wewo-task", validator.TASK_OUTPUT_PREFIX + artifact)
+                self.assertTrue(self.check(validator.validate_artifact_ownership))
+
+    def test_task_templates_cannot_add_assignment_fields(self):
+        relative = "skills/wewo-task/assets/task-template.md"
+        path = self.root / relative
+        original = path.read_text(encoding="utf-8")
+        for field in ("- Owner: Alice", "- Status: Ready", "| Assignee | Scope |"):
+            with self.subTest(field=field):
+                path.write_text(original + "\n" + field, encoding="utf-8")
+                self.assertTrue(self.check(validator.validate_task_contracts))
+        path.write_text(original, encoding="utf-8")
+
+    def test_task_boundaries_cannot_disappear(self):
+        cases = (
+            ("wewo-task/SKILL.md", "exactly N task definitions"),
+            ("wewo-build/references/task-scope.md", "not an approved implementation plan"),
+            ("wewo-testcases/references/document-contract.md", "Execution scope"),
+            ("wewo-test/references/project-and-matrix.md", "Do not infer missing task labels"),
+            ("wewo-review/references/diff-scope-and-context.md", "If reliable isolation is unavailable"),
+            ("wewo-context/references/evidence-and-lifecycle.md", "whole-requirement completion claim"),
+        )
+        for relative, phrase in cases:
+            with self.subTest(relative=relative):
+                self.replace("skills/" + relative, phrase, "omitted")
+                self.assertTrue(self.check(validator.validate_task_contracts))
+                self.replace("skills/" + relative, "omitted", phrase)
+
+    def test_task_is_included_in_runtime_independence_checks(self):
+        self.append_runtime("wewo-build", "Invoke wewo-task first.")
+        self.assertTrue(self.check(validator.validate_no_cross_skill_routing))
+
+    def test_ninth_skill_is_required(self):
+        target = (self.root / "skills/wewo-change").resolve()
+        target.relative_to(self.root.resolve())
+        shutil.rmtree(target)
+        self.assertTrue(self.check(validator.validate_skill_structure))
+        self.assertTrue(self.check(validator.validate_change_contracts))
+
+    def test_change_requires_explicit_policy_in_correct_section(self):
+        path = self.root / "skills/wewo-change/agents/openai.yaml"
+        original = path.read_text(encoding="utf-8")
+        for changed in (
+            original.replace("allow_implicit_invocation: false", "allow_implicit_invocation: true"),
+            original.replace("policy:\n  allow_implicit_invocation: false", ""),
+            original.replace("policy:", "dependencies:"),
+            original + "\npolicy:\n  allow_implicit_invocation: false\n",
+            original + "  allow_implicit_invocation: true\n",
+        ):
+            with self.subTest(metadata=changed):
+                path.write_text(changed, encoding="utf-8")
+                errors = self.check(validator.validate_change_contracts)
+                self.assertTrue(any("explicit-only" in error for error in errors))
+        path.write_text(original, encoding="utf-8")
+        self.assertEqual([], self.check(validator.validate_change_contracts))
+
+    def test_change_output_cannot_move_outside_selected_task(self):
+        relative = "skills/wewo-change/SKILL.md"
+        correct = validator.TASK_OUTPUT_PREFIX + "change-requests/CR-<number>.md"
+        wrong = validator.REQUIREMENT_OUTPUT_PREFIX + "change-requests/CR-<number>.md"
+        self.replace(relative, correct, wrong)
+        self.assertTrue(self.check(validator.validate_artifact_ownership))
+        self.assertTrue(self.check(validator.validate_change_contracts))
+        self.replace(relative, wrong, correct)
+        # Keeping the valid path must not allow an additional root CR path.
+        self.append_runtime("wewo-change", "Write " + wrong)
+        self.assertTrue(self.check(validator.validate_change_contracts))
+
+    def test_change_cannot_lose_authority_or_history_boundaries(self):
+        relative = "skills/wewo-change/SKILL.md"
+        for old, new in (
+            ("Never write `clarification-history.md`", "Also write `clarification-history.md`"),
+            ("Every new CR is **Pending decision**", "Every new CR is **Approved**"),
+            ("update only the specified existing CR", "create a new CR for every supplement"),
+            ("updating a\nCR does not approve PRD/design or authorize implementation",
+             "updating a CR approves implementation"),
+        ):
+            with self.subTest(boundary=old):
+                self.replace(relative, old, new)
+                self.assertTrue(self.check(validator.validate_change_contracts))
+                self.replace(relative, new, old)
+
+    def test_change_numbering_and_write_guards_cannot_be_removed(self):
+        relative = "skills/wewo-change/references/request-record.md"
+        for old, new in (
+            ("highest existing numeric CR suffix plus one", "first unused suffix"),
+            ("Different\nTASKs have independent sequences", "All TASKs share a global sequence"),
+            ("New files require exclusive creation", "New files may overwrite existing files"),
+            ("against the inspected preimage", "without inspecting existing content"),
+        ):
+            with self.subTest(boundary=old):
+                self.replace(relative, old, new)
+                self.assertTrue(self.check(validator.validate_change_contracts))
+                self.replace(relative, new, old)
+
+    def test_change_template_requires_scoped_identity_without_assignment(self):
+        path = self.root / "skills/wewo-change/assets/change-request-template.md"
+        original = path.read_text(encoding="utf-8")
+        for changed in (
+            original.replace("# <TASK-ID>/<CR-ID>", "# <CR-ID>"),
+            original.replace("If only the derived task split or definitions are wrong",
+                             "Always update PRD/ERD first"),
+            original + "\n- Owner: Alice\n",
+            original + "\n| Assignee | Proposal |\n",
+            original + "\n- Approval status: Approved\n",
+        ):
+            with self.subTest(template=changed[-100:]):
+                path.write_text(changed, encoding="utf-8")
+                self.assertTrue(self.check(validator.validate_change_contracts))
+        path.write_text(original, encoding="utf-8")
+
+    def test_build_task_continue_cannot_bypass_confirmed_baseline(self):
+        relative = "skills/wewo-build/references/task-scope.md"
+        self.replace(relative, "cannot\noverride those documents", "may override those documents")
+        self.assertTrue(self.check(validator.validate_change_contracts))
+
+    def test_task_only_correction_remains_available_without_prd_erd_rewrite(self):
+        for relative, old in (
+            ("skills/wewo-change/SKILL.md",
+             "do not change PRD/design merely to authorize that correction"),
+            ("skills/wewo-build/references/task-scope.md",
+             "if only derived TASK boundaries or definitions were wrong"),
+        ):
+            with self.subTest(relative=relative):
+                self.replace(relative, old, "require a PRD/ERD rewrite for every task correction")
+                self.assertTrue(self.check(validator.validate_change_contracts))
+                self.replace(relative,
+                             "require a PRD/ERD rewrite for every task correction", old)
+
+    def test_change_does_not_introduce_automatic_skill_routing(self):
+        for skill, instruction in (
+            ("wewo-build", "Invoke wewo-change automatically on conflict."),
+            ("wewo-change", "Invoke wewo-erd now to approve the application."),
+        ):
+            with self.subTest(skill=skill):
+                self.append_runtime(skill, instruction)
+                self.assertTrue(self.check(validator.validate_no_cross_skill_routing))
 
     def test_context_outputs_are_not_requirement_artifacts(self):
         self.replace(
@@ -282,7 +540,7 @@ class PackageContractsTest(unittest.TestCase):
         self.assertTrue(self.check(validator.validate_marketplace_packaging))
 
     def test_mismatched_plugin_versions_are_rejected(self):
-        self.replace(".codex-plugin/plugin.json", '"0.3.0"', '"0.2.1"')
+        self.replace(".codex-plugin/plugin.json", '"0.4.0"', '"0.3.0"')
         self.assertTrue(self.check(validator.validate_plugin_packaging))
 
 

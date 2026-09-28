@@ -17,8 +17,9 @@ output.
 - **{Module}:** {Product/requirement module}
 - **{Priority}:** P0 / P1 / P2
 - **{Test Level}:** Unit / Component / Integration / API / Contract / System / E2E
-- **{Automation}:** {Playwright / API / Unit / Integration / Component / Contract / Auto / Conditional · Playwright / Conditional · API / Conditional · Auto / Manual}
+- **{Automation}:** {Browser / API / Unit / Integration / Component / Contract / Auto / Conditional · Browser / Conditional · API / Conditional · Auto / Manual}
 - **{Automation Condition}:** {Conditional only; name the intrinsic enabling capability}
+- **{Execution scope}:** {Split requirement only: applicable TASK-ID values, or Requirement-level / Integration-level; omit for an unsplit requirement}
 
 {Preconditions — include only when meaningful}
 
@@ -41,9 +42,12 @@ output.
 - {Concise unresolved rule that affects published cases}
 ```
 
-For an Automatable Browser route, render Automation as `Playwright`. For a
-Conditional Browser route, render `Conditional · Playwright` and include its
+For an Automatable Browser route, render Automation as `Browser`. For a
+Conditional Browser route, render `Conditional · Browser` and include its
 condition. When automation is clear but the stable route requires repository
 inspection, render `Auto` or `Conditional · Auto`. For a Manual case, keep its
 real Test Level and render Automation as `Manual`. Never repeat Priority inside
 Automation or publish materially different alternative Expected Results.
+Execution scope is routing metadata only. When adding it to existing cases,
+preserve their IDs and all existing content; do not regenerate this template
+over the case document.

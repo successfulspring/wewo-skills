@@ -4,6 +4,11 @@ Localize generated headings and prose while keeping stable filenames in
 English. Use one resolved workspace, tested code version, automated execution
 record, and evidence set.
 
+Use the entrypoint's resolved output scope: the original requirement root when
+unsplit, `tasks/<TASK-ID>/` for a selected task, and the root in split mode only
+for explicitly requested whole-requirement execution. A task report preserves
+existing root artifacts and is not a whole-requirement conclusion.
+
 ## `test-execution.md`
 
 Always create this document when automated execution is requested or completed.
@@ -23,6 +28,11 @@ Passed, Failed, Blocked, Not Run, and Flaky when applicable.
 Scope and environment record Code Version, automated Scope, Environment, Test
 Basis, Key Limitations, and excluded Manual case IDs/count when useful. Refer to
 an explicitly supplied test-case artifact without copying or rewriting it.
+For a task run, identify the TASK-ID, task boundaries, mapped case selection,
+necessary regression, and remaining requirement-level/integration-level scope.
+Disclose missing or conflicting task associations. Passing a known subset does
+not establish complete task testing; a task pass does not establish requirement
+completion.
 
 Center the result table on automated execution evidence:
 
@@ -63,6 +73,10 @@ JSON events, and performance summaries.
 Store retained sanitized evidence under `test-artifacts/` when it is not
 already in a stable repository-native location. Never expose secrets,
 credentials, cookies, tokens, personal data, or unnecessary production data.
+For task runs, use that task's `test-artifacts/` for retained evidence without
+changing the Runner's native output configuration. Reference verified native
+reports where produced; never invent or duplicate a report solely for a new
+directory shape.
 
 Optional supporting tables:
 
@@ -98,3 +112,6 @@ Verify:
 - evidence is sanitized and cleanup risk is recorded;
 - executable tests remain in normal project test paths;
 - no production file or source test-case artifact was silently modified.
+- task-scoped reports and retained evidence use the selected task directory;
+  missing task mapping is not hidden, and no task result claims whole-requirement
+  completion.

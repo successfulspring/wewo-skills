@@ -1,0 +1,4 @@
+interface:
+  display_name: "wewo-task"
+  short_description: "Split confirmed requirements into exactly N tasks"
+  default_prompt: "Use $wewo-task to split this confirmed requirement into my specified number of development tasks."

@@ -1,0 +1,7 @@
+interface:
+  display_name: "wewo-change"
+  short_description: "Record task conflicts as pending change requests"
+  default_prompt: "Use $wewo-change to record this TASK conflict as a pending change request for a human decision."
+
+policy:
+  allow_implicit_invocation: false

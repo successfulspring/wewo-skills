@@ -17,6 +17,9 @@ Inspect enough to establish:
 Read applicable repository instructions and current configuration. Do not
 broadly scan unrelated files or invent repository facts and commands. The exact
 resolved requirement workspace may supply `prd.md` and `technical-design.md`.
+For task mode, first resolve the selected task and its required confirmed
+inputs under [task-scope.md](task-scope.md); optional inputs in unsplit mode
+do not make the task definition or its authoritative basis optional there.
 Read applicable project and branch context as optional background/constraints
 under the entrypoint's authority and bounded historical lookup rules. Do not
 consume QA planning or case artifacts as implementation inputs, directly or

@@ -1,7 +1,7 @@
 # Evidence by operation
 
 Select evidence according to the claim being synchronized. No operation needs
-all six development capabilities to have run or every possible report to exist.
+every development capability to have run or every possible report to exist.
 File existence, a final-looking heading, or an approved proposal alone never
 proves implementation completion.
 
@@ -24,6 +24,17 @@ code and applicable implementation/verification evidence. Available records,
 test results, and reviews can help; team-provided equivalent evidence from work
 outside this plugin is equally eligible. Inspect what the evidence proves,
 its scope, revision, and relevance to the actual implementation.
+
+For a split requirement, normally synchronize its reusable outcome after all
+tasks and necessary integration verification are complete. This is an evidence
+expectation, not an automatic trigger or a prerequisite for every independent
+fact. An explicit earlier request may synchronize a selected task's verified,
+reusable facts only: identify the TASK-ID, actual scope and revision, supporting
+verification, and any unverified dependency or integration boundary. Do not
+turn a task Pass, a finished task document, or partial implementation into a
+whole-requirement completion claim. Planned shared contracts do not establish
+that all consumers implement them. Retain existing branch/common-baseline and
+concrete-change confirmation gates for these scoped facts.
 
 For each candidate conclusion, distinguish:
 

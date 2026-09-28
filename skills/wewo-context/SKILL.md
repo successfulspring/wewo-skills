@@ -116,6 +116,18 @@ evidence remain subject to the source-access rules; this does not expand discove
 Project-only initialization needs no invented requirement directory.
 <!-- wewo:requirement-evidence:end -->
 
+When explicitly asked to synchronize a split requirement or selected task,
+use `task-breakdown.md` only for bounded task membership, dependencies, and
+coverage navigation. Read relevant `tasks/<TASK-ID>/task.md` and applicable
+implementation/verification evidence only for the selected tasks within that
+exact requirement. Validate paths under the workspace rules; do not recursively
+load all task directories or guess a task from recency. Missing or contradictory
+split evidence is a limitation on the affected claim, not proof from an older
+root report. A task definition describes intended scope, not completed work.
+Apply [evidence-and-lifecycle.md](references/evidence-and-lifecycle.md) before
+promoting any partial result. Splitting or completing a task never triggers
+context synchronization automatically.
+
 ## Inspect evidence and prepare the change
 
 Read [context-content.md](references/context-content.md) to decide which

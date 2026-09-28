@@ -13,6 +13,14 @@ redefine confirmed requirements or add excluded process artifacts as inputs.
 Apply the entrypoint's bounded historical lookup rule rather than discovering
 sibling or unrelated branch documents. Keep both context files read-only and
 treat pending project promotion as proposed, not common established fact.
+
+For a selected split task, use its `task.md` to trace the derived goal, scope,
+acceptance conditions, dependencies, and shared contracts back to the root
+PRD/design. The task definition cannot replace or override that authority.
+Assess the selected task's obligations and affected shared interfaces/callers;
+do not mark another task's explicitly separated work as a missing obligation of
+this task. A conflicting boundary requires reconciliation, not invented scope.
+
 Begin with the obligation, design evidence, scope manifest,
 and relevant changed entry points. Map each obligation to its implementation
 seam, then inspect changed code and expand to affected callers or data paths

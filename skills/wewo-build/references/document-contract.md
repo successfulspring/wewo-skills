@@ -5,6 +5,12 @@ Create only the Build-owned workflow artifacts:
 - `implementation-plan.md`
 - `implementation-record.md`
 
+Use the entrypoint's resolved requirement-root paths in unsplit mode and the
+selected `tasks/<TASK-ID>/` paths in task mode. Include the TASK-ID, bounded
+goal and source basis in existing fields when applicable. Internal unit closure
+and task completion do not establish whole-requirement completion. Keep earlier
+root outputs and unrelated task documents unchanged.
+
 Do not create or modify product, design, QA planning/case, independent-review,
 security-review, acceptance-execution, or other capability-owned documents.
 Keep production assets and developer tests in normal project paths.

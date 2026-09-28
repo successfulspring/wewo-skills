@@ -58,14 +58,14 @@ which downstream execution path implements the case: `Browser`, `API`, `Unit`,
 `Integration`, `Component`, `Contract`, or `None`. Select both only after case
 design; neither may determine whether the case exists.
 
-Browser route means Playwright within wewo-skills but does not imply E2E.
-`System + Playwright`, `E2E + Playwright`, and `E2E + API` are valid. Exact
-non-browser tools and detailed implementation-level construction belong to the
-downstream execution capability.
+Browser route does not select a runner or imply E2E. `System + Browser`,
+`E2E + Browser`, and `E2E + API` are valid. Runner selection and detailed
+implementation-level construction belong to the downstream execution
+capability.
 
 Test Level remains independent when the Automation route is deferred. `Auto`
 is a human-facing deferred-routing signal, not a Test Level or tool. Valid
-combinations include `Unit + Auto`, `System + Auto`, `System + Playwright`,
-`E2E + Playwright`, and `API + API`. A recommended level may express the best
+combinations include `Unit + Auto`, `System + Auto`, `System + Browser`,
+`E2E + Browser`, and `API + API`. A recommended level may express the best
 semantic evidence location even when downstream repository inspection must
 choose the actual concrete seam.

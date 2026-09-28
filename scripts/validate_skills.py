@@ -4,7 +4,7 @@ Check groups:
 
 A. Reliable static invariants
 - required repository files;
-- exactly the expected seven skills;
+- exactly the expected nine skills;
 - SKILL.md structure and frontmatter;
 - distinct skill descriptions;
 - valid local Markdown references;
@@ -20,6 +20,8 @@ A. Reliable static invariants
 - artifact ownership output contracts.
 - separate project/branch context paths and workspace layout contracts.
 - matching skill/UI names and embedded workspace/evidence/content contracts.
+- shared clarification-history location, phase ownership, and format consistency.
+- explicit-only change-request metadata and task-local CR output contract.
 
 B. Useful contract heuristics
 - Testcases execution-tool boundary marker present;
@@ -32,6 +34,12 @@ C. Runtime behavior explicitly NOT statically provable
 - whether Required Evidence Level is ever downgraded.
 - context write authorization, evidence freshness, selective retrieval, safe
   resolved output paths, and correct Git/non-Git workspace selection.
+- verbatim message fidelity, turn-by-turn persistence, final confirmation,
+  sensitive-message handling, and concurrent clarification-history writes.
+- task cohesion/coverage, explicit count interpretation, case-mapping fidelity,
+  reliable task Diff isolation, and partial-fact context promotion.
+- change-request classification, human authority, numbering under concurrent
+  writes, original-issue fidelity, and actual authoritative-baseline confirmation.
 
 Those are runtime acceptance concerns and are not asserted here.
 """
@@ -51,6 +59,8 @@ from urllib.parse import unquote, urlparse
 EXPECTED_SKILLS = (
     "wewo-prd",
     "wewo-erd",
+    "wewo-task",
+    "wewo-change",
     "wewo-testcases",
     "wewo-build",
     "wewo-review",
@@ -162,22 +172,55 @@ STOPWORDS = {
 # Retained V2 capability contracts and the 0.3 context output exception.
 SKILL_NAMES = set(EXPECTED_SKILLS)
 OTHER_SKILL_NAME_PATTERN = re.compile(
-    r"wewo-(?:prd|erd|testcases|build|test|review|context)\b"
+    r"wewo-(?:prd|erd|task|change|testcases|build|test|review|context)\b"
 )
 OWNED_ARTIFACTS = {
     "wewo-prd": ("prd.md",),
     "wewo-erd": ("technical-design.md",),
+    "wewo-task": ("task-breakdown.md",),
     "wewo-testcases": ("test-cases.md",),
     "wewo-build": ("implementation-plan.md", "implementation-record.md"),
-    "wewo-test": ("test-execution.md",),
+    "wewo-test": ("test-execution.md", "test-artifacts/"),
     "wewo-review": ("review.md",),
 }
 REQUIREMENT_OUTPUT_PREFIX = "docs/wewo/<workspace-key>/<requirement-slug>/"
+TASK_OUTPUT_PREFIX = REQUIREMENT_OUTPUT_PREFIX + "tasks/<TASK-ID>/"
+TASK_OWNED_ARTIFACTS = {
+    "wewo-task": ("task.md",),
+    "wewo-change": ("change-requests/CR-<number>.md",),
+    "wewo-build": ("implementation-plan.md", "implementation-record.md"),
+    "wewo-test": ("test-execution.md", "test-artifacts/"),
+    "wewo-review": ("review.md",),
+}
 CONTEXT_OUTPUT_PATHS = (
     "docs/wewo/project-context.md",
     "docs/wewo/<workspace-key>/branch-context.md",
 )
 CONTEXT_SKILL = "wewo-context"
+CLARIFICATION_HISTORY_PATH = REQUIREMENT_OUTPUT_PREFIX + "clarification-history.md"
+CLARIFICATION_GUIDES = {
+    "wewo-prd": ("PRD", "references/clarification-guide.md"),
+    "wewo-erd": ("ERD", "references/design-dialogue.md"),
+}
+# These are format/contract anchors, not a proof of runtime behavior. Keep the
+# complete protocol in the two existing self-contained dialogue guides only.
+CLARIFICATION_ANCHORS = (
+    "non-authoritative, append-only record",
+    "not a platform-level or byte-identical chat backup",
+    "`PRD-E000001` / `ERD-E000001`",
+    "`PRD-R001` / `ERD-R001`",
+    "`PRD-Q1.1` / `ERD-Q1.1`",
+    "Original text:",
+    "Interpretation (not verbatim):",
+    "Responds to: PRD-E000001",
+    "Identical text in two actual messages is not a duplicate.",
+    "Do not add a user approval step for successful logging.",
+    "Do not wait until final-document generation, and do not use background writes.",
+    "The final document still requires the original explicit final-confirmation gate.",
+    "Preserve all existing bytes, manual edits, and other-phase entries.",
+    "stop the affected write and automatic continuation",
+    "Do not silently persist it, silently sanitize it, or call altered text a complete original.",
+)
 
 # Maintainer-only copies of the small embedded contracts. Runtime skills never
 # import this file. Compare normalized whitespace, not whole skill sections.
@@ -373,7 +416,7 @@ def validate_skill_structure(
     )
     if actual_skills != sorted(EXPECTED_SKILLS):
         validation.error(
-            "Canonical skill directories differ from the expected seven: "
+            "Canonical skill directories differ from the expected nine: "
             f"{actual_skills}"
         )
 
@@ -439,7 +482,7 @@ def validate_distinct_descriptions(
                     f"({similarity:.0%})"
                 )
 
-    validation.checked("Distinct scope for all seven skill descriptions")
+    validation.checked("Distinct scope for all nine skill descriptions")
 
 
 def validate_portability(
@@ -864,6 +907,27 @@ def validate_artifact_ownership(repo_root: Path, validation: Validation) -> None
                 validation.error(
                     f"{skill_file}: missing required output contract for {artifact}"
                 )
+    for skill_name, artifacts in TASK_OWNED_ARTIFACTS.items():
+        skill_file = repo_root / "skills" / skill_name / "SKILL.md"
+        if not skill_file.is_file():
+            continue
+        body = skill_file.read_text(encoding="utf-8")
+        for artifact in artifacts:
+            if f"{TASK_OUTPUT_PREFIX}{artifact}" not in body:
+                validation.error(
+                    f"{skill_file}: missing task output contract for {artifact}"
+                )
+    # Root-only documents cannot acquire a task-local output contract. Check
+    # references/templates too, rather than weakening existing root checks.
+    root_only = (
+        "prd.md", "technical-design.md", "clarification-history.md",
+        "test-cases.md", "task-breakdown.md", "project-context.md", "branch-context.md",
+    )
+    for path in _iter_text_files(repo_root / "skills"):
+        text = path.read_text(encoding="utf-8", errors="ignore")
+        for artifact in root_only:
+            if re.search(r"tasks/(?:<TASK-ID>|TASK-\d+)/" + re.escape(artifact), text):
+                validation.error(f"{path}: root-only artifact nested in a task: {artifact}")
     context_file = repo_root / "skills" / CONTEXT_SKILL / "SKILL.md"
     if context_file.is_file():
         body = context_file.read_text(encoding="utf-8")
@@ -872,7 +936,161 @@ def validate_artifact_ownership(repo_root: Path, validation: Validation) -> None
                 validation.error(
                     f"{context_file}: missing context output contract {output_path}"
                 )
-    validation.checked("Requirement and context artifact ownership output contracts")
+    validation.checked("Unsplit, task-scoped and context artifact ownership output contracts")
+
+
+def validate_task_contracts(repo_root: Path, validation: Validation) -> None:
+    """Structural anchors only; semantic routing still needs behavioral trials."""
+    required = {
+        "wewo-task/SKILL.md": (
+            "explicitly user-specified positive integer N",
+            "confirmed `prd.md` and `technical-design.md`",
+            "exactly N task definitions", "owner/status",
+            "references/decomposition.md", "scripts/validate_task_bundle.py",
+        ),
+        "wewo-build/references/task-scope.md": (
+            "otherwise ask", "derived scope contract", "not an approved implementation plan",
+        ),
+        "wewo-testcases/references/document-contract.md": (
+            "**Execution scope**", "Requirement-level", "Integration-level",
+            "Preserve every existing TC ID and all original case content",
+        ),
+        "wewo-test/references/project-and-matrix.md": (
+            "Do not infer missing task labels", "task completeness unconfirmed",
+            "not completion of the entire requirement",
+        ),
+        "wewo-review/references/diff-scope-and-context.md": (
+            "reliably attributed", "If reliable isolation is unavailable",
+            "do not substitute whole-repository totals",
+        ),
+        "wewo-context/references/evidence-and-lifecycle.md": (
+            "whole-requirement completion claim", "actual scope and revision",
+        ),
+    }
+    for relative, anchors in required.items():
+        path = repo_root / "skills" / relative
+        if not path.is_file():
+            validation.error(f"{path}: missing task contract resource")
+            continue
+        text = " ".join(path.read_text(encoding="utf-8").split())
+        for anchor in anchors:
+            if anchor.casefold() not in text.casefold():
+                validation.error(f"{path}: missing task boundary: {anchor}")
+    task = repo_root / "skills/wewo-task"
+    for relative in (
+        "assets/task-breakdown-template.md", "assets/task-template.md",
+        "scripts/validate_task_bundle.py",
+    ):
+        path = task / relative
+        if not path.is_file():
+            validation.error(f"{path}: missing task bundle resource")
+    # Task metadata must not evolve into assignment/tracking. Business state
+    # semantics in narrative text are fine; task-level fields are not.
+    for path in (task / "assets").glob("*.md"):
+        text = path.read_text(encoding="utf-8")
+        if re.search(r"(?im)^\s*(?:[-*]\s*)?(?:\*\*)?(?:owner|assignee|status)(?:\*\*)?\s*:", text):
+            validation.error(f"{path}: forbidden task assignment/status field")
+        for line in text.splitlines():
+            if line.startswith("|") and any(
+                cell.strip().strip("*").casefold() in {"owner", "assignee", "status"}
+                for cell in line.split("|")
+            ):
+                validation.error(f"{path}: forbidden task assignment/status column")
+    validation.checked("Optional task decomposition and downstream scope boundaries (heuristic)")
+
+
+def validate_change_contracts(repo_root: Path, validation: Validation) -> None:
+    """Check metadata/path structure and key boundaries, not runtime judgment."""
+    skill = repo_root / "skills/wewo-change"
+    policy = skill / "agents/openai.yaml"
+    text = policy.read_text(encoding="utf-8") if policy.is_file() else ""
+    # Only a single literal boolean within the policy block controls discovery;
+    # a lookalike key under interface/dependencies is not an explicit-only policy.
+    sections = re.findall(r"(?m)^policy:\s*(?:#.*)?\n((?:[ \t]+[^\n]*\n|\n)*)", text + "\n")
+    entries = [line for block in sections for line in block.splitlines()
+               if line.strip() and not line.lstrip().startswith("#")]
+    if (len(sections) != 1 or len(entries) != 1 or not re.fullmatch(
+        r"  allow_implicit_invocation:\s*false\s*(?:#.*)?", entries[0]
+    )):
+        validation.error(f"{policy}: requires one explicit-only invocation policy")
+
+    required = {
+        "wewo-change/SKILL.md": (
+            "Run only on explicit user invocation",
+            "Missing inputs or ambiguous source identity",
+            "before any write",
+            "Never write `clarification-history.md`",
+            "leave it to normal Build work; create no CR",
+            "Every new CR is **Pending decision**",
+            "Every option and recommendation is **Proposed**",
+            "update only the specified existing CR",
+            "updating a CR does not approve PRD/design or authorize implementation",
+            "including an explicit positive integer N",
+            "only derived TASK boundaries or definitions are wrong",
+            "do not change PRD/design merely to authorize that correction",
+            "references/request-record.md", "assets/change-request-template.md",
+        ),
+        "wewo-change/references/request-record.md": (
+            "highest existing numeric CR suffix plus one",
+            "Different TASKs have independent sequences",
+            "New files require exclusive creation",
+            "against the inspected preimage",
+            "do not silently sanitize and call it a complete original",
+            "only the selected CR changed",
+        ),
+        "wewo-build/references/task-scope.md": (
+            'A developer\'s "continue anyway"',
+            "cannot override those documents",
+            "Do not create a CR or invoke a change-request skill automatically",
+            "updated and finally confirmed through its owning workflow",
+            "affected tasks have been revised through task decomposition",
+            "if only derived TASK boundaries or definitions were wrong",
+            "without changing PRD/design",
+            "no change to unsplit Material Gap handling",
+        ),
+    }
+    for relative, anchors in required.items():
+        path = repo_root / "skills" / relative
+        if not path.is_file():
+            validation.error(f"{path}: missing change-request contract resource")
+            continue
+        normalized = " ".join(path.read_text(encoding="utf-8").split())
+        for anchor in anchors:
+            if anchor.casefold() not in normalized.casefold():
+                validation.error(f"{path}: missing change-request boundary: {anchor}")
+
+    # A valid TASK path elsewhere cannot mask a newly added requirement-root CR
+    # path. These are literal documentation contracts, not runtime path policing.
+    cr_path = re.compile(r"docs/wewo/[^\s`]+/CR-(?:<number>|[0-9]+|\*)\.md")
+    allowed = re.compile(re.escape(REQUIREMENT_OUTPUT_PREFIX)
+                         + r"tasks/(?:<TASK-ID>|TASK-[0-9]+)/change-requests/CR-(?:<number>|[0-9]+|\*)\.md")
+    for path in _iter_text_files(repo_root / "skills"):
+        content = path.read_text(encoding="utf-8", errors="ignore")
+        for match in cr_path.finditer(content):
+            if not allowed.fullmatch(match.group()):
+                validation.error(f"{path}: CR path must be local to a TASK: {match.group()}")
+
+    template = skill / "assets/change-request-template.md"
+    if not template.is_file():
+        validation.error(f"{template}: missing CR template")
+    else:
+        body = template.read_text(encoding="utf-8")
+        if not body.startswith("# <TASK-ID>/<CR-ID>"):
+            validation.error(f"{template}: combined TASK/CR identity is required")
+        normalized = " ".join(body.split())
+        for anchor in (
+            "If only the derived task split or definitions are wrong",
+            "If product requirements or technical design must change",
+        ):
+            if anchor.casefold() not in normalized.casefold():
+                validation.error(f"{template}: missing conditional handoff: {anchor}")
+        forbidden = {"owner", "assignee", "approval status", "state transition"}
+        for line in body.splitlines():
+            label = re.sub(r"^[\s*#-]+", "", line).split(":", 1)[0].strip("* ").casefold()
+            columns = {cell.strip("* ").casefold() for cell in line.split("|")}
+            if label in forbidden or (line.startswith("|") and forbidden & columns):
+                validation.error(f"{template}: assignment/approval-system field is forbidden")
+    validation.checked("Explicit-only task-local change requests and Build conflict boundary (heuristic)")
 
 
 def validate_workspace_contracts(repo_root: Path, validation: Validation) -> None:
@@ -996,6 +1214,54 @@ def validate_context_content_contracts(repo_root: Path, validation: Validation) 
     validation.checked("Context requirement-directory mapping and sensitive-information protection")
 
 
+def validate_clarification_history_contracts(repo_root: Path, validation: Validation) -> None:
+    """Check shared format and explicit boundaries; runtime fidelity needs trials."""
+    blocks = []
+    start = "<!-- wewo:clarification-history:start -->"
+    end = "<!-- wewo:clarification-history:end -->"
+    for skill, (phase, guide) in CLARIFICATION_GUIDES.items():
+        skill_dir = repo_root / "skills" / skill
+        entry = skill_dir / "SKILL.md"
+        path = skill_dir / guide
+        if not entry.is_file() or not path.is_file():
+            validation.error(f"{skill_dir}: missing clarification entrypoint or guide")
+            continue
+        body = entry.read_text(encoding="utf-8")
+        normalized = " ".join(body.split())
+        for required in (
+            CLARIFICATION_HISTORY_PATH,
+            f"]({guide})",
+            "This log is the only pre-confirmation write exception.",
+            f"Own only `{phase}` entries; preserve all other entries and manual content.",
+        ):
+            if required not in normalized:
+                validation.error(f"{entry}: missing clarification contract: {required}")
+        for obsolete in (
+            "This flow creates no intermediate workflow artifact.",
+            "the only owned business artifact remains",
+            "The only owned business artifact is",
+            "Write nothing until explicit final confirmation.",
+        ):
+            if obsolete in normalized:
+                validation.error(f"{entry}: obsolete exclusive-output or no-write rule")
+        text = path.read_text(encoding="utf-8")
+        if f"The active phase for this skill is `{phase}`." not in text:
+            validation.error(f"{path}: wrong clarification phase")
+        if text.count(start) != 1 or text.count(end) != 1 or text.index(end) < text.index(start):
+            validation.error(f"{path}: requires one ordered clarification-history block")
+            continue
+        block = text.split(start, 1)[1].split(end, 1)[0]
+        normalized_block = " ".join(block.split())
+        for anchor in CLARIFICATION_ANCHORS:
+            if anchor not in normalized_block:
+                validation.error(f"{path}: missing clarification format/boundary: {anchor}")
+        blocks.append((path, block))
+    if len(blocks) == 2:
+        # Whitespace reflow is allowed; stage-specific dialogue stays outside.
+        validate_embedded_block(blocks[1][0], "clarification-history", blocks[0][1], validation)
+    validation.checked("Shared clarification history, phase ownership and recording protocol")
+
+
 def validate_build_invariants(repo_root: Path, validation: Validation) -> None:
     for path in _iter_text_files(repo_root / "skills" / "wewo-build"):
         text = path.read_text(encoding="utf-8", errors="ignore")
@@ -1080,10 +1346,13 @@ def main() -> int:
     validate_no_cross_skill_routing(repo_root, validation)
     validate_self_containment(repo_root, validation)
     validate_artifact_ownership(repo_root, validation)
+    validate_task_contracts(repo_root, validation)
+    validate_change_contracts(repo_root, validation)
     validate_workspace_contracts(repo_root, validation)
     validate_agent_names(repo_root, validation)
     validate_shared_contracts(repo_root, validation)
     validate_context_content_contracts(repo_root, validation)
+    validate_clarification_history_contracts(repo_root, validation)
     validate_build_invariants(repo_root, validation)
     validate_testcases_invariants(repo_root, validation)
     validate_testcases_tool_boundary(repo_root, validation)

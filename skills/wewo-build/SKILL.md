@@ -14,16 +14,31 @@ Accept a clear implementation goal, current conversation context, explicitly
 supplied or referenced source material, and the actual repository. Use an
 explicitly supplied or current-context `prd.md` or `technical-design.md` when
 available. The exact resolved current workspace's `prd.md` and
-`technical-design.md` are authorized current-context inputs; never require
-either one. Read older sources only under the bounded context rule below.
+`technical-design.md` are authorized current-context inputs; in unsplit mode,
+never require either one. Read older sources only under the bounded context rule below.
 Never consume QA planning or case artifacts as implementation inputs.
 
-Create only:
+In unsplit mode, create only:
 
 ```text
 docs/wewo/<workspace-key>/<requirement-slug>/implementation-plan.md
 docs/wewo/<workspace-key>/<requirement-slug>/implementation-record.md
 ```
+
+If the exact requirement has `task-breakdown.md`, a `tasks/` directory, or an
+explicit TASK request, resolve task mode using
+[task-scope.md](references/task-scope.md) before planning. Require the selected
+`task.md` and confirmed requirement PRD/design in that mode; unresolved or
+inconsistent task material cannot silently fall back to unsplit mode. Write
+the same two owned documents under the selected task instead:
+
+```text
+docs/wewo/<workspace-key>/<requirement-slug>/tasks/<TASK-ID>/implementation-plan.md
+docs/wewo/<workspace-key>/<requirement-slug>/tasks/<TASK-ID>/implementation-record.md
+```
+
+Preserve earlier requirement-root artifacts without migration or overwrite.
+Task selection does not confirm an implementation plan or change any gate.
 
 Keep production code, implementation configuration, migrations, and developer
 tests in normal project paths. Developer tests belong in this workflow only
@@ -143,8 +158,7 @@ migration when needed. Define coherent units with:
 - `TDD: Yes / No`;
 - done conditions.
 
-Write
-`docs/wewo/<workspace-key>/<requirement-slug>/implementation-plan.md`
+Write the plan at the resolved unsplit or task output path above
 from [implementation-plan-template.md](assets/implementation-plan-template.md),
 summarize material scope and gaps, and explicitly ask the user to confirm.
 
@@ -205,6 +219,11 @@ invariants, and explicit non-goals?
 - If no or uncertain, stop, explain the conflict and its impact, recommend a
   resolution, and ask the user to confirm before continuing.
 
+In task mode, apply the conflict rules in [task-scope.md](references/task-scope.md)
+before accepting a resolution. A direction to continue cannot replace required
+authoritative-document confirmation and task revision. Unsplit handling above
+remains unchanged.
+
 Do not reason away a confirmed boundary as something the user "probably" did
 not mean. When a shared component serves both in-scope and explicitly excluded
 behavior, check whether the change affects the excluded behavior; if yes or
@@ -228,7 +247,7 @@ material gap is resolved or confirmed. A passing focused test alone is not
 enough.
 
 After all required units close, run fresh relevant verification and finalize
-`docs/wewo/<workspace-key>/<requirement-slug>/implementation-record.md`
+the record at the resolved unsplit or task output path above
 from [implementation-record-template.md](assets/implementation-record-template.md).
 Record actual changes, obligation traceability, unit evidence, TDD Red versus
 debug/regression/environment failures, Passed/Failed/Blocked/Not Run checks,

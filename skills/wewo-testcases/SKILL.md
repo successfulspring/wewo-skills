@@ -21,6 +21,12 @@ bounded context rule below.
 Requirement and design evidence are sufficient; implementation code and other
 capabilities are not prerequisites.
 
+Task decomposition is optional. In a split requirement, use the current
+`task-breakdown.md` and its relevant listed `tasks/<TASK-ID>/task.md` only to
+annotate execution scope; they do not replace requirement or design authority.
+Cases may be designed before or after decomposition. The only case document
+remains the requirement-level `test-cases.md`, never a copy in a task directory.
+
 Do not discover historical QA documents, workflow artifacts, or old case
 libraries unless explicitly supplied or authorized. Write only:
 
@@ -106,6 +112,15 @@ or a user-selected source, still within the allowed input roles and the
 source-access rules above. Citations grant no extra permissions or source roles. Verify affected
 claims when references are stale or missing. Do not bulk-scan requirement
 folders, unrelated branches, or similarly named documents.
+
+When the exact current requirement contains neither `task-breakdown.md` nor
+`tasks/` and no TASK is requested, keep the existing workflow and omit task
+annotations. Otherwise read the task-scope rules in
+[document-contract.md](references/document-contract.md) before generating or
+updating cases. Missing or conflicting decomposition materials require
+clarification, not silent fallback to an unsplit requirement. For an existing
+case document and a mapping-only request, apply that targeted update without
+regenerating cases or repeating their level/automation classification.
 
 ### 2. Establish authoritative requirements and repository mode
 
@@ -202,7 +217,7 @@ semantics determine it, otherwise deliberately defer the route and render
 case, rewrite steps, weaken an oracle, or suppress unimplemented required
 behavior.
 
-Use Playwright only when browser behavior itself supplies the evidence. Use an
+Use Browser only when browser behavior itself supplies the evidence. Use an
 explicit API, Integration, Component, or Contract route when authoritative
 technical evidence defines that seam. Use `Auto` when automation is clearly
 appropriate but choosing the cheapest stable route requires downstream
@@ -210,10 +225,10 @@ repository inspection. `Auto` is neither a Test Level nor a concrete tool. Keep
 Manual narrow to intrinsic human judgment and preserve named conditions in
 `Conditional · Auto` or other Conditional values.
 
-Except for the fixed Browser-to-Playwright convention, the skill does not
-inspect, select, configure, or reason about concrete test tools, test runners,
-browser installations, or execution infrastructure. Concrete non-browser tools
-belong downstream. Do not implement or run automation.
+The skill identifies the Browser route but does not inspect, select, configure,
+or reason about concrete test tools, test runners, browser installations, or
+execution infrastructure. Browser runner selection and concrete non-browser
+tools belong downstream. Do not implement or run automation.
 
 ### 8. Finalize the lean artifact
 
@@ -223,9 +238,9 @@ treat an explicit update request as authorization; otherwise ask before
 overwriting it. Start near-immediately with cases. Do not publish passing audit
 narratives, coverage mappings, automation statistics, repository inventories,
 or internal methodology by default. Add only a compact Unresolved Items
-section when material oracle issues remain.
+section when material oracle issues or task-mapping gaps remain.
 
 Do not create executable tests, start services, install tools, modify product
 code or databases, record actual results, or continue into execution or review.
-Report the exact path and any material unresolved oracle issues. Claim only
-completed work.
+Report the exact path and any material unresolved oracle or task-mapping issues.
+Claim only completed work.

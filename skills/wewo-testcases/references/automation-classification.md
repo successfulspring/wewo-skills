@@ -50,15 +50,15 @@ Preserve the evidence required by the already-designed case when classifying
 Automation. Never replace browser, API, Integration, or other explicitly
 required evidence with a cheaper lower-level seam. A case whose Steps or
 Expected Results require opening a page, clicking, entering input, selecting,
-navigating, uploading, scrolling, or verifying rendered UI remains Browser /
-Playwright; use `Auto` only when the case is implementation-neutral and its
+navigating, uploading, scrolling, or verifying rendered UI remains Browser;
+use `Auto` only when the case is implementation-neutral and its
 required evidence does not depend on a specific execution surface.
 
 ## Routing decision order
 
 Use the first applicable rule:
 
-1. **Browser-native evidence -> Browser / Playwright.** Use when navigation,
+1. **Browser-native evidence -> Browser.** Use when navigation,
    DOM rendering, form interaction, browser-visible validation, responsive UI,
    browser persistence, accessibility names, or a critical browser journey is
    itself the evidence.
@@ -71,14 +71,14 @@ Use the first applicable rule:
    the case should clearly be automated; the behavior is not intrinsically
    browser-specific; no authoritative API/Integration/Component/Contract seam
    uniquely determines the route; and reliable choice among Unit, Integration,
-   API, or Playwright depends on repository structure.
+   API, or Browser depends on repository structure.
 4. **Intrinsic human judgment -> Manual.** Retain a real Test Level and
    internal route `None`.
 
 Do not label every automatable case `Auto`. Prefer an explicit route whenever
 the semantic evidence or authoritative contract already determines it. Do not
 route a business-rule boundary through Browser merely because a page can show
-the result or Playwright can send HTTP requests.
+the result or a browser runner can send HTTP requests.
 
 Typical `Auto` candidates include price or total calculations, sorting,
 normalization, state mapping, order-number rules, and other deterministic
@@ -88,33 +88,34 @@ business decisions whose cheapest stable seam cannot be known without code.
 
 Render one concise field without automation priority:
 
-- Automatable + Browser -> `Playwright`.
+- Automatable + Browser -> `Browser`.
 - Automatable + explicit API/Unit/Integration/Component/Contract route -> the
   route name.
 - Automatable + deferred route -> `Auto`.
-- Conditional + Browser -> `Conditional · Playwright`.
+- Conditional + Browser -> `Conditional · Browser`.
 - Conditional + explicit route -> `Conditional · <Route>`.
 - Conditional + deferred route -> `Conditional · Auto`.
 - Manual + None -> `Manual`.
 
 Every Conditional case also includes a concise Automation Condition naming the
-intrinsic enabling capability. Do not display `Browser`, `None`, feasibility
-`Automatable`, a separate Playwright Yes/No field, or automation priority.
+intrinsic enabling capability. Do not display `None`, feasibility
+`Automatable`, a concrete browser runner, a separate Playwright Yes/No field,
+or automation priority.
 
-## Internal Playwright and E2E audit
+## Internal Browser and E2E audit
 
 Derive candidates internally:
 
 ```text
-Playwright Candidate = Automation Route == Browser
+Browser Candidate = Automation Route == Browser
 AND Automation Feasibility in {Automatable, Conditional}
 
 E2E Candidate = Recommended Test Level == E2E
 AND Automation Feasibility in {Automatable, Conditional}
 ```
 
-A deferred `Auto` case is not yet a Playwright candidate; downstream routing
-may later choose Playwright or a non-browser seam. Keep E2E and routing
-independent. `System + Auto`, `Unit + Auto`, `System + Playwright`,
-`E2E + Playwright`, and `E2E + API` are valid. Do not publish candidate or route
+A deferred `Auto` case is not yet a Browser candidate; downstream routing
+may later choose Browser or a non-browser seam. Keep E2E and routing
+independent. `System + Auto`, `Unit + Auto`, `System + Browser`,
+`E2E + Browser`, and `E2E + API` are valid. Do not publish candidate or route
 counts by default.

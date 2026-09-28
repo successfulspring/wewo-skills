@@ -1,7 +1,7 @@
 {
   "name": "wewo-skills",
-  "version": "0.3.0",
-  "description": "AI software engineering workflows for requirement clarification, engineering design, test-case design, TDD implementation, automated test execution, code/security review, and verified project/branch context.",
+  "version": "0.4.0",
+  "description": "AI software engineering workflows for requirement clarification, engineering design, task decomposition, pending task change requests, test-case design, TDD implementation, automated test execution, code/security review, and verified project/branch context.",
   "author": {
     "name": "successfulspring",
     "url": "https://github.com/successfulspring"
@@ -10,7 +10,7 @@
   "interface": {
     "displayName": "Wewo Skills",
     "shortDescription": "Reusable software engineering workflows",
-    "longDescription": "Seven composable workflows for requirements, engineering design, test cases, TDD implementation, automated verification, code review, and reusable project/branch context.",
+    "longDescription": "Nine composable workflows for requirements, engineering design, task decomposition, pending task change requests, test cases, TDD implementation, automated verification, code review, and reusable project/branch context.",
     "developerName": "successfulspring",
     "category": "Developer Tools",
     "capabilities": ["Interactive", "Write"],

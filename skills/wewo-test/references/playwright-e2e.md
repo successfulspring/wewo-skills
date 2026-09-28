@@ -37,12 +37,14 @@ repository framework.
 
 1. Inspect browser test paths, manifests, lockfiles, configuration, fixtures,
    page objects, scripts, CI, installed runtimes, and browser availability.
-2. Reuse project-local Playwright Test, its pinned version, configuration, and
-   repository commands when present.
-3. If an established Cypress or other durable browser suite exists, it may
-   satisfy an Automation annotation of `Playwright` only when the user did not
-   explicitly require Playwright itself, no Playwright-specific behavior is
-   involved, and the same browser evidence is preserved. Record the Runner.
+2. Honor an explicit user requirement for a browser runner, subject to the
+   required evidence and framework confirmation policy.
+3. Otherwise reuse the established browser suite for the relevant scope,
+   including project-local Playwright Test, Cypress, or another suitable
+   runner, with its pinned version, configuration, and repository commands,
+   only when it preserves the required browser evidence.
+   A legacy Automation annotation of `Playwright` means Browser evidence; it
+   is not by itself an explicit user requirement for Playwright Test.
 4. When no suitable browser framework exists, propose Playwright Test as the
    default persistent addition and obtain confirmation under the framework and
    tool policy.
@@ -65,10 +67,10 @@ Use the equivalent repository-local invocation for pnpm, Yarn, Bun, or another
 established package manager. A failed detection command is setup evidence, not
 permission to download or replace the Runner.
 
-The repository-native Runner remains authoritative. Available Playwright tools
-do not justify replacing Cypress. A Playwright repository continues to use
-Playwright Test even when optional Playwright-specific agent interfaces are
-unavailable.
+The repository-native Runner remains authoritative when the user has not
+specified a runner. Available Playwright tools do not justify replacing
+Cypress. A Playwright repository continues to use Playwright Test even when
+optional Playwright-specific agent interfaces are unavailable.
 
 ## Resolve Agent Tool Interfaces
 

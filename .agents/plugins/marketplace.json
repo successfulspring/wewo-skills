@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "wewo-skills",
-      "description": "Seven independent workflows for requirement clarification, engineering design, test-case design, TDD implementation, automated test execution, code/security review, and verified project/branch context.",
+      "description": "Nine independent workflows for requirement clarification, engineering design, task decomposition, pending task change requests, test-case design, TDD implementation, automated test execution, code/security review, and verified project/branch context.",
       "source": {
         "source": "url",
         "url": "https://github.com/successfulspring/wewo-skills.git",
