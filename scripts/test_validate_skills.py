@@ -494,6 +494,38 @@ class PackageContractsTest(unittest.TestCase):
         self.append_runtime("wewo-context", "Read shared/context.md.")
         self.assertTrue(self.check(validator.validate_self_containment))
 
+    def test_company_standard_must_be_packaged(self):
+        path = self.root / "skills/company-development-standards.md"
+        path.unlink(missing_ok=True)
+        self.assertTrue(self.check(validator.validate_self_containment))
+
+    def test_company_standard_cannot_be_empty(self):
+        path = self.root / "skills/company-development-standards.md"
+        path.write_text("\n", encoding="utf-8")
+        self.assertTrue(self.check(validator.validate_self_containment))
+
+    def test_company_standard_links_are_required_in_each_consumer(self):
+        for skill in ("wewo-build", "wewo-review", "wewo-erd"):
+            with self.subTest(skill=skill):
+                path = self.root / "skills" / skill / "SKILL.md"
+                original = path.read_text(encoding="utf-8")
+                path.write_text(original.replace(
+                    "../company-development-standards.md", "missing-policy.md"
+                ), encoding="utf-8")
+                self.assertTrue(self.check(validator.validate_self_containment))
+                path.write_text(original, encoding="utf-8")
+
+    def test_company_standard_link_resolves_from_skill_not_repository_root(self):
+        target = self.root / "skills/company-development-standards.md"
+        target.write_text("# Company standard\nSQL policy.\n", encoding="utf-8")
+        path = self.root / "skills/wewo-build/SKILL.md"
+        text = path.read_text(encoding="utf-8").replace(
+            "../company-development-standards.md",
+            "skills/company-development-standards.md",
+        )
+        path.write_text(text, encoding="utf-8")
+        self.assertTrue(self.check(validator.validate_self_containment))
+
     def test_codex_marketplace_rejects_github_shorthand(self):
         path = self.root / ".agents/plugins/marketplace.json"
         manifest = json.loads(path.read_text(encoding="utf-8"))
@@ -540,7 +572,7 @@ class PackageContractsTest(unittest.TestCase):
         self.assertTrue(self.check(validator.validate_marketplace_packaging))
 
     def test_mismatched_plugin_versions_are_rejected(self):
-        self.replace(".codex-plugin/plugin.json", '"0.4.0"', '"0.3.0"')
+        self.replace(".codex-plugin/plugin.json", '"0.4.1"', '"0.3.0"')
         self.assertTrue(self.check(validator.validate_plugin_packaging))
 
 

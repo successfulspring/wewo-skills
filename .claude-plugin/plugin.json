@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "wewo-skills",
   "displayName": "Wewo Skills",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "AI software engineering workflows for requirement clarification, engineering design, task decomposition, pending task change requests, test-case design, TDD implementation, automated test execution, code/security review, and verified project/branch context.",
   "author": {
     "name": "successfulspring",

@@ -146,6 +146,25 @@ reality to identify the change surface, important entry points, likely seams,
 material conflicts, unrelated user work, and credible repository-native
 commands.
 
+Before planning any implementation change, read applicable project standards
+and inspect representative current implementations with the same responsibility
+in the target module, where available. Follow verified project conventions for
+directory organization, naming, layer responsibilities, dependency direction,
+and reuse where relevant, together with applicable company standards. Record
+the relevant constraints and their source locations in the plan. Distinguish
+explicit standards from inferred conventions; existing code does not waive
+explicit project or company rules. Resolve material conflicts between those
+rules through the existing Material Gap Gate rather than silently choosing a
+side or expanding into unrelated cleanup.
+
+When the change concerns production DAO/Mapper code in a company Java/MyBatis
+project, read [company development standards](../company-development-standards.md)
+before planning. Resolve this bundled read-only reference relative to this
+`SKILL.md`, independently of the business project's working directory; project
+source-access rules remain unchanged. Verify the rule's applicability and
+include it in the implementation constraints. If the reference is unavailable,
+report the affected gap rather than assuming no rule applies.
+
 Choose the simplest honest implementation shape: one Small Atomic Change,
 Vertical Slices for behavioral work, or a staged Expand-Migrate-Contract style
 migration when needed. Define coherent units with:
@@ -245,6 +264,11 @@ Close a unit only when its target result is complete, binding obligations are
 preserved, required verification actually ran, failures are visible, and every
 material gap is resolved or confirmed. A passing focused test alone is not
 enough.
+
+Check the actual changes against verified project conventions and applicable
+project and company standards, and record the results in the existing obligation
+traceability. Passing behavior tests alone does not establish conformity with
+those constraints.
 
 After all required units close, run fresh relevant verification and finalize
 the record at the resolved unsplit or task output path above

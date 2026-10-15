@@ -2,7 +2,7 @@
 
 ## What is Wewo Skills
 
-`wewo-skills` 0.4.0 is one AI software-engineering plugin containing nine independent,
+`wewo-skills` 0.4.1 is one AI software-engineering plugin containing nine independent,
 composable Agent Skills. The repository root is the plugin root for Claude Code
 and OpenAI/Codex hosts, while `skills/` remains the single runtime source of
 truth.
@@ -303,6 +303,16 @@ Each Skill keeps its own references, assets, optional scripts, and OpenAI agent
 metadata beside its `SKILL.md`. Follow the target host's supported discovery or
 installation mechanism; no synchronized host-specific copy is required.
 
+The sole shared reference is
+[company development standards](skills/company-development-standards.md).
+It currently contains only the company MyBatis custom-SQL rule. Build and
+Review read it for applicable production persistence work; ERD reads it only
+for relevant design. Maintain the policy once and distribute it with the
+plugin. When using an individual consumer Skill, preserve the sibling file
+and relative layout. Runtime workflows read it without modifying it or
+invoking another capability. Policy changes take effect through the installed
+plugin version; editing this checkout does not update installed copies.
+
 ## Repository architecture
 
 ```text
@@ -316,6 +326,7 @@ wewo-skills/
 ├── .codex-plugin/
 │   └── plugin.json
 ├── skills/
+│   ├── company-development-standards.md
 │   ├── wewo-prd/
 │   ├── wewo-erd/
 │   ├── wewo-task/
@@ -335,7 +346,7 @@ wewo-skills/
 ```
 
 `AGENTS.md` and `CLAUDE.md` are repository-maintenance context. Installed
-runtime behavior is defined only by the canonical Skills.
+runtime behavior is defined by the canonical Skills and their bundled references.
 
 ## Maintainer workflow
 
@@ -352,7 +363,8 @@ runtime behavior is defined only by the canonical Skills.
 There is no packaging synchronization step and no generated Skill mirror. The validator
 checks both plugin manifests, both marketplace manifests, the nine canonical
 Skills, their local resources, portability, capability independence, artifact
-ownership, matching UI/skill names, workspace and untrusted-source contracts,
+ownership, the packaged company standard and its consumer-relative links,
+matching UI/skill names, workspace and untrusted-source contracts,
 context requirement mapping, sensitive-information rules, clarification-history
 ownership and format consistency, and retained V2 contracts.
 It also checks both unsplit and task output contracts, root-only case documents,

@@ -10,7 +10,7 @@ A. Reliable static invariants
 - valid local Markdown references;
 - no legacy numbered workflow filenames in canonical runtime trees;
 - no cross-skill runtime routing to another named wewo-* capability;
-- runtime self-containment (no shared/ or specs/ dependency);
+- independent runtime workflows with one bundled company-policy reference;
 - root plugin manifests and their canonical Skill path;
 - Claude and Codex marketplace manifests and their self-referencing source;
 - one canonical Skill tree and no generated host mirrors;
@@ -886,6 +886,31 @@ def validate_no_cross_skill_routing(
 
 
 def validate_self_containment(repo_root: Path, validation: Validation) -> None:
+    standard = repo_root / "skills/company-development-standards.md"
+    if not standard.is_file() or not standard.read_text(encoding="utf-8").strip():
+        validation.error(f"Missing or empty bundled company standard: {standard}")
+
+    for skill in ("wewo-build", "wewo-review", "wewo-erd"):
+        entrypoint = repo_root / "skills" / skill / "SKILL.md"
+        if not entrypoint.is_file():
+            validation.error(f"Missing company-standard consumer: {entrypoint}")
+            continue
+        targets = (
+            candidate_reference(match.group(1))
+            for match in MARKDOWN_LINK_PATTERN.finditer(
+                entrypoint.read_text(encoding="utf-8")
+            )
+        )
+        if not any(
+            target is not None
+            and not Path(target).is_absolute()
+            and (entrypoint.parent / target).resolve() == standard.resolve()
+            for target in targets
+        ):
+            validation.error(
+                f"{entrypoint}: missing relative link to the bundled company standard"
+            )
+
     for path in _iter_text_files(repo_root / "skills"):
         text = path.read_text(encoding="utf-8", errors="ignore")
         for marker in SELF_CONTAINMENT_FORBIDDEN:
@@ -893,7 +918,7 @@ def validate_self_containment(repo_root: Path, validation: Validation) -> None:
                 validation.error(
                     f"{path}: runtime skill depends on maintainer path {marker}"
                 )
-    validation.checked("Runtime skills are self-contained")
+    validation.checked("Independent workflows and bundled company-standard references")
 
 
 def validate_artifact_ownership(repo_root: Path, validation: Validation) -> None:

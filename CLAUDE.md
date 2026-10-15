@@ -6,6 +6,9 @@
 plugin root, and `.claude-plugin/plugin.json` packages that same tree. Never
 create or maintain a host-specific copy of the Skills.
 
+The only shared runtime reference is `skills/company-development-standards.md`,
+consumed under the scope and distribution rules in `AGENTS.md`.
+
 Claude-specific subagents, tools, hooks, and other capabilities are optional
 enhancements. Preserve the portable Codex/Claude core and provide a functional
 fallback whenever an enhancement is unavailable.
@@ -30,4 +33,5 @@ Treat these repository instructions as maintenance guidance, not as business
 requirements for a runtime user requirement.
 
 This root `CLAUDE.md` is project-maintenance context. Installed plugin runtime
-behavior belongs in the nine canonical Skills, not in this file.
+behavior belongs in the nine canonical Skills and their bundled references,
+not in this file.

@@ -198,6 +198,30 @@ deterministic facts. Keep it factual: do not pre-review the change, include
 suspected defects, implementation defenses, unverified explanations, the full
 development conversation, or prior conclusions.
 
+For every review scope, give the Static lane applicable project standard
+locations and relevant same-purpose implementations in the target module,
+where available, as factual context. That lane independently verifies project
+conventions and checks the scoped code against them and applicable company
+standards, including directory organization, naming, layer responsibilities,
+dependency direction, and reuse where relevant. Distinguish explicit standards
+from inferred conventions; historical deviations do not waive explicit project
+or company rules.
+
+When the scope includes production DAO/Mapper code in a company Java/MyBatis
+project, read [company development standards](../company-development-standards.md).
+Resolve this bundled read-only reference relative to this `SKILL.md`, not the
+business project's working directory; project source-access rules remain
+unchanged. Give the Static lane its location and verified applicability as
+factual context for checking the SQL rule.
+
+Report evidenced deviations from applicable standards or verified conventions
+with their source and code location in the existing Engineering Rules section;
+retain normal Finding Admission, severity, metrics, and gates rather than
+treating every deviation as a functional or security defect. Disclose missing
+reference or applicability evidence without claiming conformity. Surface
+material conflicts between explicit project and company rules rather than
+silently choosing a side or inferring an exception.
+
 ### 3. Calculate deterministic Diff metrics
 
 For a supported Git scope, run

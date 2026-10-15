@@ -28,6 +28,13 @@ workflow.
 There is one runtime Skill source: `skills/`. Never create or maintain
 host-specific Skill copies.
 
+The sole shared runtime reference is
+`skills/company-development-standards.md`. Build and Review read it when
+applicable; ERD reads it only for relevant persistence design. Keep its policy
+in one place, read-only during business-project work. Workflows remain
+independent and do not invoke one another. Preserve this sibling resource when
+distributing an individual consumer Skill.
+
 ## Conflict handling
 
 Before making a material change, compare:

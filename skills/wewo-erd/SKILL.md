@@ -234,6 +234,16 @@ verified existing architecture, shared capabilities, dependency direction,
 dependency injection, lifecycle management, terminology, and response or error
 conventions unless a concrete reason supports change.
 
+Only when the design concerns production persistence in a company Java project
+using MyBatis, or explicitly choosing it, read
+[company development standards](../company-development-standards.md) before
+deciding SQL organization. Resolve this bundled read-only reference relative
+to this `SKILL.md`, not the business project's working directory; project
+source-access rules remain unchanged. Verify applicability, use the relevant
+rule as an implementation constraint, and retain its source in the design.
+Report a missing reference as an affected evidence gap and resolve material
+conflicts under the existing decision rules; do not infer an exception.
+
 Classify every material engineering issue as one of:
 
 1. `Repository Fact`;
