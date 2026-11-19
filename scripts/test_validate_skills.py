@@ -572,7 +572,7 @@ class PackageContractsTest(unittest.TestCase):
         self.assertTrue(self.check(validator.validate_marketplace_packaging))
 
     def test_mismatched_plugin_versions_are_rejected(self):
-        self.replace(".codex-plugin/plugin.json", '"0.4.1"', '"0.3.0"')
+        self.replace(".codex-plugin/plugin.json", '"0.4.2"', '"0.3.0"')
         self.assertTrue(self.check(validator.validate_plugin_packaging))
 
 

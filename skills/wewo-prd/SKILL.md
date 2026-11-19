@@ -228,6 +228,13 @@ Read and apply
 [clarification-guide.md](references/clarification-guide.md) and
 [decision-map.md](references/decision-map.md).
 
+Before recording or presenting questions, apply the guide's terminology,
+evidence, and decision-scope checks. Reuse established business terms and
+explain necessary new concepts before relying on them. Confirm new or changed
+business meaning; an explanation preserving confirmed meaning needs no extra
+confirmation. Keep assumptions distinct from facts and independently selectable
+business decisions in separate questions.
+
 Persist the exact prepared question text before displaying it. On following
 turns, normally append outstanding user replies, explicitly labeled parsed
 conclusions, and the next prepared questions in one synchronous log write.

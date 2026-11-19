@@ -54,6 +54,11 @@ Inspect every planned material product rule before the final summary and PRD:
 - Is it only a repository current-state fact?
 - Is it an AI recommendation or assumption?
 - Is it actually an implementation decision?
+- Are key terms, quantities, and state boundaries clear enough to decide this
+  rule, rather than merely having appeared earlier?
+- Are material factual premises verified or still explicitly unresolved?
+- Does the user's actual confirmation cover each independently selectable
+  choice, without treating acceptance of wording as approval for extra behavior?
 - If reused from context, is its scope, baseline, and underlying provenance
   applicable, and is it established rather than a pending promotion?
 

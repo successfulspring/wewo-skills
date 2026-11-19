@@ -237,6 +237,40 @@ After every answer:
 
 Do not ask a question merely because it was identified at the beginning.
 
+## Align terminology before dependent decisions
+
+Before recording a question round, check the entire user-facing draft,
+including its introduction, questions, options, recommendation reasons, and
+examples. For each term needed to answer, identify its established meaning in
+the user's language or authorized sources. An earlier AI mention alone does
+not establish that meaning or show that the user understood it.
+
+When existing words for the business object or action suffice, replace the
+extra label throughout the draft. For example, replace "Which termination base
+should we use?" with "Should the quantity to stop come from 'Quantity' or
+'Quantity for this purchase'?", using the source's actual labels. Replace
+"Which quantity must retain execution?" with a concrete question such as
+"Must goods already produced but not yet inspected still be accepted?"
+
+If a new concept is necessary, explain it in plain business language before
+its first use in the draft, connecting it to known objects and actions. A
+later explanation or calculation example does not repair an unexplained
+opening or question. Label hypothetical examples as such; do not add a new
+abstraction merely to explain another one. Reuse the established wording
+after explaining it.
+
+Distinguish an explanatory label for an existing meaning from a proposed
+business change. An explanation that preserves confirmed meaning needs no
+extra confirmation round. A new or changed scope, state, quantity definition,
+or business rule requires confirmation before dependent decisions; do not
+hide that decision inside a definition. Once established, use the meaning
+consistently rather than treating the same word as different business rules.
+
+When the user asks what a term means, clarify it before asking them to decide
+the dependent behavior, then restate the relevant question. A request for an
+explanation is not an answer, and understanding a term does not approve an
+unstated business rule.
+
 ## Ask one focused round
 
 Discuss exactly one Decision Topic per round. One topic per round does not mean
@@ -250,6 +284,27 @@ a dependent question in a later round when its relevance, available options,
 or existence changes materially based on another unanswered question. For
 example, first decide whether paid orders may be cancelled; only if they may,
 ask how their refunds should behave.
+
+Keep each question focused on one business decision. Inspect the outcomes
+inside every option, not just the question headings: could the user accept one
+outcome and reject another without contradicting a confirmed rule? If so, give
+them separate question IDs, even within the same topic. For example, asking
+whether retained work both counts in open-work totals and triggers late alerts
+still bundles two choices; ask about the totals and alerts separately unless
+their coupling is already established.
+
+Keep outcomes together when a confirmed rule requires the coupling or one is
+a necessary consequence of the other; make that basis clear. A shared topic,
+screen, or earlier combined option alone does not establish required coupling
+in a newly raised scenario. If the coupling itself is a material unresolved
+rule, clarify it before relying on it. Do not mechanically split conjunctions
+or ask the user to approve unavoidable consequences separately.
+
+Preserve already confirmed choices rather than reopening them merely to
+change question format. Give newly separated unresolved decisions their own
+identities without reusing an existing ID for a different meaning. Explain
+consequences without turning independently selectable outcomes into mandatory
+parts of a recommendation.
 
 Use stable identifiers:
 
@@ -347,6 +402,11 @@ The user may always replace an option with a custom business rule.
 
 ## Ask with context
 
+Include only the background needed for the current choice. Briefly refer to
+settled decisions instead of repeating the full summary; explain a concept
+once and reuse its wording. Keep enough context to make the choice intelligible
+without exposing this drafting check as an extra user-facing questionnaire.
+
 Keep `Q1.1`, `Q1.2`, and `A/B/C/D` stable, but adapt every surrounding label to
 the user's language. In a Chinese conversation, prefer labels such as
 `决策主题`, `为什么需要确认`, `选项`, `推荐`, `推荐理由`, and `主要权衡` instead of
@@ -440,6 +500,14 @@ Surface any temporary assumption that materially affects the final behavior
 and require confirmation. Pay particular attention to permissions, permitted
 states, result data, notifications, historical data, and whether failures block
 or allow continuation.
+
+Keep verified facts, confirmed rules, proposals, and unverified assumptions
+distinct in questions and recommendation reasons. When a missing factual premise
+materially determines the choice, verify it from authorized sources when
+available or clarify it before making a definite recommendation. Distinguish
+hypothetical examples from verified business data. A field's existence does not
+prove that all historical records contain a value; missing data alone does not
+make a different quantity an equivalent fallback.
 
 ## Audit requirement completeness
 

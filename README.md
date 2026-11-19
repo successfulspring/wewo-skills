@@ -2,7 +2,7 @@
 
 ## What is Wewo Skills
 
-`wewo-skills` 0.4.1 is one AI software-engineering plugin containing nine independent,
+`wewo-skills` 0.4.2 is one AI software-engineering plugin containing nine independent,
 composable Agent Skills. The repository root is the plugin root for Claude Code
 and OpenAI/Codex hosts, while `skills/` remains the single runtime source of
 truth.
